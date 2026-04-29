@@ -6,6 +6,7 @@ import org.example.model.Session;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 public class SessionDAO {
 
@@ -124,4 +125,18 @@ public class SessionDAO {
         }
         return liste;
     }
+    //Métier :Vérifier si un coach est libre à un créneau donné avant de créer une session — éviter les conflits d'horaire.
+    public boolean isCoachDisponible(int idCoach, LocalDateTime dateHeure) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Session WHERE id_coach = ? AND date_heure = ?";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idCoach);
+            ps.setTimestamp(2, Timestamp.valueOf(dateHeure));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1) == 0;
+        }
+        return false;
+    }
+
+
 }
