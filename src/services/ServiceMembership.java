@@ -126,6 +126,30 @@ public class ServiceMembership implements IService<Membership> {
         }
         return list;
     }
+    // Vérifier si un user est déjà dans une team
+    public boolean isMember(int id_team, int id_user) {
+        String req = "SELECT COUNT(*) FROM `membership` WHERE `id_team` = ? AND `id_user` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, id_team);
+            ps.setInt(2, id_user);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+    // Rejoindre seulement si pas déjà membre
+    public void joinSafe(int id_team, int id_user, String role) {
+        if (isMember(id_team, id_user)) {
+            System.out.println("❌ User " + id_user + " est déjà dans cette team !");
+        } else {
+            join(id_team, id_user, role);
+            System.out.println("✅ User " + id_user + " a rejoint la team !");
+        }
+    }
+
 
 
 
