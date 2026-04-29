@@ -149,6 +149,28 @@ public class ServiceMembership implements IService<Membership> {
             System.out.println("✅ User " + id_user + " a rejoint la team !");
         }
     }
+    // Obtenir tous les membres avec un rôle spécifique dans une team
+    public List<Membership> getMembersByRoleInTeam(int id_team, String role) {
+        List<Membership> list = new ArrayList<>();
+        String req = "SELECT * FROM `membership` WHERE `id_team` = ? AND `role_dans_equipe` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, id_team);
+            ps.setString(2, role);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Membership m = new Membership();
+                m.setId_membership(rs.getInt("id_membership"));
+                m.setId_team(rs.getInt("id_team"));
+                m.setId_user(rs.getInt("id_user"));
+                m.setRole_dans_equipe(rs.getString("role_dans_equipe"));
+                list.add(m);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
 
 
 
