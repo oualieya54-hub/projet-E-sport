@@ -77,4 +77,23 @@ public class BookingDAO {
             System.out.println("✅ Réservation annulée !");
         }
     }
+    //Metier:Voir tous les élèves inscrits à une session donnée.
+    public List<Booking> getBookingsBySession(int idSession) throws SQLException {
+        List<Booking> liste = new ArrayList<>();
+        String sql = "SELECT * FROM Booking WHERE id_session = ?";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idSession);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                liste.add(new Booking(
+                        rs.getInt("id_booking"),
+                        rs.getInt("id_session"),
+                        rs.getInt("id_eleve"),
+                        rs.getString("statut_paiement")
+                ));
+            }
+        }
+        return liste;
+    }
 }
