@@ -185,7 +185,28 @@ public class ServiceTeam implements IService<Team> {
     public boolean isTeamFull(int id_team) {
         return countMembers(id_team) >= 11;
     }
-    
+    // Trier les teams par date de création
+    public List<Team> getTeamsSortedByDate() {
+        List<Team> list = new ArrayList<>();
+        String req = "SELECT * FROM `team` ORDER BY `date_creation` ASC";
+        try {
+            Statement stm = MyDataBase.getInstance().getCnx().createStatement();
+            ResultSet rs = stm.executeQuery(req);
+            while (rs.next()) {
+                Team t = new Team();
+                t.setId_team(rs.getInt("id_team"));
+                t.setNom_equipe(rs.getString("nom_equipe"));
+                t.setLogo(rs.getString("logo"));
+                t.setDate_creation(rs.getDate("date_creation"));
+                t.setId_capitaine(rs.getInt("id_capitaine"));
+                list.add(t);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
 
 
 }
