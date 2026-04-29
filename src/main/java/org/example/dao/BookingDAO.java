@@ -96,4 +96,18 @@ public class BookingDAO {
         }
         return liste;
     }
+    //Metier: Vérifier si un élève est déjà inscrit à cette session — éviter les doublons.
+    public boolean hasAlreadyBooked(int idEleve, int idSession) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Booking WHERE id_eleve = ? AND id_session = ?";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idEleve);
+            ps.setInt(2, idSession);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        }
+        return false;
+    }
+    //Metier :Réservation sécurisée : appelle hasAlreadyBooked avant d'insérer.
+    //MetierCompter le nombre d'élèves inscrits à une session — utile pour gérer une limite de places.
 }
