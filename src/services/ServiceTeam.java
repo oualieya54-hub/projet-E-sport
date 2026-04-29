@@ -111,4 +111,24 @@ public class ServiceTeam implements IService<Team> {
         }
         return null;
     }
+    public Team getByName(String nom) {
+        String req = "SELECT * FROM `team` WHERE `nom_team` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setString(1, nom);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Team t = new Team();
+                t.setId_team(rs.getInt("id_team"));
+                t.setNom_equipe(rs.getString("nom_team"));
+                t.setLogo(rs.getString("logo"));
+                t.setDate_creation(rs.getDate("date_creation"));
+                t.setId_capitaine(rs.getInt("id_capiten"));
+                return t;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }
