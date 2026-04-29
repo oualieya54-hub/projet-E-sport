@@ -165,7 +165,27 @@ public class ServiceTeam implements IService<Team> {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
+
     }
+    // Compter le nombre de membres d'une team
+    public int countMembers(int id_team) {
+        String req = "SELECT COUNT(*) FROM `membership` WHERE `id_team` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, id_team);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+    // Vérifier si une team est pleine (max 11 joueurs)
+    public boolean isTeamFull(int id_team) {
+        return countMembers(id_team) >= 11;
+    }
+    
 
 
 }
