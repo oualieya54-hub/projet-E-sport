@@ -64,4 +64,25 @@ public class SessionDAO {
             System.out.println("✅ Session annulée !");
         }
     }
+
+    //Métier :Récupérer toutes les sessions d'un coach spécifique — utile pour afficher son planning.
+    public List<Session> getSessionsByCoach(int idCoach) throws SQLException {
+        List<Session> liste = new ArrayList<>();
+        String sql = "SELECT * FROM Session WHERE id_coach = ?";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idCoach);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                liste.add(new Session(
+                        rs.getInt("id_session"),
+                        rs.getTimestamp("date_heure").toLocalDateTime(),
+                        rs.getString("jeu"),
+                        rs.getFloat("prix"),
+                        rs.getInt("id_coach")
+                ));
+            }
+        }
+        return liste;
+    }
 }
