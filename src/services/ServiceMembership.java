@@ -87,17 +87,17 @@ public class ServiceMembership implements IService<Membership> {
     }
     // Recherche par ID
     public Membership getById(int id) {
-        String req = "SELECT * FROM `membreship` WHERE `id_memebreship` = ?";
+        String req = "SELECT * FROM `membership` WHERE `id_membership` = ?";
         try {
             PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Membership m = new Membership();
-                m.setId_membership(rs.getInt("id_memebreship"));
+                m.setId_membership(rs.getInt("id_membership"));
                 m.setId_team(rs.getInt("id_team"));
                 m.setId_user(rs.getInt("id_user"));
-                m.setRole_dans_equipe(rs.getString("role"));
+                m.setRole_dans_equipe(rs.getString("role_dans_equipe"));
                 return m;
             }
         } catch (SQLException e) {
@@ -105,4 +105,28 @@ public class ServiceMembership implements IService<Membership> {
         }
         return null;
     }
+    // Recherche par rôle
+    public List<Membership> getByRole(String role) {
+        List<Membership> list = new ArrayList<>();
+        String req = "SELECT * FROM `membership` WHERE `role_dans_equipe` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setString(1, role);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Membership m = new Membership();
+                m.setId_membership(rs.getInt("id_membership"));
+                m.setId_team(rs.getInt("id_team"));
+                m.setId_user(rs.getInt("id_user"));
+                m.setRole_dans_equipe(rs.getString("role_dans_equipe"));
+                list.add(m);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
+
+
 }

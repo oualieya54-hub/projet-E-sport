@@ -101,10 +101,10 @@ public class ServiceTeam implements IService<Team> {
             if (rs.next()) {
                 Team t = new Team();
                 t.setId_team(rs.getInt("id_team"));
-                t.setNom_equipe(rs.getString("nom_team"));
+                t.setNom_equipe(rs.getString("nom_equipe"));
                 t.setLogo(rs.getString("logo"));
                 t.setDate_creation(rs.getDate("date_creation"));
-                t.setId_capitaine(rs.getInt("id_capiten"));
+                t.setId_capitaine(rs.getInt("id_capitaine"));
                 return t;
             }
         } catch (SQLException e) {
@@ -113,7 +113,7 @@ public class ServiceTeam implements IService<Team> {
         return null;
     }
     public Team getByName(String nom) {
-        String req = "SELECT * FROM `team` WHERE `nom_team` = ?";
+        String req = "SELECT * FROM `team` WHERE `nom_equipe` = ?";
         try {
             PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
             ps.setString(1, nom);
@@ -121,10 +121,10 @@ public class ServiceTeam implements IService<Team> {
             if (rs.next()) {
                 Team t = new Team();
                 t.setId_team(rs.getInt("id_team"));
-                t.setNom_equipe(rs.getString("nom_team"));
+                t.setNom_equipe(rs.getString("nom_equipe"));
                 t.setLogo(rs.getString("logo"));
                 t.setDate_creation(rs.getDate("date_creation"));
-                t.setId_capitaine(rs.getInt("id_capiten"));
+                t.setId_capitaine(rs.getInt("id_capitaine"));
                 return t;
             }
         } catch (SQLException e) {
@@ -135,17 +135,17 @@ public class ServiceTeam implements IService<Team> {
     // Tous les memberships d'une team
     public List<Membership> getMembershipsOfTeam(int id_team) {
         List<Membership> list = new ArrayList<>();
-        String req = "SELECT * FROM `membreship` WHERE `id_team` = ?";
+        String req = "SELECT * FROM `membership` WHERE `id_team` = ?";
         try {
             PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
             ps.setInt(1, id_team);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Membership m = new Membership();
-                m.setId_membership(rs.getInt("id_memebreship"));
+                m.setId_membership(rs.getInt("id_membership"));
                 m.setId_team(rs.getInt("id_team"));
                 m.setId_user(rs.getInt("id_user"));
-                m.setRole_dans_equipe(rs.getString("role"));
+                m.setRole_dans_equipe(rs.getString("role_dans_equipe"));
                 list.add(m);
             }
         } catch (SQLException e) {
@@ -153,5 +153,19 @@ public class ServiceTeam implements IService<Team> {
         }
         return list;
     }
+    // Changer le capitaine d'une team
+    public void changerCapitaine(int id_team, int nouvelId_capitaine) {
+        String req = "UPDATE `team` SET `id_capitaine` = ? WHERE `id_team` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, nouvelId_capitaine);
+            ps.setInt(2, id_team);
+            ps.executeUpdate();
+            System.out.println("✅ Capitaine changé !");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
 }
