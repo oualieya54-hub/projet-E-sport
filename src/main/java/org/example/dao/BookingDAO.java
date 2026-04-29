@@ -118,4 +118,14 @@ public class BookingDAO {
         }
     }
     //MetierCompter le nombre d'élèves inscrits à une session — utile pour gérer une limite de places.
+    public int getNombreReservations(int idSession) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Booking WHERE id_session = ?";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idSession);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        }
+        return 0;
+    }
 }
