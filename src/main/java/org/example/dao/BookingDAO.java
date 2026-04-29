@@ -109,5 +109,13 @@ public class BookingDAO {
         return false;
     }
     //Metier :Réservation sécurisée : appelle hasAlreadyBooked avant d'insérer.
+    public void bookSafe(Booking b) throws SQLException {
+        if (hasAlreadyBooked(b.getIdEleve(), b.getIdSession())) {
+            System.out.println("Eleve deja inscrit a cette session !");
+        } else {
+            book(b);
+            System.out.println("Reservation effectuee avec succes !");
+        }
+    }
     //MetierCompter le nombre d'élèves inscrits à une session — utile pour gérer une limite de places.
 }
