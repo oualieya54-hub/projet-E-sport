@@ -41,6 +41,20 @@ public class SessionDAO {
         return liste;
     }
 
+    public void update(Session s) throws SQLException {
+        String sql = "UPDATE Session SET date_heure=?, jeu=?, prix=?, id_coach=? WHERE id_session=?";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setTimestamp(1, Timestamp.valueOf(s.getDateHeure()));
+            ps.setString(2, s.getJeu());
+            ps.setFloat(3, s.getPrix());
+            ps.setInt(4, s.getIdCoach());
+            ps.setInt(5, s.getIdSession());
+            ps.executeUpdate();
+            System.out.println("✅ Session mise à jour !");
+        }
+    }
+
     public void cancel(int idSession) throws SQLException {
         String sql = "DELETE FROM Session WHERE id_session = ?";
         try (Connection con = DatabaseConnection.getConnection();

@@ -27,4 +27,5 @@ public class Session {
     public String toString() {
         return "Session { id=" + idSession + ", jeu='" + jeu + "', prix=" + prix + " }";
     }
+
 }
