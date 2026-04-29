@@ -171,6 +171,18 @@ public class ServiceMembership implements IService<Membership> {
         }
         return list;
     }
+    // Quitter toutes les teams d'un user
+    public void leaveAllTeams(int id_user) {
+        String req = "DELETE FROM `membership` WHERE `id_user` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, id_user);
+            ps.executeUpdate();
+            System.out.println("✅ User " + id_user + " a quitté toutes ses teams !");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 
 
