@@ -8,144 +8,181 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FactureDAO {
-    private connexionDB connexion;
+    private Connection conn;
 
-    public FactureDAO(connexionDB connexion) {
-        this.connexion = connexion;
+    public FactureDAO() {
+        this.conn = connexionDB.getInstance();
     }
 
     // ✅ AJOUTER FACTURE
-    public void add(Facture facture) throws SQLException {
-        String sql = "INSERT INTO facture (numero_facture, commande_id, date, montant_total, montant_tva, montant_ht, " +
+    public boolean add(Facture facture) {
+        String sql = "INSERT INTO facture (numero_facture, id_commande, montant_total, montant_tva, montant_ht, " +
                 "statut, adresse_livraison, envoyee_email, chemin_pdf) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, facture.getNumeroFacture());
-            stmt.setInt(2, facture.getCommandeId());
-            stmt.setTimestamp(3, Timestamp.valueOf(facture.getDate()));
-            stmt.setDouble(4, facture.getMontantTotal());
-            stmt.setDouble(5, facture.getMontantTVA());
-            stmt.setDouble(6, facture.getMontantHT());
-            stmt.setString(7, facture.getStatut());
-            stmt.setString(8, facture.getAdresseLivraison());
-            stmt.setBoolean(9, facture.isEnvoyeeEmail());
-            stmt.setString(10, facture.getCheminPDF());
-            stmt.executeUpdate();
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, facture.getNumeroFacture());
+            ps.setInt(2, facture.getIdCommande());
+            ps.setBigDecimal(3, facture.getMontantTotal());
+            ps.setBigDecimal(4, facture.getMontantTVA());
+            ps.setBigDecimal(5, facture.getMontantHT());
+            ps.setString(6, facture.getStatut());
+            ps.setString(7, facture.getAdresseLivraison());
+            ps.setBoolean(8, facture.isEnvoyeeEmail());
+            ps.setString(9, facture.getCheminPDF());
+
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                facture.setIdFacture(rs.getInt(1));
+            }
             System.out.println("✅ Facture ajoutée: " + facture.getNumeroFacture());
+            return true;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur ajout facture: " + e.getMessage());
+            return false;
         }
     }
 
     // ✅ RÉCUPÉRER FACTURE PAR ID
-    public Facture getById(int id) throws SQLException {
-        String sql = "SELECT * FROM facture WHERE id = ?";
+    public Facture getById(int id) {
+        String sql = "SELECT * FROM facture WHERE id_facture = ?";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return mapResultSetToFacture(rs);
+                return remplirFacture(rs);
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture facture: " + e.getMessage());
         }
         return null;
     }
 
     // ✅ RÉCUPÉRER FACTURE PAR COMMANDE
-    public Facture getByCommandeId(int commandeId) throws SQLException {
-        String sql = "SELECT * FROM facture WHERE commande_id = ? LIMIT 1";
+    public Facture getByIdCommande(int idCommande) {
+        String sql = "SELECT * FROM facture WHERE id_commande = ? LIMIT 1";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, commandeId);
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCommande);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return mapResultSetToFacture(rs);
+                return remplirFacture(rs);
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture facture par commande: " + e.getMessage());
         }
         return null;
     }
 
     // ✅ RÉCUPÉRER TOUTES LES FACTURES
-    public List<Facture> getAll() throws SQLException {
+    public List<Facture> getAll() {
         List<Facture> factures = new ArrayList<>();
-        String sql = "SELECT * FROM facture";
+        String sql = "SELECT * FROM facture ORDER BY date_facture DESC";
 
-        try (Statement stmt = connexion.getConnection().createStatement()) {
-            ResultSet rs = stmt.executeQuery(sql);
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
-                factures.add(mapResultSetToFacture(rs));
+                factures.add(remplirFacture(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture factures: " + e.getMessage());
         }
         return factures;
     }
 
     // ✅ METTRE À JOUR FACTURE
-    public void update(Facture facture) throws SQLException {
-        String sql = "UPDATE facture SET statut=?, envoyee_email=?, date_envoi=?, chemin_pdf=? WHERE id=?";
+    public boolean update(Facture facture) {
+        String sql = "UPDATE facture SET statut=?, envoyee_email=?, date_envoi=?, chemin_pdf=? WHERE id_facture=?";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, facture.getStatut());
-            stmt.setBoolean(2, facture.isEnvoyeeEmail());
-            stmt.setTimestamp(3, facture.getDateEnvoi() != null ? Timestamp.valueOf(facture.getDateEnvoi()) : null);
-            stmt.setString(4, facture.getCheminPDF());
-            stmt.setInt(5, facture.getId());
-            stmt.executeUpdate();
-            System.out.println("✅ Facture mise à jour");
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, facture.getStatut());
+            ps.setBoolean(2, facture.isEnvoyeeEmail());
+            if (facture.getDateEnvoi() != null) {
+                ps.setTimestamp(3, Timestamp.valueOf(facture.getDateEnvoi()));
+            } else {
+                ps.setNull(3, Types.TIMESTAMP);
+            }
+            ps.setString(4, facture.getCheminPDF());
+            ps.setInt(5, facture.getIdFacture());
+
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) System.out.println("✅ Facture mise à jour");
+            return ok;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur mise à jour facture: " + e.getMessage());
+            return false;
         }
     }
 
     // ✅ SUPPRIMER FACTURE
-    public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM facture WHERE id = ?";
+    public boolean delete(int id) {
+        String sql = "DELETE FROM facture WHERE id_facture = ?";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-            System.out.println("✅ Facture supprimée");
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) System.out.println("✅ Facture supprimée");
+            return ok;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur suppression facture: " + e.getMessage());
+            return false;
         }
     }
 
     // ✅ OBTENIR FACTURES PAR STATUT
-    public List<Facture> getByStatut(String statut) throws SQLException {
+    public List<Facture> getByStatut(String statut) {
         List<Facture> factures = new ArrayList<>();
-        String sql = "SELECT * FROM facture WHERE statut = ?";
+        String sql = "SELECT * FROM facture WHERE statut = ? ORDER BY date_facture DESC";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, statut);
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, statut);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                factures.add(mapResultSetToFacture(rs));
+                factures.add(remplirFacture(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture factures par statut: " + e.getMessage());
         }
         return factures;
     }
 
     // ✅ MONTANT TOTAL DES FACTURES
-    public double getMontantTotal() throws SQLException {
+    public java.math.BigDecimal getMontantTotal() {
         String sql = "SELECT SUM(montant_total) as total FROM facture";
 
-        try (Statement stmt = connexion.getConnection().createStatement()) {
-            ResultSet rs = stmt.executeQuery(sql);
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
             if (rs.next()) {
-                return rs.getDouble("total");
+                return rs.getBigDecimal("total");
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur calcul montant total: " + e.getMessage());
         }
-        return 0;
+        return java.math.BigDecimal.ZERO;
     }
 
-    private Facture mapResultSetToFacture(ResultSet rs) throws SQLException {
-        Facture facture = new Facture();
-        facture.setId(rs.getInt("id"));
-        facture.setNumeroFacture(rs.getString("numero_facture"));
-        facture.setCommandeId(rs.getInt("commande_id"));
-        facture.setDate(rs.getTimestamp("date").toLocalDateTime());
-        facture.setMontantTotal(rs.getDouble("montant_total"));
-        facture.setStatut(rs.getString("statut"));
-        facture.setAdresseLivraison(rs.getString("adresse_livraison"));
-        facture.setEnvoyeeEmail(rs.getBoolean("envoyee_email"));
-        facture.setCheminPDF(rs.getString("chemin_pdf"));
-        if (rs.getTimestamp("date_envoi") != null) {
-            facture.setDateEnvoi(rs.getTimestamp("date_envoi").toLocalDateTime());
-        }
-        return facture;
+    // Helper
+    private Facture remplirFacture(ResultSet rs) throws SQLException {
+        Facture f = new Facture();
+        f.setIdFacture(rs.getInt("id_facture"));
+        f.setNumeroFacture(rs.getString("numero_facture"));
+        f.setIdCommande(rs.getInt("id_commande"));
+        f.setMontantTotal(rs.getBigDecimal("montant_total"));
+        f.setMontantTVA(rs.getBigDecimal("montant_tva"));
+        f.setMontantHT(rs.getBigDecimal("montant_ht"));
+        f.setStatut(rs.getString("statut"));
+        f.setAdresseLivraison(rs.getString("adresse_livraison"));
+        f.setEnvoyeeEmail(rs.getBoolean("envoyee_email"));
+        f.setCheminPDF(rs.getString("chemin_pdf"));
+
+        Timestamp ts = rs.getTimestamp("date_facture");
+        if (ts != null) f.setDateFacture(ts.toLocalDateTime());
+
+        Timestamp tsEnvoi = rs.getTimestamp("date_envoi");
+        if (tsEnvoi != null) f.setDateEnvoi(tsEnvoi.toLocalDateTime());
+
+        return f;
     }
 }

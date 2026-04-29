@@ -13,6 +13,8 @@ public class commande {
     private LocalDateTime dateCommande;
     private String        adresseLivraison;
     private String        methodePaiement;
+    private int           id;
+    private double        montant;
 
     public commande() {}
 
@@ -49,6 +51,24 @@ public class commande {
 
     public String getMethodePaiement()          { return methodePaiement; }
     public void setMethodePaiement(String m)    { this.methodePaiement = m; }
+
+
+
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public double getMontant() {
+        return montant;
+    }
+    public void setMontant(double montant) {
+        this.montant = montant;
+    }
+
 
     @Override
     public String toString() {

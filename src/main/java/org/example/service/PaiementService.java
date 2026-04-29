@@ -1,33 +1,36 @@
 package org.example.service;
 
-import org.example.connexion.Connexion;
-import org.example.dao.CommandeDAO;
+import org.example.dao.commandeDAO;
 import org.example.dao.PaiementDAO;
-import org.example.modele.Commande;
+import org.example.modele.commande;
 import org.example.modele.Paiement;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class PaiementService {
-    private PaiementDAO paiementDAO;
-    private CommandeDAO commandeDAO;
+    private PaiementDAO PaiementDAO;
+    private commandeDAO commandeDAO;
 
-    public PaiementService(Connexion connexion) {
-        this.paiementDAO = new PaiementDAO(connexion);
-        this.commandeDAO = new CommandeDAO(connexion);
+    public PaiementService() {
+        this.PaiementDAO = new PaiementDAO();
+        this.commandeDAO = new commandeDAO();
     }
 
     // 🔥 TRAITER PAIEMENT STRIPE
-    public boolean traiterPaiementStripe(int commandeId, String carteToken, double montant) throws SQLException {
-        Commande commande = commandeDAO.getById(commandeId);
+    public boolean traiterPaiementStripe(int idCommande, String carteToken, BigDecimal montant) {
+        commande cmd = commandeDAO.getToutesCommandes().stream()
+                .filter(c -> c.getIdCommande() == idCommande)
+                .findFirst()
+                .orElse(null);
 
-        if (commande == null) {
-            throw new IllegalArgumentException("Commande non trouvée");
+        if (cmd == null) {
+            System.err.println("❌ Commande non trouvée");
+            return false;
         }
 
-        if (Math.abs(commande.getMontant() - montant) > 0.01) {
-            throw new IllegalArgumentException("Montant incorrect");
+        if (cmd.getMontantTotal().compareTo(montant) != 0) {
+            System.err.println("❌ Montant incorrect");
+            return false;
         }
 
         try {
@@ -35,88 +38,96 @@ public class PaiementService {
             boolean paiementReussi = simulerPaiementStripe(carteToken, montant);
 
             if (paiementReussi) {
-                Paiement paiement = new Paiement(commandeId, montant, "carte_bancaire", "approuve");
-                paiement.setTokenStripe(carteToken);
-                paiement.setReferenceTransaction("TXN-" + System.currentTimeMillis());
+                Paiement p = new Paiement(idCommande, montant, "carte_bancaire", "approuve");
+                p.setTokenStripe(carteToken);
+                p.setReferenceTransaction("TXN-" + System.currentTimeMillis());
 
-                paiementDAO.add(paiement);
+                PaiementDAO.add(p);
 
                 // Mettre à jour statut commande
-                commande.setStatut("confirmee");
-                commandeDAO.update(commande);
+                commandeDAO.changerStatut(idCommande, "confirmee");
 
-                System.out.println("✅ Paiement Stripe approuvé - Commande #" + commandeId);
+                System.out.println("✅ Paiement Stripe approuvé - Commande #" + idCommande);
                 return true;
             } else {
                 System.out.println("❌ Paiement Stripe refusé");
                 return false;
             }
         } catch (Exception e) {
-            System.err.println("Erreur Stripe: " + e.getMessage());
+            System.err.println("❌ Erreur Stripe: " + e.getMessage());
             return false;
         }
     }
 
     // 🔥 TRAITER PAIEMENT SIMPLE
-    public void traiterPaiement(int commandeId, String methode, double montant) throws SQLException {
-        Commande commande = commandeDAO.getById(commandeId);
-
-        if (commande == null) {
-            throw new IllegalArgumentException("Commande non trouvée");
+    public boolean traiterPaiement(int idCommande, String methode, BigDecimal montant) {
+        try {
+            Paiement p = new Paiement(idCommande, montant, methode, "en_attente");
+            return PaiementDAO.add(p);
+        } catch (Exception e) {
+            System.err.println("❌ Erreur traitement paiement: " + e.getMessage());
+            return false;
         }
-
-        Paiement paiement = new Paiement(commandeId, montant, methode, "en_attente");
-        paiementDAO.add(paiement);
-
-        System.out.println("⏳ Paiement en attente: " + methode);
     }
 
     // 🔥 REMBOURSER COMMANDE
-    public boolean rembourserCommande(int commandeId) throws SQLException {
-        Commande commande = commandeDAO.getById(commandeId);
+    public boolean rembourserCommande(int idCommande) {
+        try {
+            commande cmd = commandeDAO.getToutesCommandes().stream()
+                    .filter(c -> c.getIdCommande() == idCommande)
+                    .findFirst()
+                    .orElse(null);
 
-        if (commande == null) {
-            throw new IllegalArgumentException("Commande non trouvée");
+            if (cmd == null) {
+                System.err.println("❌ Commande non trouvée");
+                return false;
+            }
+
+            if (cmd.getStatut().equals("livree")) {
+                System.err.println("❌ Impossible de rembourser une commande livrée");
+                return false;
+            }
+
+            Paiement p = PaiementDAO.getByIdCommande(idCommande);
+
+            if (p == null) {
+                System.err.println("❌ Aucun paiement trouvé");
+                return false;
+            }
+
+            p.setStatut("rembourse");
+            PaiementDAO.update(p);
+
+            commandeDAO.changerStatut(idCommande, "annulee");
+
+            System.out.println("💰 Remboursement approuvé: " + p.getMontant() + "€");
+            return true;
+        } catch (Exception e) {
+            System.err.println("❌ Erreur remboursement: " + e.getMessage());
+            return false;
         }
-
-        if (commande.getStatut().equals("livree")) {
-            throw new IllegalArgumentException("Impossible de rembourser une commande livrée");
-        }
-
-        Paiement paiement = paiementDAO.getByCommandeId(commandeId);
-
-        if (paiement == null) {
-            throw new IllegalArgumentException("Aucun paiement trouvé");
-        }
-
-        paiement.setStatut("rembourse");
-        paiementDAO.update(paiement);
-
-        commande.setStatut("annulee");
-        commandeDAO.update(commande);
-
-        System.out.println("💰 Remboursement approuvé: " + paiement.getMontant() + "€");
-        return true;
     }
 
-    // ��� VÉRIFIER SI PAIEMENT APPROUVÉ
-    public boolean isPaiementApprouve(int commandeId) throws SQLException {
-        return paiementDAO.isPaiementApprouve(commandeId);
+    // 🔥 VÉRIFIER SI PAIEMENT APPROUVÉ
+    public boolean isPaiementApprouve(int idCommande) {
+        return PaiementDAO.isPaiementApprouve(idCommande);
     }
 
     // 🔥 OBTENIR STATUT PAIEMENT
-    public String getStatutPaiement(int commandeId) throws SQLException {
-        Paiement paiement = paiementDAO.getByCommandeId(commandeId);
-        return paiement != null ? paiement.getStatut() : "non_trouve";
+    public String getStatutPaiement(int idCommande) {
+        Paiement p = PaiementDAO.getByIdCommande(idCommande);
+        return p != null ? p.getStatut() : "non_trouve";
     }
 
     // 🔥 MONTANT TOTAL PAIEMENTS APPROUVÉS
-    public double getMontantTotalApprouve() throws SQLException {
-        List<Paiement> paiements = paiementDAO.getByStatut("approuve");
-        return paiements.stream().mapToDouble(Paiement::getMontant).sum();
+    public BigDecimal getMontantTotalApprouve() {
+        List<Paiement> paiements = PaiementDAO.getByStatut("approuve");
+        return paiements.stream()
+                .map(Paiement::getMontant)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private boolean simulerPaiementStripe(String carteToken, double montant) {
-        return !carteToken.isEmpty() && montant > 0;
+    private boolean simulerPaiementStripe(String carteToken, BigDecimal montant) {
+        return !carteToken.isEmpty() && montant.compareTo(BigDecimal.ZERO) > 0;
     }
 }

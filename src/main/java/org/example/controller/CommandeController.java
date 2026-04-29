@@ -2,37 +2,37 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import org.example.connexion.Connexion;
-import org.example.dao.CommandeDAO;
-import org.example.dao.PanierDAO;
-import org.example.modele.Commande;
+import org.example.connexion.connexionDB;
+import org.example.dao.commandeDAO;
+import org.example.dao.panierDAO;
+import org.example.modele.commande;
 import org.example.service.PaiementService;
 import org.example.service.FacturationService;
 import java.sql.SQLException;
 
 public class CommandeController {
 
-    @FXML private TableView<Commande> commandeTable;
+    @FXML private TableView<commande> commandeTable;
     @FXML private Button addButton;
     @FXML private Button updateButton;
     @FXML private Button deleteButton;
     @FXML private Button paiementStripButton;
     @FXML private Button annulerRemboursementButton;
 
-    private CommandeDAO commandeDAO;
-    private PanierDAO panierDAO;
+    private commandeDAO commandeDAO;
+    private panierDAO panierDAO;
     private PaiementService paiementService;
     private FacturationService factuationService;
-    private Connexion connexion;
-    private Commande selectedCommande;
+    private connexionDB connexion;
+    private commande selectedCommande;
 
     @FXML
     public void initialize() {
-        connexion = new Connexion();
-        commandeDAO = new CommandeDAO(connexion);
-        panierDAO = new PanierDAO(connexion);
-        paiementService = new PaiementService(connexion);
-        factuationService = new FacturationService(connexion);
+        connexion = (connexionDB) connexionDB.getInstance();
+        commandeDAO = new commandeDAO();
+        panierDAO = new panierDAO();
+        paiementService = new PaiementService();
+        factuationService = new FacturationService();
 
         loadCommandes();
     }
@@ -56,7 +56,7 @@ public class CommandeController {
         boolean success = paiementService.traiterPaiementStripe(
                 selectedCommande.getId(),
                 "tok_visa_4242",
-                selectedCommande.getMontant()
+                selectedCommande.getMontantTotal()
         );
 
         if (success) {

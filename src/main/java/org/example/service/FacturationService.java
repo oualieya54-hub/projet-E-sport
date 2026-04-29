@@ -1,160 +1,168 @@
 package org.example.service;
 
-import org.example.connexion.Connexion;
-import org.example.dao.CommandeDAO;
+import org.example.dao.commandeDAO;
 import org.example.dao.FactureDAO;
-import org.example.dao.PanierDAO;
-import org.example.modele.Commande;
+import org.example.modele.commande;
 import org.example.modele.Facture;
-import org.example.modele.Panier;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class FacturationService {
-    private FactureDAO factureDAO;
-    private CommandeDAO commandeDAO;
-    private PanierDAO panierDAO;
+    private FactureDAO FactureDAO;
+    private commandeDAO commandeDAO;
 
-    public FacturationService(Connexion connexion) {
-        this.factureDAO = new FactureDAO(connexion);
-        this.commandeDAO = new CommandeDAO(connexion);
-        this.panierDAO = new PanierDAO(connexion);
+    public FacturationService() {
+        this.FactureDAO = new FactureDAO();
+        this.commandeDAO = new commandeDAO();
     }
 
     // 🔥 GÉNÉRER FACTURE PDF
-    public String genererFacturePDF(int commandeId) throws SQLException {
-        Commande commande = commandeDAO.getById(commandeId);
+    public String genererFacturePDF(int idCommande) {
+        try {
+            commande cmd = commandeDAO.getToutesCommandes().stream()
+                    .filter(c -> c.getIdCommande() == idCommande)
+                    .findFirst()
+                    .orElse(null);
 
-        if (commande == null) {
-            throw new IllegalArgumentException("Commande non trouvée");
+            if (cmd == null) {
+                System.err.println("❌ Commande non trouvée");
+                return null;
+            }
+
+            Facture f = new Facture(idCommande, cmd.getMontantTotal(), cmd.getAdresseLivraison());
+
+            // Générer le fichier PDF (HTML simulé)
+            String cheminPDF = genererPDF(f);
+            f.setCheminPDF(cheminPDF);
+
+            FactureDAO.add(f);
+
+            System.out.println("✅ Facture PDF générée: " + f.getNumeroFacture());
+            System.out.println("📁 Chemin: " + cheminPDF);
+
+            return cheminPDF;
+        } catch (Exception e) {
+            System.err.println("❌ Erreur génération facture: " + e.getMessage());
+            return null;
         }
-
-        Facture facture = new Facture(commandeId, commande.getMontant(), commande.getAdresse());
-
-        // Ajouter les articles du panier
-        List<Panier> articles = panierDAO.getByCommandeId(commandeId);
-
-        // Générer le fichier PDF
-        String cheminPDF = genererPDF(facture, articles);
-        facture.setCheminPDF(cheminPDF);
-
-        factureDAO.add(facture);
-
-        System.out.println("✅ Facture PDF générée: " + facture.getNumeroFacture());
-        System.out.println("📁 Chemin: " + cheminPDF);
-
-        return cheminPDF;
     }
 
     // 🔥 ENVOYER FACTURE PAR EMAIL
-    public boolean envoyerFactureEmail(int commandeId, String emailClient) throws SQLException {
-        Facture facture = factureDAO.getByCommandeId(commandeId);
-
-        if (facture == null) {
-            System.err.println("Facture non trouvée pour la commande #" + commandeId);
-            return false;
-        }
-
+    public boolean envoyerFactureEmail(int idCommande, String emailClient) {
         try {
-            // Simuler envoi email
-            System.out.println("📧 Email envoyé à: " + emailClient);
-            System.out.println("Sujet: Votre facture - " + facture.getNumeroFacture());
-            System.out.println("Pièce jointe: " + facture.getCheminPDF());
+            Facture f = FactureDAO.getByIdCommande(idCommande);
 
-            facture.setEnvoyeeEmail(true);
-            facture.setDateEnvoi(LocalDateTime.now());
-            factureDAO.update(facture);
+            if (f == null) {
+                System.err.println("❌ Facture non trouvée");
+                return false;
+            }
+
+            System.out.println("📧 Email envoyé à: " + emailClient);
+            System.out.println("Sujet: Votre facture - " + f.getNumeroFacture());
+            System.out.println("Pièce jointe: " + f.getCheminPDF());
+
+            f.setEnvoyeeEmail(true);
+            f.setDateEnvoi(LocalDateTime.now());
+            FactureDAO.update(f);
 
             return true;
         } catch (Exception e) {
-            System.err.println("Erreur envoi email: " + e.getMessage());
+            System.err.println("❌ Erreur envoi email: " + e.getMessage());
             return false;
         }
     }
 
     // 🔥 CONFIRMER COMMANDE PAR EMAIL
-    public boolean confirmerCommandeEmail(int commandeId, String emailClient) throws SQLException {
-        Commande commande = commandeDAO.getById(commandeId);
-
-        if (commande == null) {
-            throw new IllegalArgumentException("Commande non trouvée");
-        }
-
+    public boolean confirmerCommandeEmail(int idCommande, String emailClient) {
         try {
-            String sujet = "Confirmation de votre commande #" + commandeId;
+            commande cmd = commandeDAO.getToutesCommandes().stream()
+                    .filter(c -> c.getIdCommande() == idCommande)
+                    .findFirst()
+                    .orElse(null);
+
+            if (cmd == null) {
+                System.err.println("❌ Commande non trouvée");
+                return false;
+            }
+
+            String sujet = "Confirmation de votre commande #" + idCommande;
             String corps = "Merci pour votre commande!\n" +
-                    "Montant: " + commande.getMontant() + "€\n" +
-                    "Adresse: " + commande.getAdresse();
+                    "Montant: " + cmd.getMontantTotal() + "€\n" +
+                    "Adresse: " + cmd.getAdresseLivraison();
 
             System.out.println("✅ Email de confirmation envoyé à: " + emailClient);
             System.out.println("Sujet: " + sujet);
 
             return true;
         } catch (Exception e) {
-            System.err.println("Erreur envoi confirmation: " + e.getMessage());
+            System.err.println("❌ Erreur envoi confirmation: " + e.getMessage());
             return false;
         }
     }
 
     // 🔥 REMBOURSEMENT AUTOMATIQUE
-    public boolean traiterRembouissement(int commandeId) throws SQLException {
-        Facture facture = factureDAO.getByCommandeId(commandeId);
+    public boolean traiterRembouissement(int idCommande) {
+        try {
+            Facture f = FactureDAO.getByIdCommande(idCommande);
 
-        if (facture == null) {
-            throw new IllegalArgumentException("Facture non trouvée");
+            if (f == null) {
+                System.err.println("❌ Facture non trouvée");
+                return false;
+            }
+
+            f.setStatut("remboursee");
+            FactureDAO.update(f);
+
+            System.out.println("💰 Remboursement automatique de " + f.getMontantTotal() + "€");
+
+            return true;
+        } catch (Exception e) {
+            System.err.println("❌ Erreur remboursement: " + e.getMessage());
+            return false;
         }
-
-        facture.setStatut("remboursee");
-        factureDAO.update(facture);
-
-        Commande commande = commandeDAO.getById(commandeId);
-        commande.setStatut("annulee");
-        commandeDAO.update(commande);
-
-        System.out.println("💰 Remboursement automatique de " + facture.getMontantTotal() + "€");
-
-        return true;
     }
 
     // 🔥 MONTANT TOTAL FACTURÉ
-    public double getMontantTotalFacture() throws SQLException {
-        return factureDAO.getMontantTotal();
+    public BigDecimal getMontantTotalFacture() {
+        return FactureDAO.getMontantTotal();
     }
 
     // 🔥 NOMBRE DE FACTURES GÉNÉRÉES
-    public int getNombreFacturesGenerees() throws SQLException {
-        List<Facture> factures = factureDAO.getByStatut("generee");
+    public int getNombreFacturesGenerees() {
+        List<Facture> factures = FactureDAO.getByStatut("generee");
         return factures.size();
     }
 
-    private String genererPDF(Facture facture, List<Panier> articles) {
+    private String genererPDF(Facture f) {
         try {
-            String nomFichier = facture.getNumeroFacture() + ".html";
+            String nomFichier = f.getNumeroFacture() + ".html";
             String cheminComplet = "factures/" + nomFichier;
 
             // Créer dossier s'il n'existe pas
             new File("factures").mkdirs();
 
-            // Créer fichier HTML (simulant PDF)
+            // Créer fichier HTML
             FileWriter writer = new FileWriter(cheminComplet);
-            writer.write("<html><body>");
-            writer.write("<h1>Facture: " + facture.getNumeroFacture() + "</h1>");
-            writer.write("<p>Date: " + facture.getDate() + "</p>");
-            writer.write("<p>Montant Total: " + facture.getMontantTotal() + "€</p>");
-            writer.write("<p>Montant HT: " + facture.getMontantHT() + "€</p>");
-            writer.write("<p>TVA (20%): " + facture.getMontantTVA() + "€</p>");
-            writer.write("<p>Adresse: " + facture.getAdresseLivraison() + "</p>");
+            writer.write("<html><head><meta charset='UTF-8'></head><body>");
+            writer.write("<h1>FACTURE: " + f.getNumeroFacture() + "</h1>");
+            writer.write("<p><strong>Commande:</strong> #" + f.getIdCommande() + "</p>");
+            writer.write("<p><strong>Date:</strong> " + f.getDateFacture() + "</p>");
+            writer.write("<p><strong>Adresse:</strong> " + f.getAdresseLivraison() + "</p>");
+            writer.write("<hr>");
+            writer.write("<p><strong>Montant HT:</strong> " + f.getMontantHT() + "€</p>");
+            writer.write("<p><strong>TVA (20%):</strong> " + f.getMontantTVA() + "€</p>");
+            writer.write("<p><strong>TOTAL TTC:</strong> " + f.getMontantTotal() + "€</p>");
             writer.write("</body></html>");
             writer.close();
 
             System.out.println("📄 Facture générée: " + cheminComplet);
             return cheminComplet;
         } catch (IOException e) {
-            System.err.println("Erreur génération PDF: " + e.getMessage());
+            System.err.println("❌ Erreur génération PDF: " + e.getMessage());
             return null;
         }
     }

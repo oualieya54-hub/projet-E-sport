@@ -8,130 +8,158 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaiementDAO {
-    private connexionDB connexion;
+    private Connection conn;
 
-    public PaiementDAO(connexionDB connexion) {
-        this.connexion = connexion;
+    public PaiementDAO() {
+        this.conn = connexionDB.getInstance();
     }
 
     // ✅ AJOUTER PAIEMENT
-    public void add(Paiement paiement) throws SQLException {
-        String sql = "INSERT INTO paiement (commande_id, montant, methode, statut, date, token_stripe, ref_transaction) " +
+    public boolean add(Paiement paiement) {
+        String sql = "INSERT INTO paiement (id_commande, montant, methode, statut, date_paiement, token_stripe, ref_transaction) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, paiement.getCommandeId());
-            stmt.setDouble(2, paiement.getMontant());
-            stmt.setString(3, paiement.getMethode());
-            stmt.setString(4, paiement.getStatut());
-            stmt.setTimestamp(5, Timestamp.valueOf(paiement.getDate()));
-            stmt.setString(6, paiement.getTokenStripe());
-            stmt.setString(7, paiement.getReferenceTransaction());
-            stmt.executeUpdate();
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, paiement.getIdCommande());
+            ps.setBigDecimal(2, paiement.getMontant());
+            ps.setString(3, paiement.getMethode());
+            ps.setString(4, paiement.getStatut());
+            ps.setTimestamp(5, Timestamp.valueOf(paiement.getDatePaiement()));
+            ps.setString(6, paiement.getTokenStripe());
+            ps.setString(7, paiement.getReferenceTransaction());
+
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                paiement.setIdPaiement(rs.getInt(1));
+            }
             System.out.println("✅ Paiement ajouté: " + paiement.getMethode());
+            return true;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur ajout paiement: " + e.getMessage());
+            return false;
         }
     }
 
     // ✅ RÉCUPÉRER PAIEMENT PAR ID
-    public Paiement getById(int id) throws SQLException {
-        String sql = "SELECT * FROM paiement WHERE id = ?";
+    public Paiement getById(int id) {
+        String sql = "SELECT * FROM paiement WHERE id_paiement = ?";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return mapResultSetToPaiement(rs);
+                return remplirPaiement(rs);
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture paiement: " + e.getMessage());
         }
         return null;
     }
 
     // ✅ RÉCUPÉRER PAIEMENT PAR COMMANDE
-    public Paiement getByCommandeId(int commandeId) throws SQLException {
-        String sql = "SELECT * FROM paiement WHERE commande_id = ? LIMIT 1";
+    public Paiement getByIdCommande(int idCommande) {
+        String sql = "SELECT * FROM paiement WHERE id_commande = ? LIMIT 1";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, commandeId);
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCommande);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return mapResultSetToPaiement(rs);
+                return remplirPaiement(rs);
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture paiement par commande: " + e.getMessage());
         }
         return null;
     }
 
     // ✅ RÉCUPÉRER TOUS LES PAIEMENTS
-    public List<Paiement> getAll() throws SQLException {
+    public List<Paiement> getAll() {
         List<Paiement> paiements = new ArrayList<>();
-        String sql = "SELECT * FROM paiement";
+        String sql = "SELECT * FROM paiement ORDER BY date_paiement DESC";
 
-        try (Statement stmt = connexion.getConnection().createStatement()) {
-            ResultSet rs = stmt.executeQuery(sql);
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
-                paiements.add(mapResultSetToPaiement(rs));
+                paiements.add(remplirPaiement(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture paiements: " + e.getMessage());
         }
         return paiements;
     }
 
     // ✅ METTRE À JOUR PAIEMENT
-    public void update(Paiement paiement) throws SQLException {
-        String sql = "UPDATE paiement SET montant=?, methode=?, statut=?, token_stripe=?, ref_transaction=? WHERE id=?";
+    public boolean update(Paiement paiement) {
+        String sql = "UPDATE paiement SET montant=?, methode=?, statut=?, token_stripe=?, ref_transaction=? WHERE id_paiement=?";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setDouble(1, paiement.getMontant());
-            stmt.setString(2, paiement.getMethode());
-            stmt.setString(3, paiement.getStatut());
-            stmt.setString(4, paiement.getTokenStripe());
-            stmt.setString(5, paiement.getReferenceTransaction());
-            stmt.setInt(6, paiement.getId());
-            stmt.executeUpdate();
-            System.out.println("✅ Paiement mis à jour");
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBigDecimal(1, paiement.getMontant());
+            ps.setString(2, paiement.getMethode());
+            ps.setString(3, paiement.getStatut());
+            ps.setString(4, paiement.getTokenStripe());
+            ps.setString(5, paiement.getReferenceTransaction());
+            ps.setInt(6, paiement.getIdPaiement());
+
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) System.out.println("✅ Paiement mis à jour");
+            return ok;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur mise à jour paiement: " + e.getMessage());
+            return false;
         }
     }
 
     // ✅ SUPPRIMER PAIEMENT
-    public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM paiement WHERE id = ?";
+    public boolean delete(int id) {
+        String sql = "DELETE FROM paiement WHERE id_paiement = ?";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-            System.out.println("✅ Paiement supprimé");
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) System.out.println("✅ Paiement supprimé");
+            return ok;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur suppression paiement: " + e.getMessage());
+            return false;
         }
     }
 
     // ✅ OBTENIR PAIEMENTS PAR STATUT
-    public List<Paiement> getByStatut(String statut) throws SQLException {
+    public List<Paiement> getByStatut(String statut) {
         List<Paiement> paiements = new ArrayList<>();
-        String sql = "SELECT * FROM paiement WHERE statut = ?";
+        String sql = "SELECT * FROM paiement WHERE statut = ? ORDER BY date_paiement DESC";
 
-        try (PreparedStatement stmt = connexion.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, statut);
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, statut);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                paiements.add(mapResultSetToPaiement(rs));
+                paiements.add(remplirPaiement(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture paiements par statut: " + e.getMessage());
         }
         return paiements;
     }
 
     // ✅ VÉRIFIER SI PAIEMENT APPROUVÉ
-    public boolean isPaiementApprouve(int commandeId) throws SQLException {
-        Paiement paiement = getByCommandeId(commandeId);
+    public boolean isPaiementApprouve(int idCommande) {
+        Paiement paiement = getByIdCommande(idCommande);
         return paiement != null && paiement.getStatut().equals("approuve");
     }
 
-    private Paiement mapResultSetToPaiement(ResultSet rs) throws SQLException {
-        Paiement paiement = new Paiement();
-        paiement.setId(rs.getInt("id"));
-        paiement.setCommandeId(rs.getInt("commande_id"));
-        paiement.setMontant(rs.getDouble("montant"));
-        paiement.setMethode(rs.getString("methode"));
-        paiement.setStatut(rs.getString("statut"));
-        paiement.setDate(rs.getTimestamp("date").toLocalDateTime());
-        paiement.setTokenStripe(rs.getString("token_stripe"));
-        paiement.setReferenceTransaction(rs.getString("ref_transaction"));
-        return paiement;
+    // Helper
+    private Paiement remplirPaiement(ResultSet rs) throws SQLException {
+        Paiement p = new Paiement();
+        p.setIdPaiement(rs.getInt("id_paiement"));
+        p.setIdCommande(rs.getInt("id_commande"));
+        p.setMontant(rs.getBigDecimal("montant"));
+        p.setMethode(rs.getString("methode"));
+        p.setStatut(rs.getString("statut"));
+        p.setTokenStripe(rs.getString("token_stripe"));
+        p.setReferenceTransaction(rs.getString("ref_transaction"));
+        Timestamp ts = rs.getTimestamp("date_paiement");
+        if (ts != null) p.setDatePaiement(ts.toLocalDateTime());
+        return p;
     }
 }
