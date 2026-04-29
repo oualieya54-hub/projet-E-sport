@@ -1,0 +1,114 @@
+package services;
+
+import interfaces.IService;
+import models.Team;
+import utils.MyDataBase;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ServiceTeam implements IService<Team> {
+
+    @Override
+    public void add(Team t) {
+        String req = "INSERT INTO `team`(`nom_equipe`, `logo`, `date_creation`, `id_capitaine`) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setString(1, t.getNom_equipe());
+            ps.setString(2, t.getLogo());
+            ps.setDate(3, new java.sql.Date(t.getDate_creation().getTime()));
+            ps.setInt(4, t.getId_capitaine());
+            ps.executeUpdate();
+            System.out.println("Team ajoutée avec succès !");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Team> getAll() {
+        List<Team> teams = new ArrayList<>();
+        String req = "SELECT * FROM `team`";
+        try {
+            Statement stm = MyDataBase.getInstance().getCnx().createStatement();
+            ResultSet rs = stm.executeQuery(req);
+            while (rs.next()) {
+                Team t = new Team();
+                t.setId_team(rs.getInt("id_team"));
+                t.setNom_equipe(rs.getString("nom_equipe"));
+                t.setLogo(rs.getString("logo"));
+                t.setDate_creation(rs.getDate("date_creation"));
+                t.setId_capitaine(rs.getInt("id_capitaine"));
+                teams.add(t);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return teams;
+    }
+
+    @Override
+    public void delete(Team t) {
+        String req = "DELETE FROM `team` WHERE `id_team` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, t.getId_team());
+            ps.executeUpdate();
+            System.out.println("Team supprimée avec succès !");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public void update(Team t) {
+        String req = "UPDATE `team` SET `nom_equipe`=?, `logo`=?, `date_creation`=?, `id_capitaine`=? WHERE `id_team`=?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setString(1, t.getNom_equipe());
+            ps.setString(2, t.getLogo());
+            ps.setDate(3, new java.sql.Date(t.getDate_creation().getTime()));
+            ps.setInt(4, t.getId_capitaine());
+            ps.setInt(5, t.getId_team());
+            ps.executeUpdate();
+            System.out.println("Team mise à jour avec succès !");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void disband(Team t) {
+        String reqMemberships = "DELETE FROM `membership` WHERE `id_team` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(reqMemberships);
+            ps.setInt(1, t.getId_team());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        delete(t);
+        System.out.println("Équipe dissoute !");
+    }
+    // Recherche par ID
+    public Team getById(int id) {
+        String req = "SELECT * FROM `team` WHERE `id_team` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Team t = new Team();
+                t.setId_team(rs.getInt("id_team"));
+                t.setNom_equipe(rs.getString("nom_team"));
+                t.setLogo(rs.getString("logo"));
+                t.setDate_creation(rs.getDate("date_creation"));
+                t.setId_capitaine(rs.getInt("id_capiten"));
+                return t;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+}
