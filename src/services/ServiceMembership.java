@@ -85,4 +85,24 @@ public class ServiceMembership implements IService<Membership> {
         m.setRole_dans_equipe(newRole);
         update(m);
     }
+    // Recherche par ID
+    public Membership getById(int id) {
+        String req = "SELECT * FROM `membreship` WHERE `id_memebreship` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Membership m = new Membership();
+                m.setId_membership(rs.getInt("id_memebreship"));
+                m.setId_team(rs.getInt("id_team"));
+                m.setId_user(rs.getInt("id_user"));
+                m.setRole_dans_equipe(rs.getString("role"));
+                return m;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }
