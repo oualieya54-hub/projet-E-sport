@@ -1,6 +1,7 @@
 package services;
 
 import interfaces.IService;
+import models.Membership;
 import models.Team;
 import utils.MyDataBase;
 
@@ -131,4 +132,26 @@ public class ServiceTeam implements IService<Team> {
         }
         return null;
     }
+    // Tous les memberships d'une team
+    public List<Membership> getMembershipsOfTeam(int id_team) {
+        List<Membership> list = new ArrayList<>();
+        String req = "SELECT * FROM `membreship` WHERE `id_team` = ?";
+        try {
+            PreparedStatement ps = MyDataBase.getInstance().getCnx().prepareStatement(req);
+            ps.setInt(1, id_team);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Membership m = new Membership();
+                m.setId_membership(rs.getInt("id_memebreship"));
+                m.setId_team(rs.getInt("id_team"));
+                m.setId_user(rs.getInt("id_user"));
+                m.setRole_dans_equipe(rs.getString("role"));
+                list.add(m);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
 }
