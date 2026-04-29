@@ -85,7 +85,7 @@ public class SessionDAO {
         }
         return liste;
     }
-    //Filtrer les sessions par jeu (Fortnite, League of Legends...).
+    //Metier:Filtrer les sessions par jeu (Fortnite, League of Legends...).
     public List<Session> getSessionsByJeu(String jeu) throws SQLException {
         List<Session> liste = new ArrayList<>();
         String sql = "SELECT * FROM Session WHERE jeu = ?";
@@ -93,6 +93,25 @@ public class SessionDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, jeu);
             ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                liste.add(new Session(
+                        rs.getInt("id_session"),
+                        rs.getTimestamp("date_heure").toLocalDateTime(),
+                        rs.getString("jeu"),
+                        rs.getFloat("prix"),
+                        rs.getInt("id_coach")
+                ));
+            }
+        }
+        return liste;
+    }
+    //Metier:Retourner uniquement les sessions dont la date est dans le futur — éviter d'afficher des sessions passées.
+    public List<Session> getSessionsFutures() throws SQLException {
+        List<Session> liste = new ArrayList<>();
+        String sql = "SELECT * FROM Session WHERE date_heure > NOW() ORDER BY date_heure ASC";
+        try (Connection con = DatabaseConnection.getConnection();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
                 liste.add(new Session(
                         rs.getInt("id_session"),
