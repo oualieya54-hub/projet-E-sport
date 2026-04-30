@@ -62,4 +62,13 @@ public class TournamentMatch {
         return String.format("Match[id=%d, round=%d, Team%d vs Team%d, score=%d-%d, status=%s]",
                 id, round, team1Id, team2Id, scoreTeam1, scoreTeam2, status);
     }
-}
+
+        // Add these two methods HERE:
+        public int getScore1() {
+            return scoreTeam1;
+        }
+
+        public int getScore2() {
+            return scoreTeam2;
+        }
+    }  // <- closing brace of the class

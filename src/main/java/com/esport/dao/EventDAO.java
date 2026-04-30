@@ -34,7 +34,6 @@ public class EventDAO {
         return e;
     }
 
-    @Override
     public int create(Event ev) throws SQLException {
         String sql = """
             INSERT INTO events
@@ -65,7 +64,6 @@ public class EventDAO {
         return -1;
     }
 
-    @Override
     public Optional<Event> findById(Integer id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("SELECT * FROM events WHERE id=?")) {
@@ -76,7 +74,6 @@ public class EventDAO {
         return Optional.empty();
     }
 
-    @Override
     public List<Event> findAll() throws SQLException {
         List<Event> list = new ArrayList<>();
         try (Statement st = DatabaseConnection.getConnection().createStatement();
@@ -86,7 +83,6 @@ public class EventDAO {
         return list;
     }
 
-    @Override
     public List<Event> findByTitle(String title) throws SQLException {
         List<Event> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -98,7 +94,6 @@ public class EventDAO {
         return list;
     }
 
-    @Override
     public List<Event> findPublished() throws SQLException {
         List<Event> list = new ArrayList<>();
         try (Statement st = DatabaseConnection.getConnection().createStatement();
@@ -108,7 +103,6 @@ public class EventDAO {
         return list;
     }
 
-    @Override
     public List<Event> findByType(Event.Type type) throws SQLException {
         List<Event> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -120,7 +114,6 @@ public class EventDAO {
         return list;
     }
 
-    @Override
     public boolean update(Event ev) throws SQLException {
         String sql = """
             UPDATE events SET title=?, type=?, game=?, location=?, is_online=?,
@@ -146,7 +139,6 @@ public class EventDAO {
         }
     }
 
-    @Override
     public boolean delete(Integer id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("DELETE FROM events WHERE id=?")) {
@@ -155,7 +147,6 @@ public class EventDAO {
         }
     }
 
-    @Override
     public int registerUser(int eventId, int userId, String ticket) throws SQLException {
         String sql = "INSERT INTO event_registrations (event_id, user_id, ticket_code) VALUES (?,?,?)";
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -168,7 +159,6 @@ public class EventDAO {
         return -1;
     }
 
-    @Override
     public int countRegistrations(int eventId) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("SELECT COUNT(*) FROM event_registrations WHERE event_id=?")) {
@@ -179,7 +169,6 @@ public class EventDAO {
         return 0;
     }
 
-    @Override
     public boolean markAttended(int eventId, int userId) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE event_registrations SET attended=TRUE WHERE event_id=? AND user_id=?")) {
@@ -188,7 +177,6 @@ public class EventDAO {
         }
     }
 
-    @Override
     public boolean updateStatus(int eventId, Event.Status status) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE events SET status=? WHERE id=?")) {

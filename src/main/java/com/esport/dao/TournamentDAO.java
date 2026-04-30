@@ -34,7 +34,7 @@ public class TournamentDAO {
     }
 
     // ── CREATE ────────────────────────────────────────────────────────────────
-    @Override
+
     public int create(Tournament t) throws SQLException {
         String sql = """
             INSERT INTO tournaments
@@ -65,7 +65,6 @@ public class TournamentDAO {
     }
 
     // ── READ BY ID ────────────────────────────────────────────────────────────
-    @Override
     public Optional<Tournament> findById(Integer id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("SELECT * FROM tournaments WHERE id=?")) {
@@ -77,7 +76,7 @@ public class TournamentDAO {
     }
 
     // ── READ ALL ──────────────────────────────────────────────────────────────
-    @Override
+
     public List<Tournament> findAll() throws SQLException {
         List<Tournament> list = new ArrayList<>();
         try (Statement st = DatabaseConnection.getConnection().createStatement();
@@ -89,7 +88,6 @@ public class TournamentDAO {
     }
 
     // ── SEARCH BY NAME ────────────────────────────────────────────────────────
-    @Override
     public List<Tournament> findByName(String name) throws SQLException {
         List<Tournament> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -102,7 +100,7 @@ public class TournamentDAO {
     }
 
     // ── SEARCH BY GAME ────────────────────────────────────────────────────────
-    @Override
+
     public List<Tournament> findByGame(String game) throws SQLException {
         List<Tournament> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -115,7 +113,6 @@ public class TournamentDAO {
     }
 
     // ── SEARCH BY STATUS ──────────────────────────────────────────────────────
-    @Override
     public List<Tournament> findByStatus(Tournament.Status status) throws SQLException {
         List<Tournament> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -128,7 +125,6 @@ public class TournamentDAO {
     }
 
     // ── UPDATE ────────────────────────────────────────────────────────────────
-    @Override
     public boolean update(Tournament t) throws SQLException {
         String sql = """
             UPDATE tournaments SET name=?, game=?, format=?, status=?, max_teams=?,
@@ -154,7 +150,6 @@ public class TournamentDAO {
     }
 
     // ── DELETE ────────────────────────────────────────────────────────────────
-    @Override
     public boolean delete(Integer id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("DELETE FROM tournaments WHERE id=?")) {
@@ -164,7 +159,6 @@ public class TournamentDAO {
     }
 
     // ── BUSINESS METHODS ──────────────────────────────────────────────────────
-    @Override
     public int countRegisteredTeams(int tournamentId) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("SELECT COUNT(*) FROM tournament_registrations WHERE tournament_id=? AND status='approved'")) {
@@ -175,7 +169,6 @@ public class TournamentDAO {
         return 0;
     }
 
-    @Override
     public int registerTeam(int tournamentId, int teamId) throws SQLException {
         String sql = "INSERT INTO tournament_registrations (tournament_id, team_id, status) VALUES (?,?,'approved')";
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -189,7 +182,6 @@ public class TournamentDAO {
         return -1;
     }
 
-    @Override
     public boolean isRegistrationOpen(int tournamentId) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("SELECT registration_deadline FROM tournaments WHERE id=?")) {
@@ -203,7 +195,6 @@ public class TournamentDAO {
         return false;
     }
 
-    @Override
     public boolean updateStatus(int id, Tournament.Status status) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE tournaments SET status=? WHERE id=?")) {

@@ -29,7 +29,6 @@ public class MatchDAO {
         return m;
     }
 
-    @Override
     public int create(TournamentMatch m) throws SQLException {
         String sql = """
             INSERT INTO tournament_matches
@@ -56,7 +55,6 @@ public class MatchDAO {
         return -1;
     }
 
-    @Override
     public Optional<TournamentMatch> findById(Integer id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("SELECT * FROM tournament_matches WHERE id=?")) {
@@ -67,7 +65,6 @@ public class MatchDAO {
         return Optional.empty();
     }
 
-    @Override
     public List<TournamentMatch> findAll() throws SQLException {
         List<TournamentMatch> list = new ArrayList<>();
         try (Statement st = DatabaseConnection.getConnection().createStatement();
@@ -77,7 +74,6 @@ public class MatchDAO {
         return list;
     }
 
-    @Override
     public List<TournamentMatch> findByTournament(int tournamentId) throws SQLException {
         List<TournamentMatch> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -89,7 +85,6 @@ public class MatchDAO {
         return list;
     }
 
-    @Override
     public List<TournamentMatch> findByRound(int tournamentId, int round) throws SQLException {
         List<TournamentMatch> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -101,7 +96,6 @@ public class MatchDAO {
         return list;
     }
 
-    @Override
     public List<TournamentMatch> findLive() throws SQLException {
         List<TournamentMatch> list = new ArrayList<>();
         try (Statement st = DatabaseConnection.getConnection().createStatement();
@@ -111,7 +105,6 @@ public class MatchDAO {
         return list;
     }
 
-    @Override
     public boolean update(TournamentMatch m) throws SQLException {
         String sql = """
             UPDATE tournament_matches SET round=?, match_number=?, team1_id=?, team2_id=?,
@@ -133,7 +126,6 @@ public class MatchDAO {
         }
     }
 
-    @Override
     public boolean delete(Integer id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("DELETE FROM tournament_matches WHERE id=?")) {
@@ -142,7 +134,6 @@ public class MatchDAO {
         }
     }
 
-    @Override
     public boolean updateScore(int id, int s1, int s2) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE tournament_matches SET score_team1=?, score_team2=? WHERE id=?")) {
@@ -151,7 +142,6 @@ public class MatchDAO {
         }
     }
 
-    @Override
     public boolean completeMatch(int id, int winner, int s1, int s2) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE tournament_matches SET winner_id=?, score_team1=?, score_team2=?, status='completed', played_at=NOW() WHERE id=?")) {
@@ -160,7 +150,6 @@ public class MatchDAO {
         }
     }
 
-    @Override
     public boolean updateStatus(int id, TournamentMatch.Status status) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE tournament_matches SET status=? WHERE id=?")) {

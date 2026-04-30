@@ -27,7 +27,6 @@ public class BetDAO {
         return b;
     }
 
-    @Override
     public int create(Bet bet) throws SQLException {
         String sql = "INSERT INTO bets (user_id, match_id, bet_on_team_id, amount, odds) VALUES (?,?,?,?,?)";
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -42,7 +41,6 @@ public class BetDAO {
         return -1;
     }
 
-    @Override
     public Optional<Bet> findById(Integer id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("SELECT * FROM bets WHERE id=?")) {
@@ -53,7 +51,6 @@ public class BetDAO {
         return Optional.empty();
     }
 
-    @Override
     public List<Bet> findAll() throws SQLException {
         List<Bet> list = new ArrayList<>();
         try (Statement st = DatabaseConnection.getConnection().createStatement();
@@ -63,7 +60,6 @@ public class BetDAO {
         return list;
     }
 
-    @Override
     public List<Bet> findByUser(int userId) throws SQLException {
         List<Bet> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -75,7 +71,6 @@ public class BetDAO {
         return list;
     }
 
-    @Override
     public List<Bet> findByMatch(int matchId) throws SQLException {
         List<Bet> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -87,7 +82,6 @@ public class BetDAO {
         return list;
     }
 
-    @Override
     public List<Bet> findPendingByMatch(int matchId) throws SQLException {
         List<Bet> list = new ArrayList<>();
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -99,7 +93,6 @@ public class BetDAO {
         return list;
     }
 
-    @Override
     public boolean update(Bet bet) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE bets SET status=?, settled_at=? WHERE id=?")) {
@@ -110,7 +103,6 @@ public class BetDAO {
         }
     }
 
-    @Override
     public boolean delete(Integer id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("DELETE FROM bets WHERE id=?")) {
@@ -119,7 +111,6 @@ public class BetDAO {
         }
     }
 
-    @Override
     public int settleBets(int matchId, int winnerTeamId) throws SQLException {
         List<Bet> pending = findPendingByMatch(matchId);
         int count = 0;
@@ -143,7 +134,7 @@ public class BetDAO {
         }
     }
 
-    @Override
+
     public BigDecimal getWalletBalance(int userId) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("SELECT balance FROM bet_wallet WHERE user_id=?")) {
@@ -154,7 +145,7 @@ public class BetDAO {
         return BigDecimal.ZERO;
     }
 
-    @Override
+
     public boolean createWallet(int userId) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("INSERT IGNORE INTO bet_wallet (user_id) VALUES (?)")) {
@@ -163,7 +154,7 @@ public class BetDAO {
         }
     }
 
-    @Override
+
     public boolean deposit(int userId, BigDecimal amount) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE bet_wallet SET balance=balance+?, total_deposited=total_deposited+? WHERE user_id=?")) {
@@ -172,7 +163,7 @@ public class BetDAO {
         }
     }
 
-    @Override
+
     public boolean deduct(int userId, BigDecimal amount) throws SQLException {
         if (getWalletBalance(userId).compareTo(amount) < 0)
             throw new SQLException("Insufficient wallet balance.");
@@ -183,7 +174,6 @@ public class BetDAO {
         }
     }
 
-    @Override
     public boolean creditWinnings(int userId, BigDecimal amount) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE bet_wallet SET balance=balance+?, total_won=total_won+? WHERE user_id=?")) {
