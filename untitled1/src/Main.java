@@ -288,7 +288,7 @@ public class Main {
             System.out.println("   User not found!");
         }
 
-        // 2. Get user by username
+        // username
         System.out.println("2. getUserByUsername('alice'):");
         User u2 = userService.getUserByUsername("alice");
         if (u2 != null) {
@@ -297,7 +297,7 @@ public class Main {
             System.out.println("   User not found!");
         }
 
-        
+
         System.out.println("3. userExists('alice'): " + userService.userExists("alice"));
         System.out.println("   userExists('nonexistent'): " + userService.userExists("nonexistent"));
         System.out.println();
