@@ -79,7 +79,7 @@ public class ServiceLike implements IService<Like> {
             System.out.println(e.getMessage());
         }
     }
-    // Get all likes for a specific target 
+    // Get all likes for a specific target
     public List<Like> getLikesByTarget(String targetType, int targetId) {
         List<Like> likes = new ArrayList<>();
         String sql = "SELECT * FROM `likes` WHERE `target_type` = ? AND `target_id` = ?";
@@ -129,7 +129,7 @@ public class ServiceLike implements IService<Like> {
         return null;
     }
 
-    // Get vote sum (net score) for a target (post or reply)
+    // Get vote sum for a target
     public int getNetVotesForTarget(String targetType, int targetId) {
         String sql = "SELECT COALESCE(SUM(vote), 0) FROM `likes` WHERE `target_type` = ? AND `target_id` = ?";
         try {
