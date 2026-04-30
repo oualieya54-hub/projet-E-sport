@@ -279,7 +279,7 @@ public class Main {
         System.out.println("--- USER EXTRA METHODS ---");
         ServiceUser userService = new ServiceUser();
 
-        // 1. Get user by ID
+        //  ID
         System.out.println("1. getUserById(1):");
         User u = userService.getUserById(1);
         if (u != null) {
