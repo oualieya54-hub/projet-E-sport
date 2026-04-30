@@ -272,9 +272,7 @@ public class Main {
         testLikeMetiers();
     }
 
-    // --------------------------------------------------------------
-    // USER EXTRA METHODS
-    // --------------------------------------------------------------
+
     private static void testUserMetiers() {
         System.out.println("--- USER EXTRA METHODS ---");
         ServiceUser userService = new ServiceUser();
@@ -303,9 +301,7 @@ public class Main {
         System.out.println();
     }
 
-    // --------------------------------------------------------------
-    // FORUM EXTRA METHODS
-    // --------------------------------------------------------------
+
     private static void testForumMetiers() {
         System.out.println("--- FORUM EXTRA METHODS ---");
         ServiceForum forumService = new ServiceForum();
@@ -328,7 +324,6 @@ public class Main {
             System.out.println("   Forum not found!");
         }
 
-        // 3. Get forums sorted by display_order
         System.out.println("3. getForumsSorted():");
         List<Forum> forums = forumService.getForumsSorted();
         for (Forum forum : forums) {
@@ -337,9 +332,7 @@ public class Main {
         System.out.println();
     }
 
-    // --------------------------------------------------------------
-    // POST EXTRA METHODS
-    // --------------------------------------------------------------
+
     private static void testPostMetiers() {
         System.out.println("--- POST EXTRA METHODS ---");
         ServicePost postService = new ServicePost();
@@ -365,7 +358,7 @@ public class Main {
             }
         }
 
-        // 3. Get posts by user (user ID 1)
+
         System.out.println("3. getPostsByUser(1):");
         List<Post> postsByUser = postService.getPostsByUser(1);
         if (postsByUser.isEmpty()) {
@@ -378,9 +371,7 @@ public class Main {
         System.out.println();
     }
 
-    // --------------------------------------------------------------
-    // REPLY EXTRA METHODS
-    // --------------------------------------------------------------
+
     private static void testReplyMetiers() {
         System.out.println("--- REPLY EXTRA METHODS ---");
         ServiceReply replyService = new ServiceReply();
@@ -394,7 +385,7 @@ public class Main {
             System.out.println("   Reply not found!");
         }
 
-        // 2. Get replies by post (post ID 1)
+
         System.out.println("2. getRepliesByPost(1):");
         List<Reply> repliesByPost = replyService.getRepliesByPost(1);
         if (repliesByPost.isEmpty()) {
@@ -418,14 +409,12 @@ public class Main {
         System.out.println();
     }
 
-    // --------------------------------------------------------------
-    // LIKE EXTRA METHODS
-    // --------------------------------------------------------------
+
     private static void testLikeMetiers() {
         System.out.println("--- LIKE EXTRA METHODS ---");
         ServiceLike likeService = new ServiceLike();
 
-        // 1. Get likes by target (post, targetId=1)
+
         System.out.println("1. getLikesByTarget('post', 1):");
         List<Like> likesOnPost = likeService.getLikesByTarget("post", 1);
         if (likesOnPost.isEmpty()) {
@@ -436,7 +425,7 @@ public class Main {
             }
         }
 
-        // 2. Get like by user and target (user 1, post 1)
+
         System.out.println("2. getLikeByUserAndTarget(1, 'post', 1):");
         Like specificLike = likeService.getLikeByUserAndTarget(1, "post", 1);
         if (specificLike != null) {
@@ -445,12 +434,12 @@ public class Main {
             System.out.println("   No like found");
         }
 
-        // 3. Get net votes for target (post 1)
+
         System.out.println("3. getNetVotesForTarget('post', 1):");
         int netVotes = likeService.getNetVotesForTarget("post", 1);
         System.out.println("   Net votes = " + netVotes);
 
-        // Also test for reply (if any)
+
         System.out.println("4. getNetVotesForTarget('reply', 1):");
         int netReplyVotes = likeService.getNetVotesForTarget("reply", 1);
         System.out.println("   Net votes = " + netReplyVotes);
