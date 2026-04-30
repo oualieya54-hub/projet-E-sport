@@ -294,7 +294,7 @@ public class Main {
         if (u2 != null) {
             System.out.println("   Found: " + u2);
         } else {
-            System.out.println("   User not found!");
+            System.out.println("   User not found!");a
         }
 
         // 3. Check if user exists
