@@ -128,7 +128,7 @@ public class ServiceForum implements IService<Forum> {
         return null;
     }
 
-    // Get forums sorted by display_order
+    // Get forums by display_order
     public List<Forum> getForumsSorted() {
         List<Forum> forums = new ArrayList<>();
         String sql = "SELECT * FROM `forums` ORDER BY `display_order` ASC";

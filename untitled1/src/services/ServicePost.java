@@ -119,7 +119,7 @@ public class ServicePost implements IService<Post> {
         return null;
     }
 
-    // Get all posts belonging to a specific forum
+    // Get all posts specific forum
     public List<Post> getPostsByForum(int forumId) {
         List<Post> posts = new ArrayList<>();
         String sql = "SELECT * FROM `posts` WHERE `forum_id` = ? ORDER BY `is_pinned` DESC, `created_at` DESC";
