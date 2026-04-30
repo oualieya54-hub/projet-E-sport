@@ -79,7 +79,7 @@ public class ServiceLike implements IService<Like> {
             System.out.println(e.getMessage());
         }
     }
-    // Get all likes for a specific target (post or reply)
+    // Get all likes for a specific target 
     public List<Like> getLikesByTarget(String targetType, int targetId) {
         List<Like> likes = new ArrayList<>();
         String sql = "SELECT * FROM `likes` WHERE `target_type` = ? AND `target_id` = ?";
