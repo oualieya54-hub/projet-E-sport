@@ -23,6 +23,13 @@ public class Session {
     public float getPrix()              { return prix; }
     public int getIdCoach()             { return idCoach; }
 
+    // Setters
+    public void setIdSession(int idSession)           { this.idSession = idSession; }
+    public void setDateHeure(LocalDateTime dateHeure) { this.dateHeure = dateHeure; }
+    public void setJeu(String jeu)                    { this.jeu = jeu; }
+    public void setPrix(float prix)                   { this.prix = prix; }
+    public void setIdCoach(int idCoach)               { this.idCoach = idCoach; }
+
     @Override
     public String toString() {
         return "Session { id=" + idSession + ", jeu='" + jeu + "', prix=" + prix + " }";
