@@ -297,7 +297,7 @@ public class Main {
             System.out.println("   User not found!");
         }
 
-        // 3. Check if user exists
+        
         System.out.println("3. userExists('alice'): " + userService.userExists("alice"));
         System.out.println("   userExists('nonexistent'): " + userService.userExists("nonexistent"));
         System.out.println();
