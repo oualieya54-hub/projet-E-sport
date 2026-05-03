@@ -32,7 +32,7 @@ public class BetService implements IBetService {
             pstmt.setBigDecimal(4, bet.getAmount());
             pstmt.setBigDecimal(5, bet.getOdds());
             pstmt.setBigDecimal(6, bet.getPotentialWin());
-            pstmt.setString(7, bet.getStatus().name());
+            pstmt.setString(7, bet.getStatus().name().toLowerCase());
             
             pstmt.executeUpdate();
             
@@ -51,7 +51,7 @@ public class BetService implements IBetService {
         String sql = "UPDATE bets SET status=? WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, bet.getStatus().name());
+            pstmt.setString(1, bet.getStatus().name().toLowerCase());
             pstmt.setInt(2, bet.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
