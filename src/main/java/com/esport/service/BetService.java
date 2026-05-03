@@ -22,7 +22,7 @@ public class BetService implements IBetService {
             bet.setPotentialWin(bet.getAmount().multiply(dynamicOdds));
         }
 
-        String sql = "INSERT INTO bet (user_id, match_id, bet_on_team_id, amount, odds, potential_win, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO bets (user_id, match_id, bet_on_team_id, amount, odds, potential_win, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
@@ -48,7 +48,7 @@ public class BetService implements IBetService {
 
     @Override
     public void updateBet(Bet bet) {
-        String sql = "UPDATE bet SET status=? WHERE id=?";
+        String sql = "UPDATE bets SET status=? WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, bet.getStatus().name());
@@ -61,7 +61,7 @@ public class BetService implements IBetService {
 
     @Override
     public void deleteBet(int id) {
-        String sql = "DELETE FROM bet WHERE id=?";
+        String sql = "DELETE FROM bets WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -73,7 +73,7 @@ public class BetService implements IBetService {
 
     @Override
     public Bet getBetById(int id) {
-        String sql = "SELECT * FROM bet WHERE id=?";
+        String sql = "SELECT * FROM bets WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -91,7 +91,7 @@ public class BetService implements IBetService {
     @Override
     public List<Bet> getBetsByMatch(int matchId) {
         List<Bet> bets = new ArrayList<>();
-        String sql = "SELECT * FROM bet WHERE match_id=?";
+        String sql = "SELECT * FROM bets WHERE match_id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, matchId);

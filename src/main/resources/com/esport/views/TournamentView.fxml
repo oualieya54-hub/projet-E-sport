@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER_LEFT" prefHeight="500.0" prefWidth="400.0" spacing="15.0" 
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.esport.controllers.TournamentController">
+   
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+
+   <Label text="Create Tournament">
+      <font>
+         <Font name="System Bold" size="24.0" />
+      </font>
+   </Label>
+
+   <Label text="Enter tournament settings below:" />
+
+   <VBox spacing="5.0">
+      <Label text="Tournament Name:" />
+      <TextField fx:id="nameInput" promptText="e.g., Winter Clash" />
+   </VBox>
+
+   <VBox spacing="5.0">
+      <Label text="Game:" />
+      <TextField fx:id="gameInput" promptText="e.g., League of Legends" />
+   </VBox>
+
+   <VBox spacing="5.0">
+      <Label text="Format:" />
+      <ComboBox fx:id="formatComboBox" prefWidth="200.0" />
+   </VBox>
+
+   <VBox spacing="5.0">
+      <Label text="Max Teams:" />
+      <TextField fx:id="teamsInput" promptText="e.g., 16" />
+   </VBox>
+
+   <VBox spacing="5.0">
+      <Label text="Total Prize Pool ($):" />
+      <TextField fx:id="prizeInput" promptText="e.g., 5000.00" />
+   </VBox>
+
+   <Button mnemonicParsing="false" onAction="#handleSaveTournament" text="Save Tournament" 
+           style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"/>
+
+   <Label fx:id="feedbackLabel" text="..." />
+
+</VBox>

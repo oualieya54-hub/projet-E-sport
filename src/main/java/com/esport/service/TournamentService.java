@@ -17,18 +17,18 @@ public class TournamentService implements ITournamentService {
 
     @Override
     public void addTournament(Tournament tournament) {
-        String sql = "INSERT INTO tournament (name, game, format, max_teams, prize_pool, entry_fee, start_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tournaments (name, game, format, max_teams, prize_pool, entry_fee, start_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setString(1, tournament.getName());
             pstmt.setString(2, tournament.getGame());
-            pstmt.setString(3, tournament.getFormat().name());
+            pstmt.setString(3, tournament.getFormat().getLabel());
             pstmt.setInt(4, tournament.getMaxTeams());
             pstmt.setBigDecimal(5, tournament.getPrizePool());
             pstmt.setBigDecimal(6, tournament.getEntryFee());
             pstmt.setObject(7, tournament.getStartDate());
-            pstmt.setString(8, tournament.getStatus().name());
+            pstmt.setString(8, tournament.getStatus().name().toLowerCase());
             
             pstmt.executeUpdate();
             
@@ -39,34 +39,36 @@ public class TournamentService implements ITournamentService {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("DB Error: " + e.getMessage());
         }
     }
 
     @Override
     public void updateTournament(Tournament tournament) {
-        String sql = "UPDATE tournament SET name=?, game=?, format=?, max_teams=?, prize_pool=?, entry_fee=?, start_date=?, status=? WHERE id=?";
+        String sql = "UPDATE tournaments SET name=?, game=?, format=?, max_teams=?, prize_pool=?, entry_fee=?, start_date=?, status=? WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, tournament.getName());
             pstmt.setString(2, tournament.getGame());
-            pstmt.setString(3, tournament.getFormat().name());
+            pstmt.setString(3, tournament.getFormat().getLabel());
             pstmt.setInt(4, tournament.getMaxTeams());
             pstmt.setBigDecimal(5, tournament.getPrizePool());
             pstmt.setBigDecimal(6, tournament.getEntryFee());
             pstmt.setObject(7, tournament.getStartDate());
-            pstmt.setString(8, tournament.getStatus().name());
+            pstmt.setString(8, tournament.getStatus().name().toLowerCase());
             pstmt.setInt(9, tournament.getId());
             
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("DB Error: " + e.getMessage());
         }
     }
 
     @Override
     public void deleteTournament(int id) {
-        String sql = "DELETE FROM tournament WHERE id=?";
+        String sql = "DELETE FROM tournaments WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -74,12 +76,13 @@ public class TournamentService implements ITournamentService {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("DB Error: " + e.getMessage());
         }
     }
 
     @Override
     public Tournament getTournamentById(int id) {
-        String sql = "SELECT * FROM tournament WHERE id=?";
+        String sql = "SELECT * FROM tournaments WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -91,6 +94,7 @@ public class TournamentService implements ITournamentService {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("DB Error: " + e.getMessage());
         }
         return null;
     }
@@ -98,7 +102,7 @@ public class TournamentService implements ITournamentService {
     @Override
     public List<Tournament> getAllTournaments() {
         List<Tournament> tournaments = new ArrayList<>();
-        String sql = "SELECT * FROM tournament";
+        String sql = "SELECT * FROM tournaments";
         try (Connection conn = MyDatabase.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -108,6 +112,7 @@ public class TournamentService implements ITournamentService {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("DB Error: " + e.getMessage());
         }
         return tournaments;
     }
@@ -144,7 +149,15 @@ public class TournamentService implements ITournamentService {
         tournament.setId(rs.getInt("id"));
         tournament.setName(rs.getString("name"));
         tournament.setGame(rs.getString("game"));
-        tournament.setFormat(TournamentFormat.valueOf(rs.getString("format")));
+        // Map from DB label back to Enum
+        String dbFormat = rs.getString("format");
+        for (TournamentFormat f : TournamentFormat.values()) {
+            if (f.getLabel().equalsIgnoreCase(dbFormat) || f.name().equalsIgnoreCase(dbFormat)) {
+                tournament.setFormat(f);
+                break;
+            }
+        }
+        
         tournament.setMaxTeams(rs.getInt("max_teams"));
         tournament.setPrizePool(rs.getBigDecimal("prize_pool"));
         tournament.setEntryFee(rs.getBigDecimal("entry_fee"));
@@ -152,7 +165,10 @@ public class TournamentService implements ITournamentService {
         Timestamp startDate = rs.getTimestamp("start_date");
         if (startDate != null) tournament.setStartDate(startDate.toLocalDateTime());
         
-        tournament.setStatus(TournamentStatus.valueOf(rs.getString("status")));
+        String dbStatus = rs.getString("status");
+        if (dbStatus != null) {
+            tournament.setStatus(TournamentStatus.valueOf(dbStatus.toUpperCase()));
+        }
         return tournament;
     }
 }

@@ -14,7 +14,7 @@ public class EventService implements IEventService {
 
     @Override
     public void addEvent(Event event) {
-        String sql = "INSERT INTO event (title, type, game, start_date, end_date, ticket_price, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO events (title, type, game, start_date, end_date, ticket_price, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
@@ -40,7 +40,7 @@ public class EventService implements IEventService {
 
     @Override
     public void updateEvent(Event event) {
-        String sql = "UPDATE event SET title=?, type=?, game=?, start_date=?, end_date=?, ticket_price=?, status=? WHERE id=?";
+        String sql = "UPDATE events SET title=?, type=?, game=?, start_date=?, end_date=?, ticket_price=?, status=? WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -61,7 +61,7 @@ public class EventService implements IEventService {
 
     @Override
     public void deleteEvent(int id) {
-        String sql = "DELETE FROM event WHERE id=?";
+        String sql = "DELETE FROM events WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -74,7 +74,7 @@ public class EventService implements IEventService {
 
     @Override
     public Event getEventById(int id) {
-        String sql = "SELECT * FROM event WHERE id=?";
+        String sql = "SELECT * FROM events WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -93,7 +93,7 @@ public class EventService implements IEventService {
     @Override
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
-        String sql = "SELECT * FROM event";
+        String sql = "SELECT * FROM events";
         try (Connection conn = MyDatabase.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

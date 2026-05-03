@@ -13,7 +13,7 @@ public class MatchService implements IMatchService {
 
     @Override
     public void addMatch(TournamentMatch match) {
-        String sql = "INSERT INTO tournament_match (tournament_id, round, match_number, team1_id, team2_id, scheduled_at, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tournament_matches (tournament_id, round, match_number, team1_id, team2_id, scheduled_at, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
@@ -39,7 +39,7 @@ public class MatchService implements IMatchService {
 
     @Override
     public void updateMatch(TournamentMatch match) {
-        String sql = "UPDATE tournament_match SET tournament_id=?, round=?, match_number=?, team1_id=?, team2_id=?, score_team1=?, score_team2=?, scheduled_at=?, status=? WHERE id=?";
+        String sql = "UPDATE tournament_matches SET tournament_id=?, round=?, match_number=?, team1_id=?, team2_id=?, score_team1=?, score_team2=?, scheduled_at=?, status=? WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -62,7 +62,7 @@ public class MatchService implements IMatchService {
 
     @Override
     public void deleteMatch(int id) {
-        String sql = "DELETE FROM tournament_match WHERE id=?";
+        String sql = "DELETE FROM tournament_matches WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -74,7 +74,7 @@ public class MatchService implements IMatchService {
 
     @Override
     public TournamentMatch getMatchById(int id) {
-        String sql = "SELECT * FROM tournament_match WHERE id=?";
+        String sql = "SELECT * FROM tournament_matches WHERE id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -93,7 +93,7 @@ public class MatchService implements IMatchService {
     @Override
     public List<TournamentMatch> getMatchesByTournament(int tournamentId) {
         List<TournamentMatch> matches = new ArrayList<>();
-        String sql = "SELECT * FROM tournament_match WHERE tournament_id=?";
+        String sql = "SELECT * FROM tournament_matches WHERE tournament_id=?";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, tournamentId);
