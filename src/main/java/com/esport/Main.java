@@ -18,11 +18,11 @@ public class Main extends Application {
             System.err.println("DB Connection failed: " + e.getMessage());
         }
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/esport/views/TournamentView.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/esport/views/MatchView.fxml"));
         Parent root = loader.load();
         
-        primaryStage.setTitle("Esport - Create Tournament");
-        primaryStage.setScene(new Scene(root, 400, 550));
+        primaryStage.setTitle("Esport - Schedule Match");
+        primaryStage.setScene(new Scene(root, 400, 500));
         primaryStage.show();
     }
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER_LEFT" prefHeight="500.0" prefWidth="400.0" spacing="15.0" 
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.esport.controllers.BetController">
+   
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+
+   <Label text="Place a Bet (Pari Mutuel)">
+      <font>
+         <Font name="System Bold" size="24.0" />
+      </font>
+   </Label>
+
+   <Label text="Enter your betting details:" />
+
+   <VBox spacing="5.0">
+      <Label text="User ID:" />
+      <TextField fx:id="userIdInput" promptText="e.g., 1" />
+   </VBox>
+
+   <VBox spacing="5.0">
+      <Label text="Match ID:" />
+      <TextField fx:id="matchIdInput" promptText="e.g., 1 (Must exist!)" />
+   </VBox>
+
+   <VBox spacing="5.0">
+      <Label text="Team ID you are betting on:" />
+      <TextField fx:id="teamIdInput" promptText="e.g., 101" />
+   </VBox>
+
+   <VBox spacing="5.0">
+      <Label text="Amount to Wager ($):" />
+      <TextField fx:id="amountInput" promptText="e.g., 50.00" />
+   </VBox>
+
+   <!-- This label will show our advanced business logic (Dynamic Odds) -->
+   <Label fx:id="oddsLabel" text="Current Dynamic Odds: calculating..." style="-fx-text-fill: purple; -fx-font-style: italic;" />
+
+   <Button mnemonicParsing="false" onAction="#handlePlaceBet" text="Place Bet" 
+           style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-font-weight: bold; -fx-padding: 8 15;"/>
+
+   <Label fx:id="feedbackLabel" text="..." wrapText="true" />
+
+</VBox>

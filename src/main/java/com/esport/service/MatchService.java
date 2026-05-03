@@ -23,7 +23,7 @@ public class MatchService implements IMatchService {
             pstmt.setInt(4, match.getTeam1Id());
             pstmt.setInt(5, match.getTeam2Id());
             pstmt.setObject(6, match.getScheduledAt());
-            pstmt.setString(7, match.getStatus().name());
+            pstmt.setString(7, match.getStatus().name().toLowerCase());
             
             pstmt.executeUpdate();
             
@@ -51,7 +51,7 @@ public class MatchService implements IMatchService {
             pstmt.setInt(6, match.getScoreTeam1());
             pstmt.setInt(7, match.getScoreTeam2());
             pstmt.setObject(8, match.getScheduledAt());
-            pstmt.setString(9, match.getStatus().name());
+            pstmt.setString(9, match.getStatus().name().toLowerCase());
             pstmt.setInt(10, match.getId());
             
             pstmt.executeUpdate();
