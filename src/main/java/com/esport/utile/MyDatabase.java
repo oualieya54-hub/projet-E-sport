@@ -1,17 +1,13 @@
-package com.esport.config;
+package com.esport.utile;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * DatabaseConnection — singleton MySQL connection.
- * WAMP uses port 3307 with MariaDB.
- */
-public class DatabaseConnection {
+public class MyDatabase {
 
     private static final String HOST     = "localhost";
-    private static final int    PORT     = 3307;
+    private static final int    PORT     = 3306;
     private static final String DATABASE = "esport_db";
     private static final String USER     = "root";
     private static final String PASSWORD = "";
@@ -22,7 +18,7 @@ public class DatabaseConnection {
 
     private static Connection connection = null;
 
-    private DatabaseConnection() {}
+    private MyDatabase() {}
 
     public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
@@ -40,15 +36,6 @@ public class DatabaseConnection {
             }
         } catch (SQLException e) {
             System.err.println("[DB] Error closing: " + e.getMessage());
-        }
-    }
-
-    public static boolean testConnection() {
-        try {
-            return getConnection() != null && !getConnection().isClosed();
-        } catch (SQLException e) {
-            System.err.println("[DB] Test FAILED: " + e.getMessage());
-            return false;
         }
     }
 }

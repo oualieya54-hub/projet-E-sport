@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.esport.controllers.MainController">
+    <top>
+        <Label text="Esport Tournament Manager" style="-fx-font-size: 24px; -fx-font-weight: bold;" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+        </Label>
+    </top>
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+            <ListView fx:id="tournamentListView" prefHeight="200"/>
+            <HBox spacing="10">
+                <TextField fx:id="tName" promptText="Tournament Name"/>
+                <TextField fx:id="tGame" promptText="Game"/>
+                <Button text="Add Tournament" onAction="#handleAddTournament"/>
+            </HBox>
+            <HBox spacing="10">
+                <Button fx:id="startTournamentBtn" text="Start Selected Tournament (Generate Brackets)" onAction="#handleStartTournament"/>
+                <Button text="Check Dynamic Odds (Mock)" onAction="#handleCalculateOdds"/>
+            </HBox>
+            <Label fx:id="statusLabel" text="Status: Ready" style="-fx-text-fill: green;"/>
+        </VBox>
+    </center>
+</BorderPane>
