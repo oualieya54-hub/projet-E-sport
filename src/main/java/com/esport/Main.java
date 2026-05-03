@@ -18,11 +18,11 @@ public class Main extends Application {
             System.err.println("DB Connection failed: " + e.getMessage());
         }
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/esport/views/MainView.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/esport/views/EventView.fxml"));
         Parent root = loader.load();
         
-        primaryStage.setTitle("Esport Manager - Perfect CRUD & Advanced Logic");
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setTitle("Esport - Create Event (Beginner Example)");
+        primaryStage.setScene(new Scene(root, 400, 500));
         primaryStage.show();
     }
 
