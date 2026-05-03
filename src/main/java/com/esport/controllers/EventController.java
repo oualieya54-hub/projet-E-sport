@@ -40,7 +40,7 @@ public class EventController {
         // 2. Simple validation (check if empty)
         if (title.isEmpty() || game.isEmpty() || priceText.isEmpty()) {
             feedbackLabel.setText("Error: Please fill all fields!");
-            feedbackLabel.setStyle("-fx-text-fill: red;"); // Make text red
+            feedbackLabel.setStyle("-fx-text-fill: #ff0000;"); // Make text red
             return;
         }
 
