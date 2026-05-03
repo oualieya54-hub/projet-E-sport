@@ -22,7 +22,7 @@ public class BetService implements IBetService {
             bet.setPotentialWin(bet.getAmount().multiply(dynamicOdds));
         }
 
-        String sql = "INSERT INTO bets (user_id, match_id, bet_on_team_id, amount, odds, potential_win, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO bets (user_id, match_id, bet_on_team_id, amount, odds, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = MyDatabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
@@ -31,8 +31,7 @@ public class BetService implements IBetService {
             pstmt.setInt(3, bet.getBetOnTeamId());
             pstmt.setBigDecimal(4, bet.getAmount());
             pstmt.setBigDecimal(5, bet.getOdds());
-            pstmt.setBigDecimal(6, bet.getPotentialWin());
-            pstmt.setString(7, bet.getStatus().name().toLowerCase());
+            pstmt.setString(6, bet.getStatus().name().toLowerCase());
             
             pstmt.executeUpdate();
             
@@ -43,6 +42,7 @@ public class BetService implements IBetService {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("DB Error: " + e.getMessage());
         }
     }
 
