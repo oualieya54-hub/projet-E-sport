@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.esport.controllers.MainController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.esport.Controllers.MainController">
     <top>
         <Label text="Esport Tournament Manager" style="-fx-font-size: 24px; -fx-font-weight: bold;" BorderPane.alignment="CENTER">
             <padding>

@@ -1,6 +1,6 @@
-package com.esport.iservice;
+package com.esport.Iservice;
 
-import com.esport.models.Tournament;
+import com.esport.Models.Tournament;
 import java.util.List;
 
 public interface ITournamentService {

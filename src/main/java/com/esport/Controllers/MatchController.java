@@ -1,7 +1,7 @@
-package com.esport.controllers;
+package com.esport.Controllers;
 
-import com.esport.models.TournamentMatch;
-import com.esport.service.MatchService;
+import com.esport.Models.TournamentMatch;
+import com.esport.Service.MatchService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

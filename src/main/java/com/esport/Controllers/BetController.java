@@ -1,7 +1,7 @@
-package com.esport.controllers;
+package com.esport.Controllers;
 
-import com.esport.models.Bet;
-import com.esport.service.BetService;
+import com.esport.Models.Bet;
+import com.esport.Service.BetService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

@@ -4,9 +4,9 @@ module com.esport {
     requires java.sql;
 
     opens com.esport to javafx.fxml;
-    opens com.esport.controllers to javafx.fxml;
+    opens com.esport.Controllers to javafx.fxml;
 
     exports com.esport;
-    exports com.esport.controllers;
-    exports com.esport.models;
+    exports com.esport.Controllers;
+    exports com.esport.Models;
 }

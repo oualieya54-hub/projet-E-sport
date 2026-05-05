@@ -1,6 +1,6 @@
-package com.esport.iservice;
+package com.esport.Iservice;
 
-import com.esport.models.Bet;
+import com.esport.Models.Bet;
 import java.math.BigDecimal;
 import java.util.List;
 

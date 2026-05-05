@@ -1,10 +1,10 @@
-package com.esport.service;
+package com.esport.Service;
 
-import com.esport.iservice.IEventService;
-import com.esport.models.Event;
-import com.esport.models.EventStatus;
-import com.esport.models.EventType;
-import com.esport.utile.MyDatabase;
+import com.esport.Iservice.IEventService;
+import com.esport.Models.Event;
+import com.esport.Models.EventStatus;
+import com.esport.Models.EventType;
+import com.esport.Utile.MyDatabase;
 
 import java.sql.*;
 import java.util.ArrayList;

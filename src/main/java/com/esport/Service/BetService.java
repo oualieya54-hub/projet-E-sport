@@ -1,9 +1,9 @@
-package com.esport.service;
+package com.esport.Service;
 
-import com.esport.iservice.IBetService;
-import com.esport.models.Bet;
-import com.esport.models.BetStatus;
-import com.esport.utile.MyDatabase;
+import com.esport.Iservice.IBetService;
+import com.esport.Models.Bet;
+import com.esport.Models.BetStatus;
+import com.esport.Utile.MyDatabase;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

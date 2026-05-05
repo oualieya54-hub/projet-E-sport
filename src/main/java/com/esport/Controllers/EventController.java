@@ -1,8 +1,8 @@
-package com.esport.controllers;
+package com.esport.Controllers;
 
-import com.esport.models.Event;
-import com.esport.models.EventType;
-import com.esport.service.EventService;
+import com.esport.Models.Event;
+import com.esport.Models.EventType;
+import com.esport.Service.EventService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

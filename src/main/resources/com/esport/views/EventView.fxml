@@ -10,7 +10,7 @@
 <!-- VBox is a simple container that stacks everything vertically -->
 <VBox alignment="CENTER_LEFT" prefHeight="400.0" prefWidth="400.0" spacing="15.0" 
       xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="com.esport.controllers.EventController">
+      fx:controller="com.esport.Controllers.EventController">
    
    <!-- Padding around the edges so it doesn't touch the window borders -->
    <padding>

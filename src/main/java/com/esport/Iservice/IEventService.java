@@ -1,6 +1,6 @@
-package com.esport.iservice;
+package com.esport.Iservice;
 
-import com.esport.models.Event;
+import com.esport.Models.Event;
 import java.util.List;
 
 public interface IEventService {

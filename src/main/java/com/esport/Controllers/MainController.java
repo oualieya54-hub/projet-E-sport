@@ -1,9 +1,9 @@
-package com.esport.controllers;
+package com.esport.Controllers;
 
-import com.esport.models.Tournament;
-import com.esport.models.TournamentFormat;
-import com.esport.service.TournamentService;
-import com.esport.service.BetService;
+import com.esport.Models.Tournament;
+import com.esport.Models.TournamentFormat;
+import com.esport.Service.TournamentService;
+import com.esport.Service.BetService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;

@@ -1,4 +1,4 @@
-package com.esport.controllers;
+package com.esport.Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

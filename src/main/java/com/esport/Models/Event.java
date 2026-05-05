@@ -1,4 +1,4 @@
-package com.esport.models;
+package com.esport.Models;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

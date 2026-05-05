@@ -1,4 +1,4 @@
-package com.esport.models;
+package com.esport.Models;
 
 public enum TournamentFormat {
     SINGLE_ELIMINATION("Single Elimination"),

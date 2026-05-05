@@ -8,7 +8,7 @@
 
 <VBox alignment="CENTER" prefHeight="500.0" prefWidth="400.0" spacing="25.0" 
       xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="com.esport.controllers.MainMenuController"
+      fx:controller="com.esport.Controllers.MainMenuController"
       style="-fx-background-color: #f4f4f9;">
    
    <padding>

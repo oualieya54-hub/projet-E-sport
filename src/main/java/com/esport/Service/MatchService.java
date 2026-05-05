@@ -1,9 +1,9 @@
-package com.esport.service;
+package com.esport.Service;
 
-import com.esport.iservice.IMatchService;
-import com.esport.models.TournamentMatch;
-import com.esport.models.MatchStatus;
-import com.esport.utile.MyDatabase;
+import com.esport.Iservice.IMatchService;
+import com.esport.Models.TournamentMatch;
+import com.esport.Models.MatchStatus;
+import com.esport.Utile.MyDatabase;
 
 import java.sql.*;
 import java.util.ArrayList;
