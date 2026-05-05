@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.Model;
 
 public class Booking {
     private int idBooking;
@@ -17,6 +17,22 @@ public class Booking {
     public int    getIdSession()      { return idSession; }
     public int    getIdEleve()        { return idEleve; }
     public String getStatutPaiement() { return statutPaiement; }
+
+    public void setIdBooking(int idBooking) {
+        this.idBooking = idBooking;
+    }
+
+    public void setIdSession(int idSession) {
+        this.idSession = idSession;
+    }
+
+    public void setIdEleve(int idEleve) {
+        this.idEleve = idEleve;
+    }
+
+    public void setStatutPaiement(String statutPaiement) {
+        this.statutPaiement = statutPaiement;
+    }
 
     @Override
     public String toString() {
