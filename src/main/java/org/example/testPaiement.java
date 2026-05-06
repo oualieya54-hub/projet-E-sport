@@ -1,11 +1,7 @@
 package org.example;
 
-import org.example.dao.commandeDAO;
-import org.example.dao.PaiementDAO;
-import org.example.dao.FactureDAO;
-import org.example.modele.commande;
-import org.example.modele.Paiement;
-import org.example.modele.Facture;
+import org.example.Service.CommandeService;
+import org.example.Model.Commande;
 import org.example.service.PaiementService;
 import org.example.service.FacturationService;
 import java.math.BigDecimal;
@@ -19,7 +15,7 @@ public class testPaiement {
         // Initialiser les services
         PaiementService paiementService = new PaiementService();
         FacturationService factuationService = new FacturationService();
-        commandeDAO commandeDAO = new commandeDAO();
+        CommandeService commandeDAO = new CommandeService();
 
         try {
             // ============================================
@@ -28,18 +24,18 @@ public class testPaiement {
             System.out.println("📦 1️⃣ CRÉER UNE COMMANDE");
             System.out.println("=====================================");
 
-            commande cmd = new commande(
-                    1,  // idUser
-                    BigDecimal.valueOf(150.00),  // montantTotal
-                    0,  // pointsUtilises
-                    "123 Rue de la Paix, 75000 Paris",  // adresseLivraison
-                    "carte_bancaire"  // methodePaiement
+            Commande cmd = new Commande(
+                    1,
+                    BigDecimal.valueOf(150.00),
+                    0,
+                    "123 Rue de la Paix, 75000 Paris",
+                    "carte_bancaire"
             );
 
             // Créer des articles pour la commande
             List<int[]> lignes = new ArrayList<>();
             lignes.add(new int[]{1, 2, 5000}); // produit 1, qty 2, prix 50€
-            lignes.add(new int[]{2, 1, 10000}); // produit 2, qty 1, prix 100€
+            lignes.add(new int[]{2, 1, 10000});
 
             boolean commandeCreee = commandeDAO.passerCommande(cmd, lignes);
 
@@ -51,9 +47,7 @@ public class testPaiement {
             int idCommande = cmd.getIdCommande();
             System.out.println("✅ Commande créée - ID: " + idCommande + "\n");
 
-            // ============================================
-            // 2️⃣ TRAITER PAIEMENT STRIPE
-            // ============================================
+
             System.out.println("💳 2️⃣ TRAITER PAIEMENT STRIPE");
             System.out.println("=====================================");
 
@@ -70,9 +64,7 @@ public class testPaiement {
                 return;
             }
 
-            // ============================================
-            // 3️⃣ VÉRIFIER STATUT PAIEMENT
-            // ============================================
+
             System.out.println("🔍 3️⃣ VÉRIFIER STATUT PAIEMENT");
             System.out.println("=====================================");
 
@@ -82,9 +74,7 @@ public class testPaiement {
             boolean estApprouve = paiementService.isPaiementApprouve(idCommande);
             System.out.println("Paiement approuvé? " + (estApprouve ? "✅ OUI" : "❌ NON") + "\n");
 
-            // ============================================
-            // 4️⃣ GÉNÉRER FACTURE PDF
-            // ============================================
+
             System.out.println("📄 4️⃣ GÉNÉRER FACTURE PDF");
             System.out.println("=====================================");
 
@@ -97,9 +87,7 @@ public class testPaiement {
                 System.out.println("❌ Erreur génération facture\n");
             }
 
-            // ============================================
-            // 5️⃣ ENVOYER EMAILS
-            // ============================================
+
             System.out.println("📧 5️⃣ ENVOYER EMAILS");
             System.out.println("=====================================");
 
@@ -112,9 +100,7 @@ public class testPaiement {
             System.out.println(factureEnvoyee ? "✅ Email de facture envoyé" : "❌ Erreur envoi facture");
             System.out.println();
 
-            // ============================================
-            // 6️⃣ AFFICHER LES INFORMATIONS
-            // ============================================
+
             System.out.println("📋 6️⃣ AFFICHER LES INFORMATIONS");
             System.out.println("=====================================");
 
@@ -132,9 +118,7 @@ public class testPaiement {
             System.out.println("   Montant TTC: " + f.getMontantTotal());
             System.out.println();
 
-            // ============================================
-            // 7️⃣ STATISTIQUES
-            // ============================================
+
             System.out.println("📊 7️⃣ STATISTIQUES");
             System.out.println("=====================================");
 
@@ -147,22 +131,13 @@ public class testPaiement {
             BigDecimal montantApprouve = paiementService.getMontantTotalApprouve();
             System.out.println("Montant total paiements approuvés: " + montantApprouve + "€\n");
 
-            // ============================================
-            // 8️⃣ TEST REMBOURSEMENT (Optionnel)
-            // ============================================
+
             System.out.println("💰 8️⃣ TEST REMBOURSEMENT (OPTIONNEL)");
             System.out.println("=====================================");
             System.out.println("⚠️  Attention: Cette action annulera la commande et la remboursera");
             System.out.println("Pour tester, décommenter les lignes ci-dessous:\n");
 
-            /*
-            boolean remboursementReussi = paiementService.rembourserCommande(idCommande);
-            if (remboursementReussi) {
-                System.out.println("✅ Remboursement effectué");
-                factuationService.traiterRembouissement(idCommande);
-                System.out.println("✅ Facture marquée comme remboursée\n");
-            }
-            */
+
 
             System.out.println("\n✅ TEST TERMINÉ AVEC SUCCÈS!");
 

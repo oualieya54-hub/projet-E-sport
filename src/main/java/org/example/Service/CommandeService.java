@@ -1,7 +1,7 @@
-package org.example.dao;
+package org.example.Service;
 
 import org.example.connexion.connexionDB;
-import org.example.modele.commande;
+import org.example.Model.Commande;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class commandeDAO {
+public class CommandeService {
 
     private Connection conn;
 
-    public commandeDAO() {
+    public CommandeService() {
         this.conn = org.example.connexion.connexionDB.getInstance();
     }
 
 
-    public boolean passerCommande(org.example.modele.commande commande,
+    public boolean passerCommande(Commande commande,
                                   List<int[]> lignes) {
         // lignes = liste de {id_produit, quantite, prix_unitaire*100}
         try {
@@ -110,8 +110,8 @@ public class commandeDAO {
     }
 
 
-    public List<org.example.modele.commande> getCommandesUser(int idUser) {
-        List<org.example.modele.commande> liste = new ArrayList<>();
+    public List<Commande> getCommandesUser(int idUser) {
+        List<Commande> liste = new ArrayList<>();
         String sql = "SELECT * FROM commande WHERE id_user = ? ORDER BY date_commande DESC";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idUser);
@@ -124,8 +124,8 @@ public class commandeDAO {
     }
 
 
-    public List<org.example.modele.commande> getToutesCommandes() {
-        List<org.example.modele.commande> liste = new ArrayList<>();
+    public List<Commande> getToutesCommandes() {
+        List<Commande> liste = new ArrayList<>();
         String sql = "SELECT * FROM commande ORDER BY date_commande DESC";
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
@@ -208,8 +208,8 @@ public class commandeDAO {
 
 
     //  HELPER
-    private commande remplirCommande(ResultSet rs) throws SQLException {
-       commande c = new org.example.modele.commande();
+    private Commande remplirCommande(ResultSet rs) throws SQLException {
+       Commande c = new Commande();
         c.setIdCommande(rs.getInt("id_commande"));
         c.setIdUser(rs.getInt("id_user"));
         c.setMontantTotal(rs.getBigDecimal("montant_total"));

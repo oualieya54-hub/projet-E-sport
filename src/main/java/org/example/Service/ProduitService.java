@@ -1,25 +1,23 @@
-package org.example.dao;
+package org.example.Service;
 
 import org.example.connexion.connexionDB;
-import org.example.modele.produit;
+import org.example.Model.Produit;
 
-import java.math.BigDecimal;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class produitDAO {
+public class ProduitService {
 
     private Connection conn;
 
-    public produitDAO() {
+    public ProduitService() {
         this.conn = connexionDB.getInstance();
     }
 
 
-    public boolean ajouterProduit(produit p) {
+    public boolean ajouterProduit(Produit p) {
         String sql = "INSERT INTO produit " +
                 "(id_categorie, nom, description, prix, stock, image_url, " +
                 "statut, type_produit, points_gagnes) " +
@@ -51,8 +49,8 @@ public class produitDAO {
     }
 
 
-    public List<produit> getTousProduits() {
-        List<produit> liste = new ArrayList<>();
+    public List<Produit> getTousProduits() {
+        List<Produit> liste = new ArrayList<>();
         String sql = "SELECT * FROM produit ORDER BY date_ajout DESC";
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
@@ -65,7 +63,7 @@ public class produitDAO {
         return liste;
     }
 
-    public produit getProduitParId(int id) {
+    public Produit getProduitParId(int id) {
         String sql = "SELECT * FROM produit WHERE id_produit = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -78,8 +76,8 @@ public class produitDAO {
     }
 
 
-    public List<produit> getProduitsParCategorie(int idCategorie) {
-        List<produit> liste = new ArrayList<>();
+    public List<Produit> getProduitsParCategorie(int idCategorie) {
+        List<Produit> liste = new ArrayList<>();
         String sql = "SELECT * FROM produit WHERE id_categorie = ? AND statut = 'disponible'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idCategorie);
@@ -92,8 +90,8 @@ public class produitDAO {
     }
 
 
-    public List<produit> rechercherProduits(String motCle) {
-        List<produit> liste = new ArrayList<>();
+    public List<Produit> rechercherProduits(String motCle) {
+        List<Produit> liste = new ArrayList<>();
         String sql = "SELECT * FROM produit WHERE nom LIKE ? OR description LIKE ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             String pattern = "%" + motCle + "%";
@@ -108,8 +106,8 @@ public class produitDAO {
     }
 
 
-    public List<produit> getProduitsEnFlashSale() {
-        List<produit> liste = new ArrayList<>();
+    public List<Produit> getProduitsEnFlashSale() {
+        List<Produit> liste = new ArrayList<>();
         String sql = "SELECT p.* FROM produit p " +
                 "JOIN flash_sale f ON p.id_produit = f.id_produit " +
                 "WHERE f.active = 1 AND f.fin > NOW() AND f.stock_flash > 0";
@@ -123,7 +121,7 @@ public class produitDAO {
     }
 
 
-    public boolean modifierProduit(produit p) {
+    public boolean modifierProduit(Produit p) {
         String sql = "UPDATE produit SET id_categorie=?, nom=?, description=?, " +
                 "prix=?, stock=?, image_url=?, statut=?, type_produit=?, points_gagnes=? " +
                 "WHERE id_produit=?";
@@ -182,8 +180,8 @@ public class produitDAO {
 
     //  Convertit un ResultSet en objet Produit
 
-    private produit remplirProduit(ResultSet rs) throws SQLException {
-        produit p = new produit();
+    private Produit remplirProduit(ResultSet rs) throws SQLException {
+        Produit p = new Produit();
         p.setIdProduit(rs.getInt("id_produit"));
         p.setIdCategorie(rs.getInt("id_categorie"));
         p.setNom(rs.getString("nom"));

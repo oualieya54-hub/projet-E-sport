@@ -3,33 +3,32 @@ package org.example.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.connexion.connexionDB;
-import org.example.dao.commandeDAO;
-import org.example.dao.panierDAO;
-import org.example.modele.commande;
+import org.example.Service.CommandeService;
+import org.example.Model.Commande;
 import org.example.service.PaiementService;
 import org.example.service.FacturationService;
 import java.sql.SQLException;
 
 public class CommandeController {
 
-    @FXML private TableView<commande> commandeTable;
+    @FXML private TableView<Commande> commandeTable;
     @FXML private Button addButton;
     @FXML private Button updateButton;
     @FXML private Button deleteButton;
     @FXML private Button paiementStripButton;
     @FXML private Button annulerRemboursementButton;
 
-    private commandeDAO commandeDAO;
+    private CommandeService commandeDAO;
     private panierDAO panierDAO;
     private PaiementService paiementService;
     private FacturationService factuationService;
     private connexionDB connexion;
-    private commande selectedCommande;
+    private Commande selectedCommande;
 
     @FXML
     public void initialize() {
         connexion = (connexionDB) connexionDB.getInstance();
-        commandeDAO = new commandeDAO();
+        commandeDAO = new CommandeService();
         panierDAO = new panierDAO();
         paiementService = new PaiementService();
         factuationService = new FacturationService();
@@ -39,7 +38,7 @@ public class CommandeController {
 
     private void loadCommandes() {
         try {
-            // À implémenter selon votre logique
+
             System.out.println("Chargement des commandes...");
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,9 +1,9 @@
-package org.example.modele;
+package org.example.Model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class commande {
+public class Commande {
 
     private int           idCommande;
     private int           idUser;
@@ -16,9 +16,9 @@ public class commande {
     private int           id;
     private double        montant;
 
-    public commande() {}
+    public Commande() {}
 
-    public commande(int idUser, BigDecimal montantTotal, int pointsUtilises,
+    public Commande(int idUser, BigDecimal montantTotal, int pointsUtilises,
                     String adresseLivraison, String methodePaiement) {
         this.idUser           = idUser;
         this.montantTotal     = montantTotal;

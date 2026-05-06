@@ -1,11 +1,10 @@
 package org.example;
 
+import org.example.Model.Commande;
+import org.example.Model.Produit;
+import org.example.Service.CommandeService;
+import org.example.Service.ProduitService;
 import org.example.connexion.connexionDB;
-import org.example.dao.commandeDAO;
-import org.example.dao.panierDAO;
-import org.example.dao.produitDAO;
-import org.example.modele.commande;
-import org.example.modele.produit;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -30,8 +29,8 @@ public class testEshop {
 
         // ── Test 2 : Lire tous les produits ───────────────────
         System.out.println("▶ TEST 2 : Lecture des produits");
-        org.example.dao.produitDAO produitDAO = new org.example.dao.produitDAO();
-        List<org.example.modele.produit> produits = produitDAO.getTousProduits();
+        ProduitService produitDAO = new ProduitService();
+        List<Produit> produits = produitDAO.getTousProduits();
         System.out.println("   Nombre de produits trouvés : " + produits.size());
         produits.forEach(p ->
                 System.out.println("   • " + p.getNom() + " — " + p.getPrix() + " TND" +
@@ -41,14 +40,14 @@ public class testEshop {
 
         // ── Test 3 : Recherche de produits ────────────────────
         System.out.println("▶ TEST 3 : Recherche 'Gaming'");
-        List<org.example.modele.produit> resultats = produitDAO.rechercherProduits("Gaming");
+        List<Produit> resultats = produitDAO.rechercherProduits("Gaming");
         System.out.println("   Résultats : " + resultats.size());
         resultats.forEach(p -> System.out.println("   → " + p.getNom()));
         System.out.println();
 
         // ── Test 4 : Flash sales ───────────────────────────────
         System.out.println("▶ TEST 4 : Flash Sales actives");
-        List<org.example.modele.produit> flashSales = produitDAO.getProduitsEnFlashSale();
+        List<Produit> flashSales = produitDAO.getProduitsEnFlashSale();
         if (flashSales.isEmpty()) {
             System.out.println("   Aucune flash sale active.");
         } else {
@@ -58,7 +57,7 @@ public class testEshop {
 
         // ── Test 5 : Ajouter un produit ───────────────────────
         System.out.println("▶ TEST 5 : Ajout d'un produit");
-        org.example.modele.produit nouveau = new org.example.modele.produit(
+        Produit nouveau = new Produit(
                 1,
                 "Manette Pro Controller RGB",
                 "Manette filaire, 8 boutons programmables, vibration",
@@ -77,13 +76,13 @@ public class testEshop {
 
         // ── Test 6 : Panier ────────────────────────────────────
         System.out.println("▶ TEST 6 : Gestion du Panier (user id=1)");
-        org.example.dao.panierDAO panierDAO = new org.example.dao.panierDAO();
+        org.example.Service.panierDAO panierDAO = new org.example.Service.panierDAO();
         panierDAO.ajouterAuPanier(1, 1, 1); // Souris
         panierDAO.ajouterAuPanier(1, 7, 2); // Clé Steam x2
         List<Object[]> panier = panierDAO.getPanierUser(1);
         System.out.println("   Articles dans le panier :");
         panier.forEach(item -> {
-            org.example.modele.produit p   = (org.example.modele.produit) item[0];
+            Produit p   = (Produit) item[0];
             int     qte = (Integer) item[1];
             System.out.println("   • " + p.getNom() + " × " + qte +
                     " = " + p.getPrix().multiply(BigDecimal.valueOf(qte)) + " TND");
@@ -94,20 +93,20 @@ public class testEshop {
         System.out.println("▶ TEST 7 : Wishlist (user id=1)");
         panierDAO.ajouterWishlist(1, 2); // Casque
         panierDAO.ajouterWishlist(1, 3); // Clavier
-        List<org.example.modele.produit> wishlist = panierDAO.getWishlistUser(1);
+        List<Produit> wishlist = panierDAO.getWishlistUser(1);
         System.out.println("   Produits favoris :");
         wishlist.forEach(p -> System.out.println("   ❤️ " + p.getNom()));
         System.out.println();
 
         // ── Test 8 : Points fidélité ───────────────────────────
         System.out.println("▶ TEST 8 : Points fidélité (user id=1)");
-        org.example.dao.commandeDAO commandeDAO = new org.example.dao.commandeDAO();
+        CommandeService commandeDAO = new CommandeService();
         int solde = commandeDAO.getSoldePoints(1);
         System.out.println("   Solde actuel : " + solde + " points\n");
 
         // ── Test 9 : Passer une commande ───────────────────────
         System.out.println("▶ TEST 9 : Passer une commande");
-        org.example.modele.commande commande = new org.example.modele.commande(
+        Commande commande = new Commande(
                 1,                           // id_user
                 new BigDecimal("104.98"),    // montant total
                 0,                           // points utilisés
