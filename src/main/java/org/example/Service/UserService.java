@@ -65,6 +65,56 @@ public class UserService {
         return list;
     }
 
+    public boolean mettreAJourPoints(int idUser, int deltaPoints) {
+        String sql = "UPDATE users SET points = points + ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, deltaPoints);
+            ps.setInt(2, idUser);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur mettreAJourPoints : " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean attribuerBonus(int idUser, int montantBonus, String raison) {
+        System.out.println("🎁 Attribution de " + montantBonus + " points bonus à l'utilisateur " + idUser + " pour : " + raison);
+        return mettreAJourPoints(idUser, montantBonus);
+    }
+
+    public boolean verifierEtPromouvoirVIP(int idUser) {
+        TransactionService ts = new TransactionService();
+        double totalDepense = ts.calculerTotalDepense(idUser);
+
+        if (totalDepense >= 500.0) { // Seuil pour devenir VIP
+            String sql = "UPDATE users SET role = 'VIP' WHERE id = ? AND role != 'VIP' AND role != 'admin'";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, idUser);
+                if (ps.executeUpdate() > 0) {
+                    System.out.println("⭐ L'utilisateur " + idUser + " a été promu VIP ! (Total dépensé : " + totalDepense + "€)");
+                    // On peut aussi lui donner un bonus de bienvenue VIP
+                    attribuerBonus(idUser, 500, "Passage au statut VIP");
+                    return true;
+                }
+            } catch (SQLException e) {
+                System.err.println("❌ Erreur promotion VIP : " + e.getMessage());
+            }
+        }
+        return false;
+    }
+
+    public boolean bannirUser(int idUser, boolean bannir) {
+        String sql = "UPDATE users SET is_banned = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, bannir);
+            ps.setInt(2, idUser);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur bannirUser : " + e.getMessage());
+        }
+        return false;
+    }
+
     private User map(ResultSet rs) throws SQLException {
         User u = new User();
         u.setId(rs.getInt("id"));
