@@ -208,8 +208,8 @@ public class commandeDAO {
 
 
     //  HELPER
-    private org.example.modele.commande remplirCommande(ResultSet rs) throws SQLException {
-        org.example.modele.commande c = new org.example.modele.commande();
+    private commande remplirCommande(ResultSet rs) throws SQLException {
+       commande c = new org.example.modele.commande();
         c.setIdCommande(rs.getInt("id_commande"));
         c.setIdUser(rs.getInt("id_user"));
         c.setMontantTotal(rs.getBigDecimal("montant_total"));
