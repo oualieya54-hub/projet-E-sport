@@ -27,7 +27,7 @@ public class Main {
             primaryStage.setScene(scene);
             primaryStage.show();
         }
-    }
+    }//
 
     public static void main(String[] args) {
         // Launch the JavaFX application directly from this main class
