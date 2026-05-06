@@ -22,6 +22,26 @@ public class BookingService {
             System.out.println("✅ Réservation effectuée !");
         }
     }
+    public Booking getById(int idBooking) throws SQLException {
+        String sql = "SELECT * FROM booking WHERE id_booking = ?";
+        try (Connection con = MyDatabase.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idBooking);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Booking(
+                        rs.getInt("id_booking"),
+                        rs.getInt("id_session"),
+                        rs.getInt("id_eleve"),
+                        rs.getString("statut_paiement"),
+                        rs.getTimestamp("date_reservation").toLocalDateTime(),
+                        rs.getString("mode_paiement")
+                );
+            }
+        }
+        return null;
+    }
+
     public List<Booking> getByEleve(int idEleve) throws SQLException {
         List<Booking> liste = new ArrayList<>();
         String sql = "SELECT * FROM Booking WHERE id_eleve = ?";
@@ -63,6 +83,21 @@ public class BookingService {
         return liste;
     }
 
+
+    public void update(Booking b) throws SQLException {
+        String sql = "UPDATE booking SET id_session=?, id_eleve=?, statut_paiement=?, date_reservation=?, mode_paiement=? WHERE id_booking=?";
+        try (Connection con = MyDatabase.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, b.getIdSession());
+            ps.setInt(2, b.getIdEleve());
+            ps.setString(3, b.getStatutPaiement());
+            ps.setTimestamp(4, Timestamp.valueOf(b.getDateReservation()));
+            ps.setString(5, b.getModePaiement());
+            ps.setInt(6, b.getIdBooking());
+            ps.executeUpdate();
+            System.out.println("✅ Réservation mise à jour !");
+        }
+    }
 
     public void confirmPayment(int idBooking) throws SQLException {
         String sql = "UPDATE Booking SET statut_paiement = 'confirmé' WHERE id_booking = ?";
