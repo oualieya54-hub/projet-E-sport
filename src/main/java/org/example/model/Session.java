@@ -36,8 +36,8 @@ public class Session {
         this.idCoach      = idCoach;
         this.dureeMinutes = 60; // Default as per DB
         this.capaciteMax  = 10; // Default as per DB
-        this.typeSession  = "groupe"; // Default as per DB
-        this.statut       = "ouverte"; // Default as per DB
+        this.typeSession  = "groupe"; // Default as per DB (individuel/groupe/atelier)
+        this.statut       = "ouverte"; // Default as per DB (ouverte/complète/annulée)
         this.idFormation  = null; // Default as per DB
     }
 

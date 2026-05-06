@@ -100,12 +100,13 @@ public class BookingService {
     }
 
     public void confirmPayment(int idBooking) throws SQLException {
+        // statut_paiement ENUM: 'en_attente' | 'confirmé' | 'annulé'
         String sql = "UPDATE Booking SET statut_paiement = 'confirmé' WHERE id_booking = ?";
         try (Connection con = MyDatabase.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idBooking);
             ps.executeUpdate();
-            System.out.println("✅ Paiement confirmé !");
+            System.out.println("Paiement confirme !");
         }
     }
 
