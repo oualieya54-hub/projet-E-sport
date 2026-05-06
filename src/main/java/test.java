@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Manual integration test for UserService against merged_esport DB.
- * Run with: javac -cp .;mysql-connector-j-*.jar *.java && java -cp .;mysql-connector-j-*.jar TestUserService
+
  *
  * Each test prints:  [PASS] or [FAIL] — <description>
  * A summary line is printed at the end.
