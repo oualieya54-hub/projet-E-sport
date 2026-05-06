@@ -6,16 +6,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="500.0" prefWidth="400.0" spacing="25.0" 
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="com.esport.Controllers.MainMenuController"
-      style="-fx-background-color: #f4f4f9;">
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="400.0" spacing="25.0" style="-fx-background-color: #f4f4f9;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.esport.Controllers.MainMenuController">
    
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
    </padding>
 
-   <Label text="ESPORT MANAGER" textFill="#2c3e50">
+   <Label text="ESPORT APP" textFill="#2c3e50">
       <font>
          <Font name="System Bold" size="32.0" />
       </font>
@@ -30,20 +27,12 @@
       </VBox.margin>
    </Label>
 
-   <Button mnemonicParsing="false" onAction="#openEventWindow" prefHeight="50.0" prefWidth="250.0" 
-           style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" 
-           text="📅 Manage Events" />
+   <Button mnemonicParsing="false" onAction="#openEventWindow" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" text="📅 Manage Events" />
 
-   <Button mnemonicParsing="false" onAction="#openTournamentWindow" prefHeight="50.0" prefWidth="250.0" 
-           style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" 
-           text="🏆 Create Tournament" />
+   <Button mnemonicParsing="false" onAction="#openTournamentWindow" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" text="🏆 Create Tournament" />
 
-   <Button mnemonicParsing="false" onAction="#openMatchWindow" prefHeight="50.0" prefWidth="250.0" 
-           style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" 
-           text="⚔️ Schedule Matches" />
+   <Button mnemonicParsing="false" onAction="#openMatchWindow" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" text="⚔️ Schedule Matches" />
 
-   <Button mnemonicParsing="false" onAction="#openBetWindow" prefHeight="50.0" prefWidth="250.0" 
-           style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" 
-           text="💰 Place a Bet" />
+   <Button mnemonicParsing="false" onAction="#openBetWindow" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" text="💰 Place a Bet" />
 
 </VBox>
