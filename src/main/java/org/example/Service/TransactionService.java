@@ -176,6 +176,34 @@ public class TransactionService {
         return 0;
     }
 
+    public boolean viderPanier(int idUser) {
+        String sql = "DELETE FROM transaction WHERE id_user=? AND type='panier'";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUser);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            System.err.println("viderPanier : " + e.getMessage());
+        }
+        return false;
+    }
+
+    public double calculerTotalDepense(int idUser) {
+        String sql = """
+            SELECT SUM(quantite * prix_unitaire) as total 
+            FROM transaction 
+            WHERE id_user=? AND type='achat' AND prix_unitaire IS NOT NULL
+            """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUser);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getDouble("total");
+        } catch (SQLException e) {
+            System.err.println("calculerTotalDepense : " + e.getMessage());
+        }
+        return 0.0;
+    }
+
     public boolean validerPanier(int idUser, int idCommande) {
         String sql = """
             UPDATE transaction
