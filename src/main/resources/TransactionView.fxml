@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox spacing="10" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.TransactionController">
+    <Label text="Historique des Transactions" styleClass="label-title"/>
+
+    <HBox spacing="10">
+        <Button fx:id="deleteButton" text="Supprimer Transaction" onAction="#handleDelete" styleClass="button-danger"/>
+    </HBox>
+
+    <TableView fx:id="transactionTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="ID" prefWidth="50">
+                <cellValueFactory><PropertyValueFactory property="idTransaction" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="User ID" prefWidth="60">
+                <cellValueFactory><PropertyValueFactory property="idUser" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Produit ID" prefWidth="70">
+                <cellValueFactory><PropertyValueFactory property="idProduit" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Cmd ID" prefWidth="60">
+                <cellValueFactory><PropertyValueFactory property="idCommande" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Type" prefWidth="80">
+                <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Qté" prefWidth="50">
+                <cellValueFactory><PropertyValueFactory property="quantite" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Prix U." prefWidth="70">
+                <cellValueFactory><PropertyValueFactory property="prixUnitaire" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Note" prefWidth="50">
+                <cellValueFactory><PropertyValueFactory property="note" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Date" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="dateAction" /></cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+</VBox>
