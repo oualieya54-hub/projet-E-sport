@@ -4,11 +4,7 @@ import java.sql.Timestamp;
 
 public class User {
 
-    // ============================================================
-    // Fields — match merged_esport.users exactly:
-    //   id, nom, pseudo, email, password, avatar_url,
-    //   role, points, last_active, is_banned, created_at, updated_at
-    // ============================================================
+
 
     private int       id;
     private String    nom;
