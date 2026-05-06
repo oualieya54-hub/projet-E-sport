@@ -2,8 +2,8 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import org.example.Model.Transaction;
 import org.example.Service.TransactionService;
+import org.example.Model.Transaction;
 
 public class TransactionController {
 
@@ -23,7 +23,7 @@ public class TransactionController {
     private void loadTransactions() {
         System.out.println("Chargement des transactions depuis la BDD...");
         try {
-            // transactionTable.getItems().setAll(transactionDAO.findAll());
+            transactionTable.getItems().setAll(transactionDAO.findAll());
         } catch (Exception e) {
             e.printStackTrace();
         }

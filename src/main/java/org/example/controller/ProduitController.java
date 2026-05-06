@@ -24,9 +24,10 @@ public class ProduitController {
     private void loadProduits() {
         System.out.println("Chargement des produits depuis la BDD...");
         try {
-            // produitTable.getItems().setAll(produitDAO.getTousProduits());
+            produitTable.getItems().setAll(produitDAO.findAll());
         } catch (Exception e) {
             e.printStackTrace();
+            showError("Erreur lors du chargement des produits : " + e.getMessage());
         }
     }
 
