@@ -1,224 +1,121 @@
 package org.example.Service;
 
-import org.example.connexion.connexionDB;
 import org.example.Model.Commande;
+import org.example.Utils.MyDatabase;
 
-import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CommandeService {
 
-    private Connection conn;
+    private final Connection conn;
 
     public CommandeService() {
-        this.conn = org.example.connexion.connexionDB.getInstance();
+        this.conn = MyDatabase.getInstance().getConnection();
     }
 
+    public boolean ajouter(Commande c) {
+        String sql = "INSERT INTO commande (id_user, montant_total, points_utilises, points_gagnes, statut, adresse_livraison, methode_paiement) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, c.getIdUser());
+            ps.setDouble(2, c.getMontantTotal());
+            ps.setInt(3, c.getPointsUtilises());
+            ps.setInt(4, c.getPointsGagnes());
+            ps.setString(5, c.getStatut());
+            ps.setString(6, c.getAdresseLivraison());
+            ps.setString(7, c.getMethodePaiement());
 
-    public boolean passerCommande(Commande commande,
-                                  List<int[]> lignes) {
-        // lignes = liste de {id_produit, quantite, prix_unitaire*100}
-        try {
-            conn.setAutoCommit(false); // Début transaction
-
-            // 1. Insérer la commande
-            String sqlCmd = "INSERT INTO commande " +
-                    "(id_user, montant_total, points_utilises, statut, adresse_livraison, methode_paiement) " +
-                    "VALUES (?, ?, ?, 'en_attente', ?, ?)";
-            int idCommande;
-            try (PreparedStatement ps = conn.prepareStatement(sqlCmd, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setInt(1, commande.getIdUser());
-                ps.setBigDecimal(2, commande.getMontantTotal());
-                ps.setInt(3, commande.getPointsUtilises());
-                ps.setString(4, commande.getAdresseLivraison());
-                ps.setString(5, commande.getMethodePaiement());
-                ps.executeUpdate();
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
                 ResultSet rs = ps.getGeneratedKeys();
-                rs.next();
-                idCommande = rs.getInt(1);
-                commande.setIdCommande(idCommande);
-            }
-
-            // 2. Insérer les lignes de commande + décrémenter le stock
-            String sqlLigne = "INSERT INTO ligne_commande (id_commande, id_produit, quantite, prix_unitaire) " +
-                    "VALUES (?, ?, ?, ?)";
-            String sqlStock = "UPDATE produit SET stock = stock - ? WHERE id_produit = ? AND stock >= ?";
-            int totalPoints = 0;
-
-            for (int[] ligne : lignes) {
-                int idProduit    = ligne[0];
-                int quantite     = ligne[1];
-                BigDecimal prix  = BigDecimal.valueOf(ligne[2]).divide(BigDecimal.valueOf(100));
-
-                // Ligne de commande
-                try (PreparedStatement ps = conn.prepareStatement(sqlLigne)) {
-                    ps.setInt(1, idCommande);
-                    ps.setInt(2, idProduit);
-                    ps.setInt(3, quantite);
-                    ps.setBigDecimal(4, prix);
-                    ps.executeUpdate();
+                if (rs.next()) {
+                    c.setIdCommande(rs.getInt(1));
                 }
-
-                // Décrémenter stock
-                try (PreparedStatement ps = conn.prepareStatement(sqlStock)) {
-                    ps.setInt(1, quantite);
-                    ps.setInt(2, idProduit);
-                    ps.setInt(3, quantite);
-                    int updated = ps.executeUpdate();
-                    if (updated == 0) {
-                        conn.rollback();
-                        System.err.println("❌ Stock insuffisant pour produit id=" + idProduit);
-                        return false;
-                    }
-                }
-
-                // Calculer les points gagnés
-                String sqlPts = "SELECT points_gagnes FROM produit WHERE id_produit = ?";
-                try (PreparedStatement ps = conn.prepareStatement(sqlPts)) {
-                    ps.setInt(1, idProduit);
-                    ResultSet rs = ps.executeQuery();
-                    if (rs.next()) totalPoints += rs.getInt(1) * quantite;
-                }
+                System.out.println("✅ Commande ajoutée : id=" + c.getIdCommande());
+                return true;
             }
-
-            // 3. Créditer les points fidélité
-            if (totalPoints > 0) {
-                crediterPoints(commande.getIdUser(), idCommande, totalPoints, "Achat commande #" + idCommande);
-            }
-
-            // 4. Débiter les points utilisés si paiement partiel par points
-            if (commande.getPointsUtilises() > 0) {
-                debiterPoints(commande.getIdUser(), idCommande,
-                        commande.getPointsUtilises(),
-                        "Utilisation points commande #" + idCommande);
-            }
-
-            conn.commit(); // Valider la transaction
-            System.out.println("✅ Commande #" + idCommande + " validée ! Points gagnés : " + totalPoints);
-            return true;
-
         } catch (SQLException e) {
-            try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
-            System.err.println("❌ Erreur commande, transaction annulée : " + e.getMessage());
-            return false;
-        } finally {
-            try { conn.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
-        }
-    }
-
-
-    public List<Commande> getCommandesUser(int idUser) {
-        List<Commande> liste = new ArrayList<>();
-        String sql = "SELECT * FROM commande WHERE id_user = ? ORDER BY date_commande DESC";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, idUser);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) liste.add(remplirCommande(rs));
-        } catch (SQLException e) {
-            System.err.println("❌ Erreur lecture commandes : " + e.getMessage());
-        }
-        return liste;
-    }
-
-
-    public List<Commande> getToutesCommandes() {
-        List<Commande> liste = new ArrayList<>();
-        String sql = "SELECT * FROM commande ORDER BY date_commande DESC";
-        try (Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) liste.add(remplirCommande(rs));
-        } catch (SQLException e) {
-            System.err.println("❌ Erreur lecture toutes commandes : " + e.getMessage());
-        }
-        return liste;
-    }
-
-
-    public boolean changerStatut(int idCommande, String nouveauStatut) {
-        String sql = "UPDATE commande SET statut = ? WHERE id_commande = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nouveauStatut);
-            ps.setInt(2, idCommande);
-            boolean ok = ps.executeUpdate() > 0;
-            if (ok) System.out.println("✅ Commande #" + idCommande + " → " + nouveauStatut);
-            return ok;
-        } catch (SQLException e) {
-            System.err.println("❌ Erreur changement statut : " + e.getMessage());
+            System.err.println("❌ Erreur ajout commande : " + e.getMessage());
         }
         return false;
     }
 
-
-    private void crediterPoints(int idUser, int idCommande, int points, String motif) throws SQLException {
-        // Insérer ou mettre à jour le solde
-        String sqlUpsert = "INSERT INTO points_fidelite (id_user, solde_actuel) VALUES (?, ?) " +
-                "ON DUPLICATE KEY UPDATE solde_actuel = solde_actuel + ?";
-        try (PreparedStatement ps = conn.prepareStatement(sqlUpsert)) {
-            ps.setInt(1, idUser);
-            ps.setInt(2, points);
-            ps.setInt(3, points);
-            ps.executeUpdate();
-        }
-        // Historique
-        insererHistoriquePoints(idUser, idCommande, points, "gain", motif);
-    }
-
-
-    private void debiterPoints(int idUser, int idCommande, int points, String motif) throws SQLException {
-        String sql = "UPDATE points_fidelite SET solde_actuel = solde_actuel - ? " +
-                "WHERE id_user = ? AND solde_actuel >= ?";
+    public boolean modifier(Commande c) {
+        String sql = "UPDATE commande SET id_user=?, montant_total=?, points_utilises=?, points_gagnes=?, statut=?, adresse_livraison=?, methode_paiement=? WHERE id_commande=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, points);
-            ps.setInt(2, idUser);
-            ps.setInt(3, points);
-            ps.executeUpdate();
-        }
-        insererHistoriquePoints(idUser, idCommande, -points, "depense", motif);
-    }
+            ps.setInt(1, c.getIdUser());
+            ps.setDouble(2, c.getMontantTotal());
+            ps.setInt(3, c.getPointsUtilises());
+            ps.setInt(4, c.getPointsGagnes());
+            ps.setString(5, c.getStatut());
+            ps.setString(6, c.getAdresseLivraison());
+            ps.setString(7, c.getMethodePaiement());
+            ps.setInt(8, c.getIdCommande());
 
-    private void insererHistoriquePoints(int idUser, int idCommande,
-                                         int points, String type, String motif) throws SQLException {
-        String sql = "INSERT INTO historique_points (id_user, id_commande, points, type_operation, motif) " +
-                "VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, idUser);
-            if (idCommande > 0) ps.setInt(2, idCommande); else ps.setNull(2, Types.INTEGER);
-            ps.setInt(3, points);
-            ps.setString(4, type);
-            ps.setString(5, motif);
-            ps.executeUpdate();
-        }
-    }
-
-
-    public int getSoldePoints(int idUser) {
-        String sql = "SELECT solde_actuel FROM points_fidelite WHERE id_user = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, idUser);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1);
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) System.out.println("✅ Commande modifiée : id=" + c.getIdCommande());
+            return ok;
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lecture points : " + e.getMessage());
+            System.err.println("❌ Erreur modification commande : " + e.getMessage());
         }
-        return 0;
+        return false;
     }
 
+    public boolean supprimer(int idCommande) {
+        String sql = "DELETE FROM commande WHERE id_commande = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCommande);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur suppression commande : " + e.getMessage());
+        }
+        return false;
+    }
 
-    //  HELPER
-    private Commande remplirCommande(ResultSet rs) throws SQLException {
-       Commande c = new Commande();
+    public List<Commande> findAll() {
+        List<Commande> list = new ArrayList<>();
+        String sql = "SELECT * FROM commande ORDER BY date_commande DESC";
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                list.add(map(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture commandes : " + e.getMessage());
+        }
+        return list;
+    }
+
+    public Commande findById(int idCommande) {
+        String sql = "SELECT * FROM commande WHERE id_commande = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCommande);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return map(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lecture commande id=" + idCommande + " : " + e.getMessage());
+        }
+        return null;
+    }
+
+    private Commande map(ResultSet rs) throws SQLException {
+        Commande c = new Commande();
         c.setIdCommande(rs.getInt("id_commande"));
         c.setIdUser(rs.getInt("id_user"));
-        c.setMontantTotal(rs.getBigDecimal("montant_total"));
+        c.setMontantTotal(rs.getDouble("montant_total"));
         c.setPointsUtilises(rs.getInt("points_utilises"));
+        c.setPointsGagnes(rs.getInt("points_gagnes"));
         c.setStatut(rs.getString("statut"));
+
+        Timestamp ts = rs.getTimestamp("date_commande");
+        if (ts != null) {
+            c.setDateCommande(ts.toLocalDateTime());
+        }
         c.setAdresseLivraison(rs.getString("adresse_livraison"));
         c.setMethodePaiement(rs.getString("methode_paiement"));
-        Timestamp ts = rs.getTimestamp("date_commande");
-        if (ts != null) c.setDateCommande(ts.toLocalDateTime());
         return c;
     }
 }
