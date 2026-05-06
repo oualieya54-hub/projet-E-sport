@@ -63,6 +63,17 @@ public class SessionService {
         return liste;
     }
 
+    public Session getById(int idSession) throws SQLException {
+        String sql = "SELECT * FROM session WHERE id_session = ?";
+        try (Connection con = MyDatabase.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idSession);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return extractSessionFromResultSet(rs);
+        }
+        return null;
+    }
+
     public void update(Session s) throws SQLException {
         String sql = "UPDATE Session SET date_heure=?, jeu=?, prix=?, id_coach=?, duree_minutes=?, capacite_max=?, type_session=?, statut=?, id_formation=? WHERE id_session=?";
         try (Connection con = MyDatabase.getConnection();
