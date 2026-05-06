@@ -1,80 +1,63 @@
 package org.example.Model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Commande {
 
     private int           idCommande;
     private int           idUser;
-    private BigDecimal    montantTotal;
+    private double        montantTotal;
     private int           pointsUtilises;
-    private String        statut;
+    private int           pointsGagnes;
+    private String        statut;   // en_attente | confirmée | expédiée | livrée | annulée
     private LocalDateTime dateCommande;
     private String        adresseLivraison;
     private String        methodePaiement;
-    private int           id;
-    private double        montant;
 
     public Commande() {}
 
-    public Commande(int idUser, BigDecimal montantTotal, int pointsUtilises,
-                    String adresseLivraison, String methodePaiement) {
+    public Commande(int idUser, double montantTotal, String adresseLivraison, String methodePaiement) {
         this.idUser           = idUser;
         this.montantTotal     = montantTotal;
-        this.pointsUtilises   = pointsUtilises;
         this.adresseLivraison = adresseLivraison;
         this.methodePaiement  = methodePaiement;
         this.statut           = "en_attente";
+        this.pointsUtilises   = 0;
+        this.pointsGagnes     = 0;
     }
 
-    public int getIdCommande()                  { return idCommande; }
-    public void setIdCommande(int id)           { this.idCommande = id; }
+    // ── Getters & Setters ──────────────────────────────────────
 
-    public int getIdUser()                      { return idUser; }
-    public void setIdUser(int id)               { this.idUser = id; }
+    public int           getIdCommande()                  { return idCommande; }
+    public void          setIdCommande(int v)              { this.idCommande = v; }
 
-    public BigDecimal getMontantTotal()         { return montantTotal; }
-    public void setMontantTotal(BigDecimal m)   { this.montantTotal = m; }
+    public int           getIdUser()                      { return idUser; }
+    public void          setIdUser(int v)                  { this.idUser = v; }
 
-    public int getPointsUtilises()              { return pointsUtilises; }
-    public void setPointsUtilises(int pts)      { this.pointsUtilises = pts; }
+    public double        getMontantTotal()                 { return montantTotal; }
+    public void          setMontantTotal(double v)         { this.montantTotal = v; }
 
-    public String getStatut()                   { return statut; }
-    public void setStatut(String statut)        { this.statut = statut; }
+    public int           getPointsUtilises()               { return pointsUtilises; }
+    public void          setPointsUtilises(int v)          { this.pointsUtilises = v; }
 
-    public LocalDateTime getDateCommande()      { return dateCommande; }
-    public void setDateCommande(LocalDateTime d){ this.dateCommande = d; }
+    public int           getPointsGagnes()                 { return pointsGagnes; }
+    public void          setPointsGagnes(int v)            { this.pointsGagnes = v; }
 
-    public String getAdresseLivraison()         { return adresseLivraison; }
-    public void setAdresseLivraison(String a)   { this.adresseLivraison = a; }
+    public String        getStatut()                      { return statut; }
+    public void          setStatut(String v)               { this.statut = v; }
 
-    public String getMethodePaiement()          { return methodePaiement; }
-    public void setMethodePaiement(String m)    { this.methodePaiement = m; }
+    public LocalDateTime getDateCommande()                 { return dateCommande; }
+    public void          setDateCommande(LocalDateTime v)  { this.dateCommande = v; }
 
+    public String        getAdresseLivraison()             { return adresseLivraison; }
+    public void          setAdresseLivraison(String v)     { this.adresseLivraison = v; }
 
-
-
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public double getMontant() {
-        return montant;
-    }
-    public void setMontant(double montant) {
-        this.montant = montant;
-    }
-
+    public String        getMethodePaiement()              { return methodePaiement; }
+    public void          setMethodePaiement(String v)      { this.methodePaiement = v; }
 
     @Override
     public String toString() {
-        return "Commande{id=" + idCommande +
-                ", user=" + idUser +
-                ", total=" + montantTotal +
-                ", statut='" + statut + "'}";
+        return String.format("Commande{id=%d, user=%d, montant=%.2f, statut='%s'}",
+                idCommande, idUser, montantTotal, statut);
     }
 }
