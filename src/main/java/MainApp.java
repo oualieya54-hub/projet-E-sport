@@ -20,7 +20,7 @@ public class MainApp {
             
             Scene scene = new Scene(root);
             
-            // Setup the primary stage (window)
+            // Setup the primary stage
             primaryStage.setTitle("E-SPORT User Management");
             primaryStage.setScene(scene);
             primaryStage.show();
