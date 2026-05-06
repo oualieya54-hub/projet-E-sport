@@ -150,6 +150,28 @@ public class ProduitService {
         return false;
     }
 
+    public boolean appliquerPromotionCategorie(String categorie, double reductionPct, String debut, String fin) {
+        String sql = """
+            UPDATE produit SET
+              reduction_pct = ?,
+              prix_promo = prix * (1 - (? / 100)),
+              promo_debut = ?,
+              promo_fin = ?
+            WHERE categorie = ? AND statut = 'disponible'
+            """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, reductionPct);
+            ps.setDouble(2, reductionPct);
+            ps.setString(3, debut);
+            ps.setString(4, fin);
+            ps.setString(5, categorie);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("appliquerPromotionCategorie : " + e.getMessage());
+        }
+        return false;
+    }
+
     private List<Produit> query(String sql) {
         List<Produit> list = new ArrayList<>();
         try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
