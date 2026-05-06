@@ -2,8 +2,8 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import org.example.Service.TransactionService;
 import org.example.Model.Transaction;
+import org.example.Service.TransactionService;
 
 public class TransactionController {
 
