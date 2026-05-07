@@ -13,19 +13,33 @@ public class Main {
     public static class EsportApp extends Application {
         @Override
         public void start(Stage primaryStage) throws Exception {
-            // FXML is now at the root of resources
-            URL fxmlUrl = getClass().getResource("/FormationView.fxml");
+            // Load FormationView
+            URL formationUrl = getClass().getResource("/FormationView.fxml");
             
-            if (fxmlUrl == null) {
+            if (formationUrl == null) {
                 System.err.println("ERREUR : Impossible de trouver le fichier FormationView.fxml !");
                 System.exit(1);
             }
 
-            Parent root = FXMLLoader.load(fxmlUrl);
-            Scene scene = new Scene(root);
-            primaryStage.setTitle("eSports Academy & Coaching - Gestion");
-            primaryStage.setScene(scene);
+            Parent formationRoot = FXMLLoader.load(formationUrl);
+            Scene formationScene = new Scene(formationRoot);
+            primaryStage.setTitle("eSports Academy & Coaching - Gestion Formation");
+            primaryStage.setScene(formationScene);
             primaryStage.show();
+
+            // Load SessionView
+            URL sessionUrl = getClass().getResource("/SessionView.fxml");
+            
+            if (sessionUrl == null) {
+                System.err.println("ERREUR : Impossible de trouver le fichier SessionView.fxml !");
+            } else {
+                Parent sessionRoot = FXMLLoader.load(sessionUrl);
+                Scene sessionScene = new Scene(sessionRoot);
+                Stage sessionStage = new Stage();
+                sessionStage.setTitle("eSports Academy & Coaching - Gestion Session");
+                sessionStage.setScene(sessionScene);
+                sessionStage.show();
+            }
         }
     }//
 
