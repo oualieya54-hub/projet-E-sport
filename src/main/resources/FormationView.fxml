@@ -101,7 +101,7 @@
                     <TextField fx:id="dureeField" styleClass="text-field"/>
                 </VBox>
                 <VBox prefWidth="150" spacing="5">
-                    <Label text="Prix (€):" styleClass="label-white"/>
+                    <Label text="Prix (TND):" styleClass="label-white"/>
                     <TextField fx:id="prixField" styleClass="text-field"/>
                 </VBox>
             </HBox>
