@@ -8,8 +8,9 @@
     <!-- Sidebar -->
     <VBox prefWidth="250.0" styleClass="sidebar" spacing="10">
         <Label text="Game Pilot" styleClass="sidebar-title" />
+        <Label text="ACADEMY MANAGER" styleClass="sidebar-subtitle" />
         
-        <Region prefHeight="30" />
+        <Region prefHeight="10" />
         
         <Button text="Formation" onAction="#navigateToFormation" styleClass="nav-btn" prefWidth="210"/>
         <Button text="Session" onAction="#navigateToSession" styleClass="nav-btn" prefWidth="210"/>
