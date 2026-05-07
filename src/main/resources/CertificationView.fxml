@@ -12,11 +12,11 @@
         
         <Region prefHeight="30" />
         
-        <Button text="Formation" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Session" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Booking" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Evaluation" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Certification" style="-fx-background-color: #7c3aed; -fx-text-fill: white;" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Formation" onAction="#navigateToFormation" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Session" onAction="#navigateToSession" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Booking" onAction="#navigateToBooking" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Evaluation" onAction="#navigateToEvaluation" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Certification" onAction="#navigateToCertification" style="-fx-background-color: #7c3aed; -fx-text-fill: white;" styleClass="nav-btn" prefWidth="210"/>
     </VBox>
 
     <!-- Main Content -->
