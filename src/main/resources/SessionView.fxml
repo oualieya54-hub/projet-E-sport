@@ -30,7 +30,7 @@
                 <HBox alignment="CENTER_LEFT" spacing="15">
                     <TextField promptText="Filter by game..." styleClass="text-field" prefWidth="250" />
                     <Region HBox.hgrow="ALWAYS" />
-                    <Button text="Refresh" onAction="#initialize" styleClass="btn-clear" />
+                    <Button text="Refresh" onAction="#handleRefresh" styleClass="btn-clear" />
                 </HBox>
                 
                 <TableView fx:id="sessionTable" VBox.vgrow="ALWAYS">
@@ -38,8 +38,10 @@
                         <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
                         <TableColumn fx:id="colJeu" prefWidth="120.0" text="Jeu" />
                         <TableColumn fx:id="colDateHeure" prefWidth="140.0" text="Date &amp; Heure" />
-                        <TableColumn fx:id="colPrix" prefWidth="80.0" text="Prix (TND)" />
-                        <TableColumn fx:id="colCapacite" prefWidth="80.0" text="Capacité" />
+                        <TableColumn fx:id="colPrix" prefWidth="80.0" text="Prix" />
+                        <TableColumn fx:id="colDuree" prefWidth="80.0" text="Durée" />
+                        <TableColumn fx:id="colCapacite" prefWidth="80.0" text="Cap." />
+                        <TableColumn fx:id="colType" prefWidth="80.0" text="Type" />
                         <TableColumn fx:id="colStatut" prefWidth="100.0" text="Statut" />
                     </columns>
                     <columnResizePolicy>

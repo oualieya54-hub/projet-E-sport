@@ -126,13 +126,16 @@ public class SessionController {
 
     private void loadData() {
         try {
-            // Depending on the backend, you might need a custom method to get ALL sessions
-            // For now, using getDisponibilites
             List<Session> data = this.getDisponibilites();
             sessionList.setAll(data);
         } catch (SQLException e) {
             showAlert("Erreur de chargement", "Impossible de charger les sessions.", e.getMessage(), Alert.AlertType.ERROR);
         }
+    }
+
+    @FXML
+    void handleRefresh(ActionEvent event) {
+        loadData();
     }
 
     private void showSessionDetails(Session session) {

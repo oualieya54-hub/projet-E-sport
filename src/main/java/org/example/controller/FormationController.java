@@ -271,8 +271,8 @@ public class FormationController {
     }
 
     @FXML
-    void handleFilter(ActionEvent event) {
-        String keyword = searchField.getText().toLowerCase();
+    void handleFilter() {
+        String keyword = searchField.getText() != null ? searchField.getText().toLowerCase() : "";
         String jeu = filterJeuCombo.getValue();
         String niveau = filterNiveauCombo.getValue();
         String statut = filterStatutCombo.getValue();
