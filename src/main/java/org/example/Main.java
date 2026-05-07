@@ -23,7 +23,7 @@ public class Main {
 
             Parent formationRoot = FXMLLoader.load(formationUrl);
             Scene formationScene = new Scene(formationRoot);
-            primaryStage.setTitle("eSports Academy & Coaching - Gestion Formation");
+            primaryStage.setTitle("Game Pilot - Formation");
             primaryStage.setScene(formationScene);
             primaryStage.show();
 
@@ -36,7 +36,7 @@ public class Main {
                 Parent sessionRoot = FXMLLoader.load(sessionUrl);
                 Scene sessionScene = new Scene(sessionRoot);
                 Stage sessionStage = new Stage();
-                sessionStage.setTitle("eSports Academy & Coaching - Gestion Session");
+                sessionStage.setTitle("Game Pilot - Session");
                 sessionStage.setScene(sessionScene);
                 sessionStage.show();
             }

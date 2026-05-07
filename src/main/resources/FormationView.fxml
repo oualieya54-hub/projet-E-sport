@@ -8,18 +8,15 @@
 <HBox stylesheets="@styles.css" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.FormationController">
     <!-- Sidebar -->
     <VBox prefWidth="250.0" styleClass="sidebar" spacing="10">
-        <Label text="GAME PILOT" styleClass="sidebar-title"/>
-        <Label text="MANAGER PRO" styleClass="sidebar-subtitle"/>
+        <Label text="Game Pilot" styleClass="sidebar-title"/>
         
         <Region prefHeight="30" />
         
-        <Button text="Home / Overview" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Tournaments" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Events" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Matches" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Formations" styleClass="nav-btn, active" prefWidth="210"/>
-        <Button text="Sessions" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Bets &amp; Odds" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Formation" style="-fx-background-color: #7c3aed; -fx-text-fill: white;" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Session" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Booking" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Evaluation" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Certification" styleClass="nav-btn" prefWidth="210"/>
     </VBox>
 
     <!-- Main Content -->

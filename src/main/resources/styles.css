@@ -69,12 +69,16 @@
 
 /* Inputs */
 .text-field, .text-area, .date-picker {
-    -fx-background-color: #1c1d26;
+    -fx-control-inner-background: #1c1d26;
+    -fx-background-color: #383a4a, #1c1d26;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 5, 4;
     -fx-text-fill: white;
-    -fx-border-color: #383a4a;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
     -fx-padding: 5 10;
+}
+
+.text-area .content {
+    -fx-background-color: transparent;
 }
 
 .combo-box {
