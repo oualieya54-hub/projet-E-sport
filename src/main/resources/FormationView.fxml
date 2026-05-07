@@ -63,6 +63,7 @@
                         <TableColumn fx:id="colTitre" prefWidth="120.0" text="Titre" />
                         <TableColumn fx:id="colJeu" prefWidth="100.0" text="Jeu" />
                         <TableColumn fx:id="colNiveau" prefWidth="80.0" text="Niveau" />
+                        <TableColumn fx:id="colDuree" prefWidth="70.0" text="Durée" />
                         <TableColumn fx:id="colPrix" prefWidth="70.0" text="Prix" />
                         <TableColumn fx:id="colStatut" prefWidth="80.0" text="Statut" />
                         <TableColumn fx:id="colDate" prefWidth="100.0" text="Date" />
