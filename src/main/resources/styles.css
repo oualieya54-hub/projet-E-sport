@@ -78,7 +78,12 @@
 }
 
 .text-area .content {
-    -fx-background-color: transparent;
+    -fx-background-color: #1c1d26;
+    -fx-text-fill: white;
+}
+
+.text-area:focused .content {
+    -fx-background-color: #1c1d26;
 }
 
 .combo-box {
