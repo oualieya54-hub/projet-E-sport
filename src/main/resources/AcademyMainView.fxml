@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<HBox stylesheets="@styles.css" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.AcademyMainController">
+    <!-- Sidebar -->
+    <VBox prefWidth="250.0" styleClass="sidebar" spacing="10">
+        <Label text="Game Pilot" styleClass="sidebar-title" />
+        
+        <Region prefHeight="30" />
+        
+        <Button text="Formation" onAction="#navigateToFormation" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Session" onAction="#navigateToSession" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Booking" onAction="#navigateToBooking" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Evaluation" onAction="#navigateToEvaluation" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Certification" onAction="#navigateToCertification" styleClass="nav-btn" prefWidth="210"/>
+    </VBox>
+
+    <!-- Main Content -->
+    <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #161722; -fx-padding: 40;" spacing="30">
+        <VBox spacing="5">
+            <Label text="Academy &amp; Coaching" styleClass="card-title">
+                <font><Font size="32.0" /></font>
+            </Label>
+            <Label text="Manage your eSports educational module from one place." styleClass="card-subtitle" />
+        </VBox>
+
+        <FlowPane hgap="30" vgap="30">
+            <!-- Formation Card -->
+            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToFormation">
+                <Label text="📚" styleClass="dash-icon" />
+                <Label text="Formations" styleClass="dash-title" />
+            </VBox>
+
+            <!-- Session Card -->
+            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToSession">
+                <Label text="📅" styleClass="dash-icon" />
+                <Label text="Sessions" styleClass="dash-title" />
+            </VBox>
+
+            <!-- Booking Card -->
+            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToBooking">
+                <Label text="🎟️" styleClass="dash-icon" />
+                <Label text="Bookings" styleClass="dash-title" />
+            </VBox>
+
+            <!-- Evaluation Card -->
+            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToEvaluation">
+                <Label text="⭐" styleClass="dash-icon" />
+                <Label text="Evaluations" styleClass="dash-title" />
+            </VBox>
+
+            <!-- Certification Card -->
+            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToCertification">
+                <Label text="🏆" styleClass="dash-icon" />
+                <Label text="Certifications" styleClass="dash-title" />
+            </VBox>
+        </FlowPane>
+    </VBox>
+</HBox>
