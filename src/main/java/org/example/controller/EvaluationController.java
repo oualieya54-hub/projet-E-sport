@@ -174,6 +174,14 @@ public class EvaluationController {
         }
     }
 
+    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
     // --- Backend delegates ---
     public void create(Evaluation e) throws SQLException { evaluationService.create(e); }
     public List<Evaluation> getAll() throws SQLException { return evaluationService.getAll(); }

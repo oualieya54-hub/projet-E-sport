@@ -9,6 +9,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Booking;
 import org.example.Service.BookingService;
 
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -146,6 +152,36 @@ public class BookingController {
         bookingTable.getSelectionModel().clearSelection();
     }
 
+    @FXML
+    void navigateToFormation(ActionEvent event) { switchScene(event, "/FormationView.fxml"); }
+
+    @FXML
+    void navigateToSession(ActionEvent event) { switchScene(event, "/SessionView.fxml"); }
+
+    @FXML
+    void navigateToBooking(ActionEvent event) { switchScene(event, "/BookingView.fxml"); }
+
+    @FXML
+    void navigateToEvaluation(ActionEvent event) { switchScene(event, "/EvaluationView.fxml"); }
+
+    @FXML
+    void navigateToCertification(ActionEvent event) { switchScene(event, "/CertificationView.fxml"); }
+
+    private void switchScene(ActionEvent event, String fxmlPath) {
+        try {
+            URL url = getClass().getResource(fxmlPath);
+            if (url == null) {
+                System.err.println("FXML file not found: " + fxmlPath);
+                return;
+            }
+            Parent root = FXMLLoader.load(url);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showAlert(String title, String header, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -154,7 +190,6 @@ public class BookingController {
         alert.showAndWait();
     }
 
-    // --- Backend delegates ---
     public void book(Booking b) throws SQLException { bookingService.book(b); }
     public Booking getById(int idBooking) throws SQLException { return bookingService.getById(idBooking); }
     public List<Booking> getByEleve(int idEleve) throws SQLException { return bookingService.getByEleve(idEleve); }

@@ -12,6 +12,7 @@ import org.example.Service.FormationService;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -343,5 +344,13 @@ public class FormationController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

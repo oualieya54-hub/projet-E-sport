@@ -9,6 +9,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Certification;
 import org.example.Service.CertificationService;
 
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -139,6 +145,36 @@ public class CertificationController {
         scoreField.clear();
         datePicker.setValue(null);
         certificationTable.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    void navigateToFormation(ActionEvent event) { switchScene(event, "/FormationView.fxml"); }
+
+    @FXML
+    void navigateToSession(ActionEvent event) { switchScene(event, "/SessionView.fxml"); }
+
+    @FXML
+    void navigateToBooking(ActionEvent event) { switchScene(event, "/BookingView.fxml"); }
+
+    @FXML
+    void navigateToEvaluation(ActionEvent event) { switchScene(event, "/EvaluationView.fxml"); }
+
+    @FXML
+    void navigateToCertification(ActionEvent event) { switchScene(event, "/CertificationView.fxml"); }
+
+    private void switchScene(ActionEvent event, String fxmlPath) {
+        try {
+            URL url = getClass().getResource(fxmlPath);
+            if (url == null) {
+                System.err.println("FXML file not found: " + fxmlPath);
+                return;
+            }
+            Parent root = FXMLLoader.load(url);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showAlert(String title, String header, String content, Alert.AlertType type) {
