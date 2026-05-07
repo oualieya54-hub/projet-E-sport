@@ -3,17 +3,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="700.0" prefWidth="1000.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@style.css" styleClass="main-app" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.MainController">
     <top>
-        <HBox style="-fx-background-color: #0d0d0d; -fx-padding: 15;">
-            <Label text="⚡ WAHCH L GAMING E-SHOP ⚡" style="-fx-font-size: 24px; -fx-text-fill: #3f51b5; -fx-font-weight: bold;"/>
+        <HBox styleClass="header-bar" spacing="20" alignment="CENTER_LEFT">
+            <Label text="🚀 GAME PILOT ADMIN" styleClass="header-logo" HBox.hgrow="ALWAYS"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="Ouvrir la Boutique Client" onAction="#openBoutique" styleClass="btn, btn-outline"/>
         </HBox>
     </top>
 
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE">
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="main-tab-pane">
             <tabs>
-                <Tab text="🎮 PRODUITS">
+                <Tab text="📊 DASHBOARD">
+                    <content>
+                        <fx:include source="DashboardView.fxml"/>
+                    </content>
+                </Tab>
+                <Tab text="🎮 PRODUITS &amp; MÉTIERS">
                     <content>
                         <fx:include source="ProduitView.fxml"/>
                     </content>

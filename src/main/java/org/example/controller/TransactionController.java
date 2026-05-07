@@ -2,28 +2,24 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import org.example.Service.TransactionService;
 import org.example.Model.Transaction;
+import org.example.Service.TransactionService;
 
 public class TransactionController {
 
     @FXML private TableView<Transaction> transactionTable;
-    @FXML private Button updateButton;
-    @FXML private Button deleteButton;
-
-    private TransactionService transactionDAO;
-    private Transaction selectedTransaction;
+    private TransactionService transactionService;
 
     @FXML
     public void initialize() {
-        transactionDAO = new TransactionService();
+        transactionService = new TransactionService();
         loadTransactions();
     }
 
-    private void loadTransactions() {
-        System.out.println("Chargement des transactions depuis la BDD...");
+    @FXML
+    public void loadTransactions() {
         try {
-            transactionTable.getItems().setAll(transactionDAO.findAll());
+            transactionTable.getItems().setAll(transactionService.findAll());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,9 +27,14 @@ public class TransactionController {
 
     @FXML
     private void handleDelete() {
-        if (selectedTransaction != null) {
-            transactionDAO.supprimer(selectedTransaction.getIdTransaction());
-            loadTransactions();
+        Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            if (transactionService.supprimer(selected.getIdTransaction())) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setContentText("Transaction supprimée.");
+                alert.showAndWait();
+                loadTransactions();
+            }
         }
     }
 }

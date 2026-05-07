@@ -2,58 +2,63 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import org.example.Utils.MyDatabase;
-import org.example.Service.CommandeService;
 import org.example.Model.Commande;
-import java.sql.SQLException;
+import org.example.Service.CommandeService;
 
 public class CommandeController {
 
     @FXML private TableView<Commande> commandeTable;
-    @FXML private Button addButton;
-    @FXML private Button updateButton;
-    @FXML private Button deleteButton;
-    @FXML private Button paiementStripButton;
-    @FXML private Button annulerRemboursementButton;
+    @FXML private ComboBox<String> statutInput;
 
-    private CommandeService commandeDAO;
-    private Commande selectedCommande;
+    private CommandeService commandeService;
 
     @FXML
     public void initialize() {
-        commandeDAO = new CommandeService();
+        commandeService = new CommandeService();
         loadCommandes();
     }
 
-    private void loadCommandes() {
+    @FXML
+    public void loadCommandes() {
         try {
-            System.out.println("Chargement des commandes depuis BDD...");
-            // commandeTable.getItems().setAll(commandeDAO.findAll());
+            commandeTable.getItems().setAll(commandeService.findAll());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void handlePaiementStripe() {
-        if (selectedCommande == null) {
-            showError("Sélectionnez une commande!");
+    private void handleChangerStatut() {
+        Commande selected = commandeTable.getSelectionModel().getSelectedItem();
+        if (selected == null || statutInput.getValue() == null) {
+            showError("Sélectionnez une commande et un statut.");
             return;
         }
 
-        // TODO: Implémenter logique Stripe plus tard
-        showInfo("✅ Simulation de paiement Stripe !");
+        String nouveauStatut = statutInput.getValue();
+        if (commandeService.changerStatut(selected.getIdCommande(), nouveauStatut)) {
+            if (nouveauStatut.equals("annulée")) {
+                showInfo("Commande annulée (Rollback de stock et points effectué).");
+            } else {
+                showInfo("Statut mis à jour !");
+            }
+            loadCommandes();
+        } else {
+            showError("Erreur lors du changement de statut.");
+        }
     }
 
     @FXML
-    private void handleAnnulerAvecRemboursement() {
-        if (selectedCommande == null) {
-            showError("Sélectionnez une commande!");
-            return;
+    private void handleDelete() {
+        Commande selected = commandeTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            if (commandeService.supprimer(selected.getIdCommande())) {
+                showInfo("Commande supprimée.");
+                loadCommandes();
+            } else {
+                showError("Erreur de suppression.");
+            }
         }
-
-        // TODO: Implémenter le remboursement plus tard
-        showInfo("💰 Simulation de Remboursement effectué!");
     }
 
     private void showError(String message) {
@@ -65,7 +70,7 @@ public class CommandeController {
 
     private void showInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
+        alert.setTitle("Info");
         alert.setContentText(message);
         alert.showAndWait();
     }

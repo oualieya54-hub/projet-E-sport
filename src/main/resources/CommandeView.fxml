@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 
-<VBox spacing="10" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.CommandeController">
-    <Label text="Gestion des Commandes" styleClass="label-title"/>
+<BorderPane styleClass="main-pane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.CommandeController">
+    <top>
+        <Label text="🛒 Historique des Commandes" styleClass="header-title" BorderPane.alignment="CENTER"/>
+    </top>
 
-    <HBox spacing="10">
-        <Button fx:id="addButton" text="Nouvelle Commande"/>
-        <Button fx:id="updateButton" text="Modifier Statut"/>
-        <Button fx:id="paiementStripButton" text="Payer (Stripe)" onAction="#handlePaiementStripe"/>
-        <Button fx:id="annulerRemboursementButton" text="Annuler &amp; Rembourser" onAction="#handleAnnulerAvecRemboursement" styleClass="button-danger"/>
-    </HBox>
+    <left>
+        <VBox spacing="12" styleClass="form-pane" prefWidth="300">
+            <Label text="Gérer le Statut" styleClass="form-title"/>
 
-    <TableView fx:id="commandeTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn text="ID Cmd" prefWidth="60">
-                <cellValueFactory><PropertyValueFactory property="idCommande" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="ID User" prefWidth="60">
-                <cellValueFactory><PropertyValueFactory property="idUser" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Total (€)" prefWidth="80">
-                <cellValueFactory><PropertyValueFactory property="montantTotal" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Points Utilsés" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="pointsUtilises" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Statut" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="statut" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Date" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="dateCommande" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Adresse" prefWidth="200">
-                <cellValueFactory><PropertyValueFactory property="adresseLivraison" /></cellValueFactory>
-            </TableColumn>
-        </columns>
-    </TableView>
-</VBox>
+            <ComboBox fx:id="statutInput" promptText="Nouveau Statut" styleClass="combo-box" maxWidth="Infinity">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="en_attente"/>
+                        <String fx:value="expédiée"/>
+                        <String fx:value="livrée"/>
+                        <String fx:value="annulée"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <Button text="Mettre à jour" onAction="#handleChangerStatut" styleClass="btn, btn-warning" maxWidth="Infinity"/>
+
+            <Separator style="-fx-padding: 15px 0;"/>
+            <Button text="Actualiser" onAction="#loadCommandes" styleClass="btn, btn-outline" maxWidth="Infinity"/>
+            <Button text="Supprimer" onAction="#handleDelete" styleClass="btn, btn-danger" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox styleClass="table-pane" BorderPane.alignment="CENTER">
+            <TableView fx:id="commandeTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="ID" prefWidth="50"><cellValueFactory><PropertyValueFactory property="idCommande" /></cellValueFactory></TableColumn>
+                    <TableColumn text="User ID" prefWidth="70"><cellValueFactory><PropertyValueFactory property="idUser" /></cellValueFactory></TableColumn>
+                    <TableColumn text="Total (€)" prefWidth="80"><cellValueFactory><PropertyValueFactory property="montantTotal" /></cellValueFactory></TableColumn>
+                    <TableColumn text="Pts Utilisés" prefWidth="90"><cellValueFactory><PropertyValueFactory property="pointsUtilises" /></cellValueFactory></TableColumn>
+                    <TableColumn text="Pts Gagnés" prefWidth="90"><cellValueFactory><PropertyValueFactory property="pointsGagnes" /></cellValueFactory></TableColumn>
+                    <TableColumn text="Statut" prefWidth="100"><cellValueFactory><PropertyValueFactory property="statut" /></cellValueFactory></TableColumn>
+                    <TableColumn text="Adresse" prefWidth="250"><cellValueFactory><PropertyValueFactory property="adresseLivraison" /></cellValueFactory></TableColumn>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="40" styleClass="dashboard-pane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.DashboardController">
+    <Label text="🚀 Dashboard Professionnel 🚀" styleClass="dashboard-title"/>
+
+    <HBox spacing="30" alignment="CENTER">
+        <VBox styleClass="card, card-blue">
+            <Label text="Total Produits" styleClass="card-title"/>
+            <Label fx:id="lblTotalProduits" text="0" styleClass="card-value"/>
+        </VBox>
+        <VBox styleClass="card, card-green">
+            <Label text="Total Commandes" styleClass="card-title"/>
+            <Label fx:id="lblTotalCommandes" text="0" styleClass="card-value"/>
+        </VBox>
+        <VBox styleClass="card, card-orange">
+            <Label text="Transactions" styleClass="card-title"/>
+            <Label fx:id="lblTotalTransactions" text="0" styleClass="card-value"/>
+        </VBox>
+    </HBox>
+
+    <Button text="🔄 Rafraîchir les statistiques" onAction="#loadStats" styleClass="btn, btn-primary"/>
+</VBox>

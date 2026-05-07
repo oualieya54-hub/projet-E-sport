@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane styleClass="main-pane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.BoutiqueController">
+    <top>
+        <HBox styleClass="header-bar" spacing="20" alignment="CENTER_LEFT">
+            <Label text="🛸 GAME PILOT - BOUTIQUE" styleClass="header-logo" HBox.hgrow="ALWAYS"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="User ID Connecté :" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+            <TextField fx:id="clientUserIdInput" text="1" styleClass="text-field" prefWidth="60"/>
+            <Button text="Recharger Profil" onAction="#loadData" styleClass="btn, btn-secondary"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 20;">
+            <FlowPane fx:id="produitsContainer" hgap="25" vgap="25" alignment="TOP_LEFT" />
+        </ScrollPane>
+    </center>
+
+    <right>
+        <VBox spacing="15" styleClass="form-pane" prefWidth="350">
+            <Label text="🛒 Mon Panier" styleClass="form-title"/>
+            <ListView fx:id="panierListView" VBox.vgrow="ALWAYS" />
+
+            <Label text="💖 Ma Wishlist" styleClass="form-title"/>
+            <ListView fx:id="wishlistListView" prefHeight="150" />
+
+            <Separator style="-fx-padding: 10px 0;"/>
+            <Label text="Passer ma Commande" styleClass="form-title"/>
+            <TextField fx:id="adresseInput" promptText="Adresse de livraison" text="123 Rue Cyberpunk" styleClass="text-field"/>
+            <TextField fx:id="paiementInput" text="Carte Bancaire" styleClass="text-field"/>
+            <TextField fx:id="pointsInput" promptText="Points à utiliser" text="0" styleClass="text-field"/>
+
+            <Button text="💳 Payer et Commander" onAction="#handleCommander" styleClass="btn, btn-primary" maxWidth="Infinity"/>
+        </VBox>
+    </right>
+</BorderPane>

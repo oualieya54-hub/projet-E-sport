@@ -3,39 +3,79 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 
-<VBox spacing="10" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.ProduitController">
-    <Label text="Gestion des Produits" styleClass="label-title"/>
+<BorderPane styleClass="main-pane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.ProduitController">
+    <top>
+        <Label text="📦 Gestion des Produits &amp; Métiers" styleClass="header-title" BorderPane.alignment="CENTER"/>
+    </top>
 
-    <HBox spacing="10">
-        <Button fx:id="addButton" text="Ajouter Produit" onAction="#handleAddProduit"/>
-        <Button fx:id="updateButton" text="Modifier"/>
-        <Button fx:id="deleteButton" text="Supprimer" styleClass="button-danger"/>
-    </HBox>
+    <left>
+        <VBox spacing="12" styleClass="form-pane" prefWidth="350">
+            <Label text="Ajouter / Modifier" styleClass="form-title"/>
 
-    <TableView fx:id="produitTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn text="ID" prefWidth="50">
-                <cellValueFactory><PropertyValueFactory property="idProduit" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Nom" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="nom" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Prix" prefWidth="80">
-                <cellValueFactory><PropertyValueFactory property="prix" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Stock" prefWidth="80">
-                <cellValueFactory><PropertyValueFactory property="stock" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Catégorie" prefWidth="120">
-                <cellValueFactory><PropertyValueFactory property="categorie" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Type" prefWidth="120">
-                <cellValueFactory><PropertyValueFactory property="typeProduit" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Statut" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="statut" /></cellValueFactory>
-            </TableColumn>
-        </columns>
-    </TableView>
-</VBox>
+            <TextField fx:id="nomInput" promptText="Nom du produit" styleClass="text-field"/>
+            <TextField fx:id="descInput" promptText="Description" styleClass="text-field"/>
+
+            <HBox spacing="10">
+                <TextField fx:id="prixInput" promptText="Prix (€)" styleClass="text-field" HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="stockInput" promptText="Stock" styleClass="text-field" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <ComboBox fx:id="categorieInput" promptText="Catégorie" styleClass="combo-box" maxWidth="Infinity" editable="true">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Jeux Vidéo"/>
+                        <String fx:value="Accessoires"/>
+                        <String fx:value="Consoles"/>
+                        <String fx:value="Cartes Cadeaux"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <ComboBox fx:id="typeInput" promptText="Type Produit" styleClass="combo-box" maxWidth="Infinity">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="physique"/>
+                        <String fx:value="virtuel"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <ComboBox fx:id="statutInput" promptText="Statut" styleClass="combo-box" maxWidth="Infinity">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="disponible"/>
+                        <String fx:value="rupture"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10px 0 0 0;">
+                <Button fx:id="addButton" text="Ajouter" onAction="#handleAddProduit" styleClass="btn, btn-primary" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="updateButton" text="Modifier" onAction="#handleUpdateProduit" styleClass="btn, btn-secondary" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="deleteButton" text="Supprimer" onAction="#handleDeleteProduit" styleClass="btn, btn-danger" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="clearButton" text="Vider" onAction="#clearForm" styleClass="btn, btn-outline" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <!-- Integration des Metiers -->
+            <Separator style="-fx-padding: 15px 0;"/>
+            <Label text="🔥 Métier: Promotions" styleClass="form-title"/>
+
+            <HBox spacing="10">
+                <TextField fx:id="promoPctInput" promptText="Réduction %" styleClass="text-field" HBox.hgrow="ALWAYS"/>
+                <Button text="Appliquer" onAction="#handleAppliquerPromo" styleClass="btn, btn-warning"/>
+            </HBox>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox styleClass="table-pane" BorderPane.alignment="CENTER">
+            <ListView fx:id="produitList" VBox.vgrow="ALWAYS" />
+        </VBox>
+    </center>
+</BorderPane>
