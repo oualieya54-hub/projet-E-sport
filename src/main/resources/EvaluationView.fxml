@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox stylesheets="@styles.css" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.EvaluationController">
+    <!-- Sidebar -->
+    <VBox prefWidth="250.0" styleClass="sidebar" spacing="10">
+        <Label text="Game Pilot" styleClass="sidebar-title" />
+        
+        <Region prefHeight="30" />
+        
+        <Button text="Formation" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Session" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Booking" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Evaluation" style="-fx-background-color: #7c3aed; -fx-text-fill: white;" styleClass="nav-btn" prefWidth="210"/>
+        <Button text="Certification" styleClass="nav-btn" prefWidth="210"/>
+    </VBox>
+
+    <!-- Main Content -->
+    <HBox HBox.hgrow="ALWAYS" spacing="20" style="-fx-background-color: #161722; -fx-padding: 20;">
+        
+        <!-- Left Column: Table & Filters -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="card" spacing="15">
+            <Label text="Evaluations" styleClass="card-title"/>
+            
+            <TableView fx:id="evaluationTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                <columns>
+                  <TableColumn fx:id="colIdEvaluation" prefWidth="50.0" text="ID Eval" />
+                  <TableColumn fx:id="colIdBooking" prefWidth="80.0" text="ID Booking" />
+                  <TableColumn fx:id="colNote" prefWidth="80.0" text="Note" />
+                  <TableColumn fx:id="colCommentaire" prefWidth="250.0" text="Commentaire" />
+                  <TableColumn fx:id="colDateEval" prefWidth="120.0" text="Date Evaluation" />
+                </columns>
+                 <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                 </columnResizePolicy>
+            </TableView>
+        </VBox>
+        
+        <!-- Right Column: Form -->
+        <VBox prefWidth="350.0" styleClass="card" spacing="10">
+            <Label text="Evaluation Details" styleClass="card-title"/>
+            <Label text="Select a record or create a new one." styleClass="card-subtitle"/>
+            
+            <HBox spacing="10">
+                <VBox prefWidth="150" spacing="5">
+                    <Label text="ID Booking:" styleClass="label-white"/>
+                    <TextField fx:id="idBookingField" styleClass="text-field"/>
+                </VBox>
+                <VBox prefWidth="150" spacing="5">
+                    <Label text="Note:" styleClass="label-white"/>
+                    <TextField fx:id="noteField" promptText="ex: 10" styleClass="text-field"/>
+                </VBox>
+            </HBox>
+            
+            <Label text="Commentaire:" styleClass="label-white"/>
+            <TextArea fx:id="commentaireArea" prefHeight="100.0" wrapText="true" styleClass="text-area"/>
+            
+            <Label text="Date Evaluation:" styleClass="label-white"/>
+            <DatePicker fx:id="dateEvalPicker" prefWidth="310.0" styleClass="date-picker"/>
+            
+            <Region prefHeight="10" />
+            
+            <HBox spacing="10">
+                <Button text="Add" onAction="#handleAdd" styleClass="btn-update" prefWidth="100" prefHeight="35"/>
+                <Button text="Update" onAction="#handleUpdate" styleClass="btn-update" prefWidth="100" prefHeight="35"/>
+                <Button text="Delete" onAction="#handleDelete" styleClass="btn-delete" prefWidth="100" prefHeight="35"/>
+            </HBox>
+            
+            <Button text="Clear Form" onAction="#handleReset" styleClass="btn-clear" prefWidth="320" prefHeight="35">
+                <VBox.margin><Insets top="5"/></VBox.margin>
+            </Button>
+            
+        </VBox>
+        
+    </HBox>
+</HBox>
