@@ -13,17 +13,25 @@ public class MainApp {
 
     // The actual JavaFX Application logic is kept inside this static inner class
     public static class App extends Application {
+        private static Stage primaryStage;
+
         @Override
-        public void start(Stage primaryStage) throws Exception {
-            // Load the UserView interface we created
-            Parent root = FXMLLoader.load(getClass().getResource("/UserView.fxml"));
-            
-            Scene scene = new Scene(root);
-            
-            // Setup the primary stage
-            primaryStage.setTitle("E-SPORT User Management");
-            primaryStage.setScene(scene);
+        public void start(Stage stage) throws Exception {
+            primaryStage = stage;
+            // Load the Login interface initially
+            switchScene("/LoginView.fxml", "E-SPORT - Login");
             primaryStage.show();
+        }
+
+        public static void switchScene(String fxmlFile, String title) {
+            try {
+                Parent root = FXMLLoader.load(App.class.getResource(fxmlFile));
+                Scene scene = new Scene(root);
+                primaryStage.setTitle(title);
+                primaryStage.setScene(scene);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
