@@ -32,20 +32,20 @@
                 <HBox spacing="10">
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="ID Elève:" styleClass="label-white" />
-                        <TextField fx:id="idEleveField" />
+                        <TextField fx:id="idEleveField" promptText="Ex: 42" />
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="ID Form.:" styleClass="label-white" />
-                        <TextField fx:id="idFormationField" />
+                        <TextField fx:id="idFormationField" promptText="Ex: 5" />
                     </VBox>
                 </HBox>
                 <VBox spacing="5">
                     <Label text="Niveau:" styleClass="label-white" />
-                    <ComboBox fx:id="niveauCombo" maxWidth="Infinity" />
+                    <ComboBox fx:id="niveauCombo" maxWidth="Infinity" promptText="Sélectionner..." />
                 </VBox>
                 <VBox spacing="5">
                     <Label text="Score Final:" styleClass="label-white" />
-                    <TextField fx:id="scoreField" />
+                    <TextField fx:id="scoreField" promptText="Ex: 92.5" />
                 </VBox>
                 <VBox spacing="5">
                     <Label text="Date d'Obtention:" styleClass="label-white" />

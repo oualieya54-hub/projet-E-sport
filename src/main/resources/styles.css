@@ -153,15 +153,45 @@
 /* Inputs */
 .text-field, .text-area, .combo-box, .date-picker {
     -fx-background-color: #1c2436;
-    -fx-border-color: #2a344a;
-    -fx-text-fill: white;
+    -fx-border-color: #3f4a61;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #8b9cb0;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-padding: 8;
 }
 
-.text-field:focused, .combo-box:focused {
+.text-field:focused, .combo-box:focused, .date-picker:focused {
     -fx-border-color: #00bcd4;
+}
+
+.label-white {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+}
+
+/* ComboBox Styles */
+.combo-box .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #1c2436;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #00bcd4;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #1c2436;
+    -fx-border-color: #00bcd4;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #00bcd4;
 }
 
 /* Buttons */

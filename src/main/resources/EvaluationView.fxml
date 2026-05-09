@@ -31,15 +31,15 @@
             <VBox spacing="15" VBox.vgrow="ALWAYS">
                 <VBox spacing="5">
                     <Label text="ID Réservation:" styleClass="label-white" />
-                    <TextField fx:id="idBookingField" />
+                    <TextField fx:id="idBookingField" promptText="Ex: 105" />
                 </VBox>
                 <VBox spacing="5">
                     <Label text="Note (0-100):" styleClass="label-white" />
-                    <TextField fx:id="noteField" />
+                    <TextField fx:id="noteField" promptText="Ex: 85" />
                 </VBox>
                 <VBox spacing="5">
                     <Label text="Commentaire:" styleClass="label-white" />
-                    <TextArea fx:id="commentaireArea" prefHeight="100" wrapText="true" />
+                    <TextArea fx:id="commentaireArea" prefHeight="100" wrapText="true" promptText="Feedback sur la performance de l'élève..." />
                 </VBox>
                 <VBox spacing="5">
                     <Label text="Date Évaluation:" styleClass="label-white" />

@@ -32,11 +32,11 @@
                 <HBox spacing="10">
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="ID Session:" styleClass="label-white" />
-                        <TextField fx:id="idSessionField" />
+                        <TextField fx:id="idSessionField" promptText="Ex: 10" />
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="ID Elève:" styleClass="label-white" />
-                        <TextField fx:id="idEleveField" />
+                        <TextField fx:id="idEleveField" promptText="Ex: 42" />
                     </VBox>
                 </HBox>
                 <VBox spacing="5">
@@ -45,11 +45,11 @@
                 </VBox>
                 <VBox spacing="5">
                     <Label text="Statut Paiement:" styleClass="label-white" />
-                    <ComboBox fx:id="statutPaiementCombo" maxWidth="Infinity" />
+                    <ComboBox fx:id="statutPaiementCombo" maxWidth="Infinity" promptText="Sélectionner..." />
                 </VBox>
                 <VBox spacing="5">
                     <Label text="Mode de Paiement:" styleClass="label-white" />
-                    <ComboBox fx:id="modePaiementCombo" maxWidth="Infinity" />
+                    <ComboBox fx:id="modePaiementCombo" maxWidth="Infinity" promptText="Sélectionner..." />
                 </VBox>
             </VBox>
 

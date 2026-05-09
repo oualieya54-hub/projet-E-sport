@@ -36,45 +36,45 @@
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="Heure:" styleClass="label-white" />
-                        <TextField fx:id="timeField" promptText="HH:mm" />
+                        <TextField fx:id="timeField" promptText="HH:mm (Ex: 14:30)" />
                     </VBox>
                 </HBox>
                 <VBox spacing="5">
                     <Label text="Jeu / Titre:" styleClass="label-white" />
-                    <TextField fx:id="jeuField" />
+                    <TextField fx:id="jeuField" promptText="Ex: Stratégies avancées LoL" />
                 </VBox>
                 <HBox spacing="10">
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="Prix:" styleClass="label-white" />
-                        <TextField fx:id="prixField" />
+                        <TextField fx:id="prixField" promptText="Ex: 50.0" />
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="Durée (min):" styleClass="label-white" />
-                        <TextField fx:id="dureeField" />
+                        <TextField fx:id="dureeField" promptText="Ex: 60" />
                     </VBox>
                 </HBox>
                 <HBox spacing="10">
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="Capacité:" styleClass="label-white" />
-                        <TextField fx:id="capaciteField" />
+                        <TextField fx:id="capaciteField" promptText="Ex: 10" />
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="Type:" styleClass="label-white" />
-                        <ComboBox fx:id="typeCombo" maxWidth="Infinity" />
+                        <ComboBox fx:id="typeCombo" maxWidth="Infinity" promptText="Sélectionner..." />
                     </VBox>
                 </HBox>
                 <VBox spacing="5">
                     <Label text="Statut:" styleClass="label-white" />
-                    <ComboBox fx:id="statutCombo" maxWidth="Infinity" />
+                    <ComboBox fx:id="statutCombo" maxWidth="Infinity" promptText="Sélectionner..." />
                 </VBox>
                 <HBox spacing="10">
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="ID Coach:" styleClass="label-white" />
-                        <TextField fx:id="idCoachField" />
+                        <TextField fx:id="idCoachField" promptText="Ex: 1" />
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="ID Formation:" styleClass="label-white" />
-                        <TextField fx:id="idFormationField" />
+                        <TextField fx:id="idFormationField" promptText="Ex: 1" />
                     </VBox>
                 </HBox>
             </VBox>

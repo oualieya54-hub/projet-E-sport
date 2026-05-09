@@ -307,6 +307,7 @@ public class SessionController {
         statutCombo.getSelectionModel().clearSelection();
         idCoachField.clear();
         idFormationField.clear();
+        sessionListView.getSelectionModel().clearSelection();
     }
 
     @FXML

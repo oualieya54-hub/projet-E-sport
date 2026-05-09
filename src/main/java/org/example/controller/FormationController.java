@@ -206,7 +206,7 @@ public class FormationController {
                         currentCoachId,
                         dateDebutPicker.getValue(),
                         statutCombo.getValue() != null ? statutCombo.getValue() : "brouillon",
-                        Integer.parseInt(sessionsField.getText())
+                        0 // Default to 0 sessions for new formation
                 );
 
                 this.create(newFormation);
@@ -239,7 +239,7 @@ public class FormationController {
                 selected.setPrix(Float.parseFloat(prixField.getText()));
                 selected.setDateDebut(dateDebutPicker.getValue());
                 selected.setStatut(statutCombo.getValue());
-                selected.setNombreSessions(Integer.parseInt(sessionsField.getText()));
+                // nombreSessions is usually read-only or updated via sessions module
 
                 this.update(selected);
                 loadData(); // Refresh table
@@ -276,7 +276,6 @@ public class FormationController {
 
     @FXML
     void handleReset(ActionEvent event) {
-        formationListView.getSelectionModel().clearSelection();
         titreField.clear();
         descArea.clear();
         jeuCombo.getSelectionModel().clearSelection();
@@ -285,7 +284,8 @@ public class FormationController {
         prixField.clear();
         dateDebutPicker.setValue(null);
         statutCombo.getSelectionModel().clearSelection();
-        sessionsField.clear();
+        sessionsField.setText("0");
+        formationListView.getSelectionModel().clearSelection();
     }
 
     @FXML
@@ -325,18 +325,17 @@ public class FormationController {
     private boolean validateInput() {
         if (titreField.getText().trim().isEmpty() || jeuCombo.getValue() == null ||
             niveauCombo.getValue() == null || dureeField.getText().trim().isEmpty() ||
-            prixField.getText().trim().isEmpty() || sessionsField.getText().trim().isEmpty()) {
+            prixField.getText().trim().isEmpty() || dateDebutPicker.getValue() == null) {
             
-            showAlert("Champs requis", "Informations manquantes", "Veuillez remplir tous les champs obligatoires.", Alert.AlertType.WARNING);
+            showAlert("Champs requis", "Informations manquantes", "Veuillez remplir tous les champs obligatoires (Titre, Jeu, Niveau, Prix, Durée, Date).", Alert.AlertType.WARNING);
             return false;
         }
 
         try {
             Integer.parseInt(dureeField.getText());
-            Integer.parseInt(sessionsField.getText());
             Float.parseFloat(prixField.getText());
         } catch (NumberFormatException e) {
-            showAlert("Format invalide", "Erreur de format", "Durée, Prix et Nombre de sessions doivent être des nombres.", Alert.AlertType.WARNING);
+            showAlert("Format invalide", "Erreur de format", "Durée et Prix doivent être des nombres.", Alert.AlertType.WARNING);
             return false;
         }
 
