@@ -131,7 +131,7 @@ public class FormationController {
                     Label badge = new Label(item.getStatut().toUpperCase());
                     badge.getStyleClass().add("badge");
                     if ("active".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-active");
-                    else if ("archivée".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-danger");
+                    else if ("archive".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-danger");
                     else badge.getStyleClass().add("badge-warning");
 
                     footer.getChildren().add(badge);
@@ -156,7 +156,7 @@ public class FormationController {
         ObservableList<String> levels = FXCollections.observableArrayList("débutant", "intermédiaire", "avancé");
         niveauCombo.setItems(levels);
 
-        ObservableList<String> statusList = FXCollections.observableArrayList("brouillon", "active", "archivée");
+        ObservableList<String> statusList = FXCollections.observableArrayList("projet", "active", "archive");
         statutCombo.setItems(statusList);
 
         // 4. Load initial data

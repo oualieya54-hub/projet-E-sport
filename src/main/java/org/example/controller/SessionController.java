@@ -138,8 +138,8 @@ public class SessionController {
                     HBox footer = new HBox(10);
                     Label badge = new Label(item.getStatut().toUpperCase());
                     badge.getStyleClass().add("badge");
-                    if ("planifiée".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-active");
-                    else if ("annulée".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-danger");
+                    if ("prévu".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-active");
+                    else if ("annulé".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-danger");
                     else badge.getStyleClass().add("badge-warning");
 
                     footer.getChildren().add(badge);
@@ -159,7 +159,7 @@ public class SessionController {
 
         // 3. Initialize ComboBox items
         typeCombo.setItems(FXCollections.observableArrayList("individuel", "groupe"));
-        statutCombo.setItems(FXCollections.observableArrayList("planifiée", "terminée", "annulée"));
+        statutCombo.setItems(FXCollections.observableArrayList("prévu", "terminé", "annulé"));
         
         // Populate Coaches (Dummy names for now)
         coachCombo.setItems(FXCollections.observableArrayList("Coach Karim", "Coach Slim", "Coach Amina", "Coach Yassine"));
