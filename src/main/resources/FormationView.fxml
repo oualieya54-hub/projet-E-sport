@@ -11,8 +11,6 @@
         <Label text="🚀" styleClass="header-rocket" />
         <Region prefWidth="10" />
         <Label text="GAME PILOT ADMIN" styleClass="header-title" />
-        <Region HBox.hgrow="ALWAYS" />
-        <Button text="Ouvrir la Boutique Client" styleClass="btn-client-shop" />
     </HBox>
 
     <!-- Navigation Tabs -->
