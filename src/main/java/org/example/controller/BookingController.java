@@ -9,6 +9,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Booking;
 import org.example.Service.BookingService;
 
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -19,17 +23,13 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BookingController {
     private BookingService bookingService;
 
-    @FXML private TableView<Booking> bookingTable;
-    @FXML private TableColumn<Booking, Integer> colIdBooking;
-    @FXML private TableColumn<Booking, Integer> colIdSession;
-    @FXML private TableColumn<Booking, Integer> colIdEleve;
-    @FXML private TableColumn<Booking, String> colStatutPaiement;
-    @FXML private TableColumn<Booking, LocalDateTime> colDateReservation;
-    @FXML private TableColumn<Booking, String> colModePaiement;
+    @FXML private ListView<Booking> bookingListView;
+    @FXML private TextField searchField;
 
     @FXML private TextField idSessionField;
     @FXML private TextField idEleveField;
@@ -45,19 +45,62 @@ public class BookingController {
 
     @FXML
     public void initialize() {
-        colIdBooking.setCellValueFactory(new PropertyValueFactory<>("idBooking"));
-        colIdSession.setCellValueFactory(new PropertyValueFactory<>("idSession"));
-        colIdEleve.setCellValueFactory(new PropertyValueFactory<>("idEleve"));
-        colStatutPaiement.setCellValueFactory(new PropertyValueFactory<>("statutPaiement"));
-        colDateReservation.setCellValueFactory(new PropertyValueFactory<>("dateReservation"));
-        colModePaiement.setCellValueFactory(new PropertyValueFactory<>("modePaiement"));
+        // 1. Configure ListView CellFactory
+        bookingListView.setCellFactory(param -> new ListCell<Booking>() {
+            @Override
+            protected void updateItem(Booking item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    VBox card = new VBox(5);
+                    card.getStyleClass().add("list-card");
 
-        bookingTable.setItems(bookingList);
+                    HBox header = new HBox(10);
+                    Label title = new Label("Réservation #" + item.getIdBooking());
+                    title.getStyleClass().add("item-title");
+                    
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+                    
+                    Label mode = new Label(item.getModePaiement() != null ? item.getModePaiement().toUpperCase() : "N/A");
+                    mode.getStyleClass().add("item-title");
+                    mode.setStyle("-fx-text-fill: #e91e63;");
 
-        bookingTable.getSelectionModel().selectedItemProperty().addListener(
+                    header.getChildren().addAll(title, spacer, mode);
+
+                    String dateStr = item.getDateReservation() != null ? item.getDateReservation().toString().replace("T", " ") : "N/A";
+                    Label detail = new Label("Session: " + item.getIdSession() + " | Elève: " + item.getIdEleve() + " | " + dateStr);
+                    detail.getStyleClass().add("item-detail");
+
+                    HBox footer = new HBox(10);
+                    Label badge = new Label(item.getStatutPaiement() != null ? item.getStatutPaiement().toUpperCase() : "PENDING");
+                    badge.getStyleClass().add("badge");
+                    if ("confirmé".equalsIgnoreCase(item.getStatutPaiement())) badge.getStyleClass().add("badge-active");
+                    else if ("annulé".equalsIgnoreCase(item.getStatutPaiement())) badge.getStyleClass().add("badge-danger");
+                    else badge.getStyleClass().add("badge-warning");
+
+                    footer.getChildren().add(badge);
+
+                    card.getChildren().addAll(header, detail, footer);
+                    setGraphic(card);
+                }
+            }
+        });
+
+        bookingListView.setItems(bookingList);
+
+        // 2. Setup ListView selection listener to fill the form
+        bookingListView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showBookingDetails(newValue)
         );
 
+        // 3. Initialize ComboBox items
+        statutPaiementCombo.setItems(FXCollections.observableArrayList("en_attente", "confirmé", "annulé"));
+        modePaiementCombo.setItems(FXCollections.observableArrayList("carte", "virement", "espèces", "gratuit"));
+
+        // 4. Load data
         loadData();
     }
 
@@ -108,7 +151,7 @@ public class BookingController {
 
     @FXML
     void handleUpdate(ActionEvent event) {
-        Booking selected = bookingTable.getSelectionModel().getSelectedItem();
+        Booking selected = bookingListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
                 selected.setIdSession(Integer.parseInt(idSessionField.getText()));
@@ -129,7 +172,7 @@ public class BookingController {
 
     @FXML
     void handleDelete(ActionEvent event) {
-        Booking selected = bookingTable.getSelectionModel().getSelectedItem();
+        Booking selected = bookingListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
                 bookingService.cancel(selected.getIdBooking());
@@ -149,8 +192,25 @@ public class BookingController {
         dateReservationPicker.setValue(null);
         statutPaiementCombo.getSelectionModel().clearSelection();
         modePaiementCombo.getSelectionModel().clearSelection();
-        bookingTable.getSelectionModel().clearSelection();
+        bookingListView.getSelectionModel().clearSelection();
     }
+
+    @FXML
+    void handleFilter() {
+        String keyword = searchField.getText() != null ? searchField.getText().toLowerCase() : "";
+        try {
+            List<Booking> all = bookingService.getAll();
+            List<Booking> filtered = all.stream()
+                .filter(b -> keyword.isEmpty() || String.valueOf(b.getIdBooking()).contains(keyword) || (b.getStatutPaiement() != null && b.getStatutPaiement().toLowerCase().contains(keyword)))
+                .collect(Collectors.toList());
+            bookingList.setAll(filtered);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void navigateToDashboard(ActionEvent event) { switchScene(event, "/AcademyMainView.fxml"); }
 
     @FXML
     void navigateToFormation(ActionEvent event) { switchScene(event, "/FormationView.fxml"); }
