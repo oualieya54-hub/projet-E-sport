@@ -142,32 +142,41 @@ EvaluationController {
 
     @FXML
     void handleAdd(ActionEvent event) {
-        try {
-            Booking selectedBooking = bookingCombo.getValue();
-            Evaluation e = new Evaluation(
-                    selectedBooking != null ? selectedBooking.getIdBooking() : 0,
-                    Integer.parseInt(noteField.getText()),
-                    commentaireArea.getText()
-            );
-            if (dateEvalPicker.getValue() != null) {
-                e.setDateEval(dateEvalPicker.getValue().atTime(LocalTime.now()));
+        if (validateInput()) {
+            try {
+                Booking selectedBooking = bookingCombo.getValue();
+                Evaluation e = new Evaluation(
+                        selectedBooking.getIdBooking(),
+                        Integer.parseInt(noteField.getText()),
+                        commentaireArea.getText()
+                );
+                if (dateEvalPicker.getValue() != null) {
+                    e.setDateEval(dateEvalPicker.getValue().atTime(LocalTime.now()));
+                }
+                evaluationService.create(e);
+                loadData();
+                handleReset(null);
+                showAlert("Succès", "Évaluation ajoutée", "L'évaluation a été enregistrée.", Alert.AlertType.INFORMATION);
+            } catch (SQLException ex) {
+                showAlert("Erreur Base de Données", "Impossible d'ajouter l'évaluation", ex.getMessage(), Alert.AlertType.ERROR);
+            } catch (Exception ex) {
+                showAlert("Erreur", "Une erreur inattendue est survenue", ex.getMessage(), Alert.AlertType.ERROR);
             }
-            evaluationService.create(e);
-            loadData();
-            handleReset(null);
-            showAlert("Succès", "Évaluation ajoutée", "L'évaluation a été enregistrée.", Alert.AlertType.INFORMATION);
-        } catch (Exception ex) {
-            showAlert("Erreur", "Saisie invalide", ex.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     void handleUpdate(ActionEvent event) {
         Evaluation selected = evaluationListView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
+        if (selected == null) {
+            showAlert("Aucune sélection", "Veuillez sélectionner une évaluation", "Sélectionnez un élément dans la liste.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (validateInput()) {
             try {
                 Booking selectedBooking = bookingCombo.getValue();
-                selected.setIdBooking(selectedBooking != null ? selectedBooking.getIdBooking() : 0);
+                selected.setIdBooking(selectedBooking.getIdBooking());
                 selected.setNote(Integer.parseInt(noteField.getText()));
                 selected.setCommentaire(commentaireArea.getText());
                 if (dateEvalPicker.getValue() != null) {
@@ -176,8 +185,10 @@ EvaluationController {
                 evaluationService.update(selected);
                 loadData();
                 showAlert("Succès", "Évaluation mise à jour", null, Alert.AlertType.INFORMATION);
+            } catch (SQLException ex) {
+                showAlert("Erreur Base de Données", "Impossible de modifier l'évaluation", ex.getMessage(), Alert.AlertType.ERROR);
             } catch (Exception ex) {
-                showAlert("Erreur", "Mise à jour impossible", ex.getMessage(), Alert.AlertType.ERROR);
+                showAlert("Erreur", "Une erreur inattendue est survenue", ex.getMessage(), Alert.AlertType.ERROR);
             }
         }
     }
@@ -192,9 +203,32 @@ EvaluationController {
                 handleReset(null);
                 showAlert("Succès", "Évaluation supprimée", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur", "Suppression impossible", ex.getMessage(), Alert.AlertType.ERROR);
+                String msg = ex.getMessage();
+                showAlert("Erreur Base de Données", "Suppression impossible", msg, Alert.AlertType.ERROR);
             }
         }
+    }
+
+    private boolean validateInput() {
+        if (bookingCombo.getValue() == null || noteField.getText().trim().isEmpty() ||
+            commentaireArea.getText().trim().isEmpty() || dateEvalPicker.getValue() == null) {
+            
+            showAlert("Champs requis", "Informations manquantes", "Veuillez remplir tous les champs (Réservation, Note, Commentaire, Date).", Alert.AlertType.WARNING);
+            return false;
+        }
+
+        try {
+            int note = Integer.parseInt(noteField.getText());
+            if (note < 0 || note > 100) {
+                showAlert("Note invalide", "Valeur hors limite", "La note doit être un nombre entre 0 et 100 (ex: 85).", Alert.AlertType.WARNING);
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showAlert("Format invalide", "Vérifiez la note", "Le champ Note doit contenir uniquement des chiffres (ex: 90).", Alert.AlertType.WARNING);
+            return false;
+        }
+
+        return true;
     }
 
     @FXML

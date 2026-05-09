@@ -163,37 +163,7 @@ public class BookingController {
 
     @FXML
     void handleAdd(ActionEvent event) {
-        try {
-            // Student mapping
-            String eleveName = eleveCombo.getValue();
-            int eleveId = 42; 
-            if ("Sonia Mansour".equals(eleveName)) eleveId = 43;
-            else if ("Firas Gharbi".equals(eleveName)) eleveId = 44;
-            else if ("Yasmine Trabelsi".equals(eleveName)) eleveId = 45;
-
-            Session selectedSession = sessionCombo.getValue();
-
-            Booking b = new Booking(
-                    0,
-                    selectedSession != null ? selectedSession.getIdSession() : 0,
-                    eleveId,
-                    statutPaiementCombo.getValue() != null ? statutPaiementCombo.getValue() : "en_attente",
-                    dateReservationPicker.getValue() != null ? dateReservationPicker.getValue().atTime(LocalTime.now()) : LocalDateTime.now(),
-                    modePaiementCombo.getValue()
-            );
-            bookingService.book(b);
-            loadData();
-            handleReset(null);
-            showAlert("Succès", "Réservation ajoutée", null, Alert.AlertType.INFORMATION);
-        } catch (Exception ex) {
-            showAlert("Erreur", "Saisie invalide", ex.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    void handleUpdate(ActionEvent event) {
-        Booking selected = bookingListView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
+        if (validateInput()) {
             try {
                 // Student mapping
                 String eleveName = eleveCombo.getValue();
@@ -204,7 +174,46 @@ public class BookingController {
 
                 Session selectedSession = sessionCombo.getValue();
 
-                selected.setIdSession(selectedSession != null ? selectedSession.getIdSession() : 0);
+                Booking b = new Booking(
+                        0,
+                        selectedSession.getIdSession(),
+                        eleveId,
+                        statutPaiementCombo.getValue() != null ? statutPaiementCombo.getValue() : "en_attente",
+                        dateReservationPicker.getValue() != null ? dateReservationPicker.getValue().atTime(LocalTime.now()) : LocalDateTime.now(),
+                        modePaiementCombo.getValue()
+                );
+                bookingService.book(b);
+                loadData();
+                handleReset(null);
+                showAlert("Succès", "Réservation ajoutée", "La réservation a été enregistrée avec succès.", Alert.AlertType.INFORMATION);
+            } catch (SQLException ex) {
+                showAlert("Erreur Base de Données", "Impossible de réserver", ex.getMessage(), Alert.AlertType.ERROR);
+            } catch (Exception ex) {
+                showAlert("Erreur", "Saisie invalide", ex.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+    }
+
+    @FXML
+    void handleUpdate(ActionEvent event) {
+        Booking selected = bookingListView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Aucune sélection", "Veuillez sélectionner une réservation", "Sélectionnez un élément dans la liste.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (validateInput()) {
+            try {
+                // Student mapping
+                String eleveName = eleveCombo.getValue();
+                int eleveId = 42; 
+                if ("Sonia Mansour".equals(eleveName)) eleveId = 43;
+                else if ("Firas Gharbi".equals(eleveName)) eleveId = 44;
+                else if ("Yasmine Trabelsi".equals(eleveName)) eleveId = 45;
+
+                Session selectedSession = sessionCombo.getValue();
+
+                selected.setIdSession(selectedSession.getIdSession());
                 selected.setIdEleve(eleveId);
                 if (dateReservationPicker.getValue() != null) {
                     selected.setDateReservation(dateReservationPicker.getValue().atTime(LocalTime.now()));
@@ -214,6 +223,8 @@ public class BookingController {
                 bookingService.update(selected);
                 loadData();
                 showAlert("Succès", "Réservation mise à jour", null, Alert.AlertType.INFORMATION);
+            } catch (SQLException ex) {
+                showAlert("Erreur Base de Données", "Impossible de modifier", ex.getMessage(), Alert.AlertType.ERROR);
             } catch (Exception ex) {
                 showAlert("Erreur", "Mise à jour impossible", ex.getMessage(), Alert.AlertType.ERROR);
             }
@@ -230,9 +241,19 @@ public class BookingController {
                 handleReset(null);
                 showAlert("Succès", "Réservation supprimée", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur", "Suppression impossible", ex.getMessage(), Alert.AlertType.ERROR);
+                showAlert("Erreur Base de Données", "Suppression impossible", ex.getMessage(), Alert.AlertType.ERROR);
             }
         }
+    }
+
+    private boolean validateInput() {
+        if (dateReservationPicker.getValue() == null || sessionCombo.getValue() == null || 
+            eleveCombo.getValue() == null || modePaiementCombo.getValue() == null) {
+            
+            showAlert("Champs requis", "Informations manquantes", "Veuillez remplir tous les champs (Session, Élève, Date, Mode de Paiement).", Alert.AlertType.WARNING);
+            return false;
+        }
+        return true;
     }
 
     @FXML

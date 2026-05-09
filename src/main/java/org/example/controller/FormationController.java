@@ -214,7 +214,13 @@ public class FormationController {
                 handleReset(null);
                 showAlert("Succès", "Formation ajoutée", "La formation a été ajoutée avec succès.", Alert.AlertType.INFORMATION);
             } catch (SQLException e) {
-                showAlert("Erreur BD", "Erreur lors de l'ajout", e.getMessage(), Alert.AlertType.ERROR);
+                String msg = e.getMessage();
+                if (msg.contains("Data truncated for column 'statut'")) {
+                    msg = "Le statut choisi est trop long ou non supporté par la base de données.";
+                } else if (msg.contains("Duplicate entry")) {
+                    msg = "Une formation avec ce titre existe déjà.";
+                }
+                showAlert("Erreur Base de Données", "Impossible d'ajouter la formation", msg, Alert.AlertType.ERROR);
             } catch (NumberFormatException e) {
                 showAlert("Erreur de saisie", "Champs numériques invalides", "Veuillez vérifier la durée, le prix et le nombre de sessions.", Alert.AlertType.ERROR);
             }
@@ -245,7 +251,11 @@ public class FormationController {
                 loadData(); // Refresh table
                 showAlert("Succès", "Formation modifiée", "La formation a été mise à jour.", Alert.AlertType.INFORMATION);
             } catch (SQLException e) {
-                showAlert("Erreur BD", "Erreur lors de la modification", e.getMessage(), Alert.AlertType.ERROR);
+                String msg = e.getMessage();
+                if (msg.contains("Data truncated for column 'statut'")) {
+                    msg = "Le statut choisi est trop long ou non supporté par la base de données.";
+                }
+                showAlert("Erreur Base de Données", "Erreur lors de la modification", msg, Alert.AlertType.ERROR);
             } catch (NumberFormatException e) {
                 showAlert("Erreur de saisie", "Champs numériques invalides", "Veuillez vérifier la durée, le prix et le nombre de sessions.", Alert.AlertType.ERROR);
             }
@@ -335,11 +345,11 @@ public class FormationController {
             Integer.parseInt(dureeField.getText());
             float price = Float.parseFloat(prixField.getText());
             if (price < 0 || price > 10000) {
-                showAlert("Prix invalide", "Le prix est illogique", "Le prix doit être compris entre 0 et 10,000 TND.", Alert.AlertType.WARNING);
+                showAlert("Prix invalide", "Le prix est illogique", "Le prix doit être compris entre 0 et 10,000 TND (ex: 450.0).", Alert.AlertType.WARNING);
                 return false;
             }
         } catch (NumberFormatException e) {
-            showAlert("Format invalide", "Erreur de format", "Durée et Prix doivent être des nombres.", Alert.AlertType.WARNING);
+            showAlert("Format invalide", "Vérifiez vos saisies", "La Durée (ex: 20) et le Prix (ex: 300.0) doivent contenir uniquement des chiffres.", Alert.AlertType.WARNING);
             return false;
         }
 

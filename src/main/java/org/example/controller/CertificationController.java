@@ -158,38 +158,47 @@ public class CertificationController {
 
     @FXML
     void handleAdd(ActionEvent event) {
-        try {
-            // Student mapping
-            String eleveName = eleveCombo.getValue();
-            int eleveId = 42; 
-            if ("Sonia Mansour".equals(eleveName)) eleveId = 43;
-            else if ("Firas Gharbi".equals(eleveName)) eleveId = 44;
-            else if ("Yasmine Trabelsi".equals(eleveName)) eleveId = 45;
+        if (validateInput()) {
+            try {
+                // Student mapping
+                String eleveName = eleveCombo.getValue();
+                int eleveId = 42; 
+                if ("Sonia Mansour".equals(eleveName)) eleveId = 43;
+                else if ("Firas Gharbi".equals(eleveName)) eleveId = 44;
+                else if ("Yasmine Trabelsi".equals(eleveName)) eleveId = 45;
 
-            Formation selectedForm = formationCombo.getValue();
+                Formation selectedForm = formationCombo.getValue();
 
-            Certification c = new Certification(
-                    eleveId,
-                    selectedForm != null ? selectedForm.getIdFormation() : 0,
-                    niveauCombo.getValue(),
-                    Float.parseFloat(scoreField.getText())
-            );
-            if (datePicker.getValue() != null) {
-                c.setDateObtention(datePicker.getValue());
+                Certification c = new Certification(
+                        eleveId,
+                        selectedForm.getIdFormation(),
+                        niveauCombo.getValue(),
+                        Float.parseFloat(scoreField.getText())
+                );
+                if (datePicker.getValue() != null) {
+                    c.setDateObtention(datePicker.getValue());
+                }
+                certificationService.create(c);
+                loadData();
+                handleReset(null);
+                showAlert("Succès", "Certification ajoutée", "La certification a été enregistrée.", Alert.AlertType.INFORMATION);
+            } catch (SQLException ex) {
+                showAlert("Erreur Base de Données", "Impossible d'ajouter la certification", ex.getMessage(), Alert.AlertType.ERROR);
+            } catch (Exception ex) {
+                showAlert("Erreur", "Saisie invalide", ex.getMessage(), Alert.AlertType.ERROR);
             }
-            certificationService.create(c);
-            loadData();
-            handleReset(null);
-            showAlert("Succès", "Certification ajoutée", null, Alert.AlertType.INFORMATION);
-        } catch (Exception ex) {
-            showAlert("Erreur", "Saisie invalide", ex.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     void handleUpdate(ActionEvent event) {
         Certification selected = certificationListView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
+        if (selected == null) {
+            showAlert("Aucune sélection", "Veuillez sélectionner une certification", "Sélectionnez un élément dans la liste.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (validateInput()) {
             try {
                 // Student mapping
                 String eleveName = eleveCombo.getValue();
@@ -201,7 +210,7 @@ public class CertificationController {
                 Formation selectedForm = formationCombo.getValue();
 
                 selected.setIdEleve(eleveId);
-                selected.setIdFormation(selectedForm != null ? selectedForm.getIdFormation() : 0);
+                selected.setIdFormation(selectedForm.getIdFormation());
                 selected.setNiveauObtenu(niveauCombo.getValue());
                 selected.setScoreFinal(Float.parseFloat(scoreField.getText()));
                 selected.setDateObtention(datePicker.getValue());
@@ -209,6 +218,8 @@ public class CertificationController {
                 certificationService.update(selected);
                 loadData();
                 showAlert("Succès", "Certification mise à jour", null, Alert.AlertType.INFORMATION);
+            } catch (SQLException ex) {
+                showAlert("Erreur Base de Données", "Impossible de modifier la certification", ex.getMessage(), Alert.AlertType.ERROR);
             } catch (Exception ex) {
                 showAlert("Erreur", "Mise à jour impossible", ex.getMessage(), Alert.AlertType.ERROR);
             }
@@ -225,9 +236,32 @@ public class CertificationController {
                 handleReset(null);
                 showAlert("Succès", "Certification supprimée", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur", "Suppression impossible", ex.getMessage(), Alert.AlertType.ERROR);
+                showAlert("Erreur Base de Données", "Suppression impossible", ex.getMessage(), Alert.AlertType.ERROR);
             }
         }
+    }
+
+    private boolean validateInput() {
+        if (eleveCombo.getValue() == null || formationCombo.getValue() == null ||
+            niveauCombo.getValue() == null || scoreField.getText().trim().isEmpty() ||
+            datePicker.getValue() == null) {
+            
+            showAlert("Champs requis", "Informations manquantes", "Veuillez remplir tous les champs (Élève, Formation, Niveau, Score, Date).", Alert.AlertType.WARNING);
+            return false;
+        }
+
+        try {
+            float score = Float.parseFloat(scoreField.getText());
+            if (score < 0 || score > 100) {
+                showAlert("Score invalide", "Valeur hors limite", "Le score doit être compris entre 0 et 100 (ex: 95.5).", Alert.AlertType.WARNING);
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showAlert("Format invalide", "Vérifiez le score", "Le champ Score doit contenir uniquement des chiffres (ex: 80.0).", Alert.AlertType.WARNING);
+            return false;
+        }
+
+        return true;
     }
 
     @FXML

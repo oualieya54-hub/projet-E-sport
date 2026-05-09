@@ -262,7 +262,13 @@ public class SessionController {
                 handleReset(null);
                 showAlert("Succès", "Session ajoutée", "La session a été ajoutée avec succès.", Alert.AlertType.INFORMATION);
             } catch (SQLException e) {
-                showAlert("Erreur BD", "Erreur lors de l'ajout", e.getMessage(), Alert.AlertType.ERROR);
+                String msg = e.getMessage();
+                if (msg.contains("Data truncated for column 'statut'")) {
+                    msg = "Le statut choisi est trop long ou non supporté par la base de données.";
+                } else if (msg.contains("Duplicate entry")) {
+                    msg = "Cette session existe déjà (doublon).";
+                }
+                showAlert("Erreur Base de Données", "Impossible d'enregistrer les données", msg, Alert.AlertType.ERROR);
             } catch (DateTimeParseException e) {
                 showAlert("Erreur de format", "Heure invalide", "L'heure doit être au format HH:mm (ex: 14:30)", Alert.AlertType.ERROR);
             }
@@ -304,7 +310,11 @@ public class SessionController {
                 loadData();
                 showAlert("Succès", "Session modifiée", "La session a été mise à jour.", Alert.AlertType.INFORMATION);
             } catch (SQLException e) {
-                showAlert("Erreur BD", "Erreur lors de la modification", e.getMessage(), Alert.AlertType.ERROR);
+                String msg = e.getMessage();
+                if (msg.contains("Data truncated for column 'statut'")) {
+                    msg = "Le statut choisi est trop long ou non supporté par la base de données.";
+                }
+                showAlert("Erreur Base de Données", "Erreur lors de la modification", msg, Alert.AlertType.ERROR);
             } catch (DateTimeParseException e) {
                 showAlert("Erreur de format", "Heure invalide", "L'heure doit être au format HH:mm (ex: 14:30)", Alert.AlertType.ERROR);
             }
@@ -376,13 +386,13 @@ public class SessionController {
         try {
             float price = Float.parseFloat(prixField.getText());
             if (price < 0 || price > 5000) {
-                showAlert("Prix invalide", "Le prix est illogique", "Le prix d'une session doit être compris entre 0 et 5,000 TND.", Alert.AlertType.WARNING);
+                showAlert("Prix invalide", "Le prix est illogique", "Le prix doit être entre 0 et 5,000 TND (ex: 250.0).", Alert.AlertType.WARNING);
                 return false;
             }
             Integer.parseInt(dureeField.getText());
             Integer.parseInt(capaciteField.getText());
         } catch (NumberFormatException e) {
-            showAlert("Format invalide", "Erreur de format", "Les champs Prix, Durée et Capacité doivent être numériques.", Alert.AlertType.WARNING);
+            showAlert("Format invalide", "Vérifiez vos saisies", "Les champs Prix, Durée et Capacité doivent contenir uniquement des chiffres (ex: Prix: 150.0, Capacité: 20).", Alert.AlertType.WARNING);
             return false;
         }
 
