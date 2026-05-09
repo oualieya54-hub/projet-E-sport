@@ -279,6 +279,8 @@ public class SessionController {
 
         if (validateInput()) {
             try {
+                LocalDateTime dateTime = LocalDateTime.of(datePicker.getValue(), LocalTime.parse(timeField.getText()));
+                
                 // Coach mapping
                 String coachName = coachCombo.getValue();
                 int coachId = 1;
