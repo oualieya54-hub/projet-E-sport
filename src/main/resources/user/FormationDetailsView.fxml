@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #0b121e;" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.user.FormationDetailsController">
+    
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" prefHeight="100.0" spacing="20.0" style="-fx-background-color: #141c2b; -fx-padding: 0 40;">
+        <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <Label fx:id="titreLabel" style="-fx-text-fill: #00bcd4; -fx-font-size: 32; -fx-font-weight: bold;" text="NOM DE LA FORMATION" />
+            <Label fx:id="jeuLabel" style="-fx-text-fill: #b0b0b0; -fx-font-size: 16;" text="Jeu | Niveau" />
+        </VBox>
+        <Label fx:id="prixLabel" style="-fx-text-fill: #e91e63; -fx-font-size: 28; -fx-font-weight: bold;" text="0.0 TND" />
+        <Button onAction="#handleCancel" styleClass="btn-secondary" text="Retour" />
+    </HBox>
+
+    <HBox spacing="30.0" VBox.vgrow="ALWAYS" style="-fx-padding: 40;">
+        <!-- Left: Description -->
+        <VBox prefWidth="450.0" spacing="20.0">
+            <VBox spacing="10" styleClass="card">
+                <Label styleClass="card-title" text="📖 Description" />
+                <Label fx:id="descLabel" styleClass="label-white" wrapText="true" />
+            </VBox>
+            
+            <VBox spacing="15" styleClass="card">
+                <Label styleClass="card-title" text="✍️ Inscription Rapide" />
+                <VBox spacing="10">
+                    <Label text="Votre Nom:" styleClass="label-white" />
+                    <TextField fx:id="userNameField" promptText="Ex: Ahmed Ben Ali" styleClass="text-field-dark" />
+                    <Label text="Votre Email:" styleClass="label-white" />
+                    <TextField fx:id="userEmailField" promptText="Ex: ahmed@gmail.com" styleClass="text-field-dark" />
+                </VBox>
+                <Button onAction="#handleConfirmBooking" maxWidth="Infinity" styleClass="btn-primary" text="Confirmer mon Inscription" prefHeight="45" />
+            </VBox>
+        </VBox>
+
+        <!-- Right: Sessions Table -->
+        <VBox HBox.hgrow="ALWAYS" spacing="15.0" styleClass="card">
+            <Label styleClass="card-title" text="📅 Sessions programmées" />
+            <Label text="Voici les créneaux disponibles pour cette formation :" styleClass="card-subtitle" />
+            <TableView fx:id="sessionTable" styleClass="table-view-dark" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colDate" prefWidth="180" text="Date &amp; Heure" />
+                    <TableColumn fx:id="colType" prefWidth="100" text="Type" />
+                    <TableColumn fx:id="colCoach" prefWidth="150" text="Coach" />
+                </columns>
+            </TableView>
+            <Label text="* Une fois inscrit, ces sessions apparaîtront dans votre espace Live Coaching." style="-fx-text-fill: #00bcd4; -fx-font-size: 11; -fx-font-style: italic;" />
+        </VBox>
+    </HBox>
+</VBox>
