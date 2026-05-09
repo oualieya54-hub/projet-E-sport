@@ -45,6 +45,12 @@
                 <Label text="Inscriptions" styleClass="dash-summary-label" />
                 <Label text="145" styleClass="dash-summary-value" />
             </VBox>
+
+            <VBox styleClass="dash-summary-card, purple" prefWidth="280" onMouseClicked="#navigateToVision" style="-fx-cursor: hand;">
+                <Label text="LIVE COACHING" styleClass="dash-summary-label" />
+                <Label text="Vision" styleClass="dash-summary-value" style="-fx-font-size: 24;" />
+                <Label text="Rejoindre maintenant" style="-fx-text-fill: #00bcd4; -fx-font-size: 12;" />
+            </VBox>
         </HBox>
 
         <Region VBox.vgrow="ALWAYS" />
