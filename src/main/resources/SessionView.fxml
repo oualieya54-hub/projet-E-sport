@@ -69,12 +69,12 @@
                 </VBox>
                 <HBox spacing="10">
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
-                        <Label text="ID Coach:" styleClass="label-white" />
-                        <TextField fx:id="idCoachField" promptText="Ex: 1" />
+                        <Label text="Coach:" styleClass="label-white" />
+                        <ComboBox fx:id="coachCombo" maxWidth="Infinity" promptText="Choisir un coach..." />
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
-                        <Label text="ID Formation:" styleClass="label-white" />
-                        <TextField fx:id="idFormationField" promptText="Ex: 1" />
+                        <Label text="Formation:" styleClass="label-white" />
+                        <ComboBox fx:id="formationCombo" maxWidth="Infinity" promptText="Choisir une formation..." />
                     </VBox>
                 </HBox>
             </VBox>

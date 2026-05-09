@@ -7,7 +7,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Certification;
+import org.example.Model.Formation;
 import org.example.Service.CertificationService;
+import org.example.Service.FormationService;
+import javafx.util.StringConverter;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -30,16 +33,19 @@ public class CertificationController {
     @FXML private ListView<Certification> certificationListView;
     @FXML private TextField searchField;
 
-    @FXML private TextField idEleveField;
-    @FXML private TextField idFormationField;
+    @FXML private ComboBox<String> eleveCombo;
+    @FXML private ComboBox<Formation> formationCombo;
     @FXML private ComboBox<String> niveauCombo;
     @FXML private TextField scoreField;
     @FXML private DatePicker datePicker;
 
     private final ObservableList<Certification> certificationList = FXCollections.observableArrayList();
 
+    private final FormationService formationService;
+
     public CertificationController() {
         this.certificationService = new CertificationService();
+        this.formationService = new FormationService();
     }
 
     @FXML
@@ -96,6 +102,21 @@ public class CertificationController {
 
         // 3. Initialize ComboBox items
         niveauCombo.setItems(FXCollections.observableArrayList("Bronze", "Silver", "Gold", "Pro"));
+        
+        // Populate Students (Dummy)
+        eleveCombo.setItems(FXCollections.observableArrayList("Ahmed Ben Ali", "Sonia Mansour", "Firas Gharbi", "Yasmine Trabelsi"));
+
+        // Populate Formations
+        try {
+            List<Formation> formations = formationService.getAll();
+            formationCombo.setItems(FXCollections.observableArrayList(formations));
+            formationCombo.setConverter(new StringConverter<Formation>() {
+                @Override public String toString(Formation f) { return f == null ? "" : f.getTitre(); }
+                @Override public Formation fromString(String string) { return null; }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         // 4. Load data
         loadData();
@@ -112,8 +133,21 @@ public class CertificationController {
 
     private void showCertificationDetails(Certification c) {
         if (c != null) {
-            idEleveField.setText(String.valueOf(c.getIdEleve()));
-            idFormationField.setText(String.valueOf(c.getIdFormation()));
+            // Student mapping (dummy)
+            int eleveId = c.getIdEleve();
+            if (eleveId == 42) eleveCombo.getSelectionModel().select("Ahmed Ben Ali");
+            else if (eleveId == 43) eleveCombo.getSelectionModel().select("Sonia Mansour");
+            else if (eleveId == 44) eleveCombo.getSelectionModel().select("Firas Gharbi");
+            else eleveCombo.getSelectionModel().select("Yasmine Trabelsi");
+
+            // Formation selection
+            for (Formation f : formationCombo.getItems()) {
+                if (f.getIdFormation() == c.getIdFormation()) {
+                    formationCombo.getSelectionModel().select(f);
+                    break;
+                }
+            }
+            
             niveauCombo.getSelectionModel().select(c.getNiveauObtenu());
             scoreField.setText(String.valueOf(c.getScoreFinal()));
             datePicker.setValue(c.getDateObtention());
@@ -125,9 +159,18 @@ public class CertificationController {
     @FXML
     void handleAdd(ActionEvent event) {
         try {
+            // Student mapping
+            String eleveName = eleveCombo.getValue();
+            int eleveId = 42; 
+            if ("Sonia Mansour".equals(eleveName)) eleveId = 43;
+            else if ("Firas Gharbi".equals(eleveName)) eleveId = 44;
+            else if ("Yasmine Trabelsi".equals(eleveName)) eleveId = 45;
+
+            Formation selectedForm = formationCombo.getValue();
+
             Certification c = new Certification(
-                    Integer.parseInt(idEleveField.getText()),
-                    Integer.parseInt(idFormationField.getText()),
+                    eleveId,
+                    selectedForm != null ? selectedForm.getIdFormation() : 0,
                     niveauCombo.getValue(),
                     Float.parseFloat(scoreField.getText())
             );
@@ -148,8 +191,17 @@ public class CertificationController {
         Certification selected = certificationListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
-                selected.setIdEleve(Integer.parseInt(idEleveField.getText()));
-                selected.setIdFormation(Integer.parseInt(idFormationField.getText()));
+                // Student mapping
+                String eleveName = eleveCombo.getValue();
+                int eleveId = 42; 
+                if ("Sonia Mansour".equals(eleveName)) eleveId = 43;
+                else if ("Firas Gharbi".equals(eleveName)) eleveId = 44;
+                else if ("Yasmine Trabelsi".equals(eleveName)) eleveId = 45;
+
+                Formation selectedForm = formationCombo.getValue();
+
+                selected.setIdEleve(eleveId);
+                selected.setIdFormation(selectedForm != null ? selectedForm.getIdFormation() : 0);
                 selected.setNiveauObtenu(niveauCombo.getValue());
                 selected.setScoreFinal(Float.parseFloat(scoreField.getText()));
                 selected.setDateObtention(datePicker.getValue());
@@ -180,8 +232,8 @@ public class CertificationController {
 
     @FXML
     void handleReset(ActionEvent event) {
-        idEleveField.clear();
-        idFormationField.clear();
+        eleveCombo.getSelectionModel().clearSelection();
+        formationCombo.getSelectionModel().clearSelection();
         niveauCombo.getSelectionModel().clearSelection();
         scoreField.clear();
         datePicker.setValue(null);

@@ -7,7 +7,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Session;
+import org.example.Model.Formation;
 import org.example.Service.SessionService;
+import org.example.Service.FormationService;
+import javafx.util.StringConverter;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -30,9 +33,11 @@ import java.util.stream.Collectors;
 public class SessionController {
     
     private final SessionService sessionService;
+    private final FormationService formationService;
 
     public SessionController() {
         this.sessionService = new SessionService();
+        this.formationService = new FormationService();
     }
 
     // --- Backend methods ---
@@ -93,8 +98,8 @@ public class SessionController {
     @FXML private TextField capaciteField;
     @FXML private ComboBox<String> typeCombo;
     @FXML private ComboBox<String> statutCombo;
-    @FXML private TextField idCoachField;
-    @FXML private TextField idFormationField;
+    @FXML private ComboBox<String> coachCombo;
+    @FXML private ComboBox<Formation> formationCombo;
 
     // ObservableList for the TableView
     private final ObservableList<Session> sessionList = FXCollections.observableArrayList();
@@ -155,6 +160,21 @@ public class SessionController {
         // 3. Initialize ComboBox items
         typeCombo.setItems(FXCollections.observableArrayList("individuel", "groupe"));
         statutCombo.setItems(FXCollections.observableArrayList("planifiée", "terminée", "annulée"));
+        
+        // Populate Coaches (Dummy names for now)
+        coachCombo.setItems(FXCollections.observableArrayList("Coach Karim", "Coach Slim", "Coach Amina", "Coach Yassine"));
+        
+        // Populate Formations
+        try {
+            List<Formation> formations = formationService.getAll();
+            formationCombo.setItems(FXCollections.observableArrayList(formations));
+            formationCombo.setConverter(new StringConverter<Formation>() {
+                @Override public String toString(Formation f) { return f == null ? "" : f.getTitre(); }
+                @Override public Formation fromString(String string) { return null; }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         // 4. Load initial data
         loadData();
@@ -186,12 +206,23 @@ public class SessionController {
             capaciteField.setText(String.valueOf(session.getCapaciteMax()));
             typeCombo.getSelectionModel().select(session.getTypeSession());
             statutCombo.getSelectionModel().select(session.getStatut());
-            idCoachField.setText(String.valueOf(session.getIdCoach()));
             
-            if (session.getIdFormation() != null && session.getIdFormation() > 0) {
-                idFormationField.setText(String.valueOf(session.getIdFormation()));
+            // Selection Coach by name (simple mapping for now)
+            int coachId = session.getIdCoach();
+            if (coachId == 1) coachCombo.getSelectionModel().select("Coach Karim");
+            else if (coachId == 2) coachCombo.getSelectionModel().select("Coach Slim");
+            else if (coachId == 3) coachCombo.getSelectionModel().select("Coach Amina");
+            else coachCombo.getSelectionModel().select("Coach Yassine");
+            
+            if (session.getIdFormation() != null) {
+                for (Formation f : formationCombo.getItems()) {
+                    if (f.getIdFormation() == session.getIdFormation()) {
+                        formationCombo.getSelectionModel().select(f);
+                        break;
+                    }
+                }
             } else {
-                idFormationField.setText("");
+                formationCombo.getSelectionModel().clearSelection();
             }
         } else {
             handleReset(null);
@@ -204,22 +235,26 @@ public class SessionController {
             try {
                 LocalDateTime dateTime = LocalDateTime.of(datePicker.getValue(), LocalTime.parse(timeField.getText()));
                 
-                Integer idFormation = null;
-                if (!idFormationField.getText().trim().isEmpty()) {
-                    idFormation = Integer.parseInt(idFormationField.getText());
-                }
+                // Coach mapping
+                String coachName = coachCombo.getValue();
+                int coachId = 1; // Default
+                if ("Coach Slim".equals(coachName)) coachId = 2;
+                else if ("Coach Amina".equals(coachName)) coachId = 3;
+                else if ("Coach Yassine".equals(coachName)) coachId = 4;
+
+                Formation selectedForm = formationCombo.getValue();
 
                 Session newSession = new Session(
-                        0, // ID auto-generated
+                        0,
                         dateTime,
                         jeuField.getText(),
                         Float.parseFloat(prixField.getText()),
-                        Integer.parseInt(idCoachField.getText()),
+                        coachId,
                         Integer.parseInt(dureeField.getText()),
                         Integer.parseInt(capaciteField.getText()),
                         typeCombo.getValue(),
                         statutCombo.getValue(),
-                        idFormation
+                        selectedForm != null ? selectedForm.getIdFormation() : null
                 );
 
                 this.create(newSession);
@@ -244,22 +279,24 @@ public class SessionController {
 
         if (validateInput()) {
             try {
-                LocalDateTime dateTime = LocalDateTime.of(datePicker.getValue(), LocalTime.parse(timeField.getText()));
-                
-                Integer idFormation = null;
-                if (!idFormationField.getText().trim().isEmpty()) {
-                    idFormation = Integer.parseInt(idFormationField.getText());
-                }
+                // Coach mapping
+                String coachName = coachCombo.getValue();
+                int coachId = 1;
+                if ("Coach Slim".equals(coachName)) coachId = 2;
+                else if ("Coach Amina".equals(coachName)) coachId = 3;
+                else if ("Coach Yassine".equals(coachName)) coachId = 4;
 
                 selected.setDateHeure(dateTime);
                 selected.setJeu(jeuField.getText());
                 selected.setPrix(Float.parseFloat(prixField.getText()));
-                selected.setIdCoach(Integer.parseInt(idCoachField.getText()));
+                selected.setIdCoach(coachId);
                 selected.setDureeMinutes(Integer.parseInt(dureeField.getText()));
                 selected.setCapaciteMax(Integer.parseInt(capaciteField.getText()));
                 selected.setTypeSession(typeCombo.getValue());
                 selected.setStatut(statutCombo.getValue());
-                selected.setIdFormation(idFormation);
+                
+                Formation selectedForm = formationCombo.getValue();
+                selected.setIdFormation(selectedForm != null ? selectedForm.getIdFormation() : null);
 
                 this.update(selected);
                 loadData();
@@ -305,8 +342,8 @@ public class SessionController {
         capaciteField.clear();
         typeCombo.getSelectionModel().clearSelection();
         statutCombo.getSelectionModel().clearSelection();
-        idCoachField.clear();
-        idFormationField.clear();
+        coachCombo.getSelectionModel().clearSelection();
+        formationCombo.getSelectionModel().clearSelection();
         sessionListView.getSelectionModel().clearSelection();
     }
 
@@ -328,10 +365,9 @@ public class SessionController {
         if (datePicker.getValue() == null || timeField.getText().trim().isEmpty() ||
             jeuField.getText().trim().isEmpty() || prixField.getText().trim().isEmpty() ||
             dureeField.getText().trim().isEmpty() || capaciteField.getText().trim().isEmpty() ||
-            typeCombo.getValue() == null || statutCombo.getValue() == null ||
-            idCoachField.getText().trim().isEmpty()) {
+            typeCombo.getValue() == null || coachCombo.getValue() == null) {
             
-            showAlert("Champs requis", "Informations manquantes", "Veuillez remplir tous les champs obligatoires (sauf ID Formation).", Alert.AlertType.WARNING);
+            showAlert("Champs requis", "Informations manquantes", "Veuillez remplir tous les champs obligatoires (Date, Heure, Jeu, Prix, Durée, Capacité, Type, Coach).", Alert.AlertType.WARNING);
             return false;
         }
 
@@ -343,12 +379,8 @@ public class SessionController {
             }
             Integer.parseInt(dureeField.getText());
             Integer.parseInt(capaciteField.getText());
-            Integer.parseInt(idCoachField.getText());
-            if (!idFormationField.getText().trim().isEmpty()) {
-                Integer.parseInt(idFormationField.getText());
-            }
         } catch (NumberFormatException e) {
-            showAlert("Format invalide", "Erreur de format", "Les champs Prix, Durée, Capacité et IDs doivent être numériques.", Alert.AlertType.WARNING);
+            showAlert("Format invalide", "Erreur de format", "Les champs Prix, Durée et Capacité doivent être numériques.", Alert.AlertType.WARNING);
             return false;
         }
 

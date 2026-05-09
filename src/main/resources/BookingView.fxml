@@ -31,12 +31,12 @@
             <VBox spacing="15" VBox.vgrow="ALWAYS">
                 <HBox spacing="10">
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
-                        <Label text="ID Session:" styleClass="label-white" />
-                        <TextField fx:id="idSessionField" promptText="Ex: 10" />
+                        <Label text="Session:" styleClass="label-white" />
+                        <ComboBox fx:id="sessionCombo" maxWidth="Infinity" promptText="Choisir une session..." />
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
-                        <Label text="ID Elève:" styleClass="label-white" />
-                        <TextField fx:id="idEleveField" promptText="Ex: 42" />
+                        <Label text="Élève:" styleClass="label-white" />
+                        <ComboBox fx:id="eleveCombo" maxWidth="Infinity" promptText="Choisir un élève..." />
                     </VBox>
                 </HBox>
                 <VBox spacing="5">

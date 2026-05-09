@@ -7,7 +7,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Booking;
+import org.example.Model.Session;
 import org.example.Service.BookingService;
+import org.example.Service.SessionService;
+import javafx.util.StringConverter;
+import java.time.format.DateTimeFormatter;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,16 +35,20 @@ public class BookingController {
     @FXML private ListView<Booking> bookingListView;
     @FXML private TextField searchField;
 
-    @FXML private TextField idSessionField;
-    @FXML private TextField idEleveField;
     @FXML private DatePicker dateReservationPicker;
     @FXML private ComboBox<String> statutPaiementCombo;
     @FXML private ComboBox<String> modePaiementCombo;
+    @FXML private ComboBox<Session> sessionCombo;
+    @FXML private ComboBox<String> eleveCombo;
 
     private final ObservableList<Booking> bookingList = FXCollections.observableArrayList();
 
+    private BookingService bookingService;
+    private SessionService sessionService;
+
     public BookingController() {
         this.bookingService = new BookingService();
+        this.sessionService = new SessionService();
     }
 
     @FXML
@@ -98,7 +106,23 @@ public class BookingController {
 
         // 3. Initialize ComboBox items
         statutPaiementCombo.setItems(FXCollections.observableArrayList("en_attente", "confirmé", "annulé"));
-        modePaiementCombo.setItems(FXCollections.observableArrayList("carte", "virement", "espèces", "gratuit"));
+        modePaiementCombo.setItems(FXCollections.observableArrayList("carte_bancaire", "virement", "espèces"));
+        
+        // Populate Students (Dummy names)
+        eleveCombo.setItems(FXCollections.observableArrayList("Ahmed Ben Ali", "Sonia Mansour", "Firas Gharbi", "Yasmine Trabelsi"));
+
+        // Populate Sessions
+        try {
+            List<Session> sessions = sessionService.getDisponibilites();
+            sessionCombo.setItems(FXCollections.observableArrayList(sessions));
+            sessionCombo.setConverter(new StringConverter<Session>() {
+                private DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM HH:mm");
+                @Override public String toString(Session s) { return s == null ? "" : s.getJeu() + " (" + s.getDateHeure().format(fmt) + ")"; }
+                @Override public Session fromString(String string) { return null; }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         // 4. Load data
         loadData();
@@ -115,13 +139,25 @@ public class BookingController {
 
     private void showBookingDetails(Booking b) {
         if (b != null) {
-            idSessionField.setText(String.valueOf(b.getIdSession()));
-            idEleveField.setText(String.valueOf(b.getIdEleve()));
             if (b.getDateReservation() != null) {
                 dateReservationPicker.setValue(b.getDateReservation().toLocalDate());
             }
             statutPaiementCombo.getSelectionModel().select(b.getStatutPaiement());
             modePaiementCombo.getSelectionModel().select(b.getModePaiement());
+            
+            // Student mapping (dummy)
+            int eleveId = b.getIdEleve();
+            if (eleveId == 42) eleveCombo.getSelectionModel().select("Ahmed Ben Ali");
+            else if (eleveId == 43) eleveCombo.getSelectionModel().select("Sonia Mansour");
+            else eleveCombo.getSelectionModel().select("Firas Gharbi");
+
+            // Session selection
+            for (Session s : sessionCombo.getItems()) {
+                if (s.getIdSession() == b.getIdSession()) {
+                    sessionCombo.getSelectionModel().select(s);
+                    break;
+                }
+            }
         } else {
             handleReset(null);
         }
@@ -130,16 +166,23 @@ public class BookingController {
     @FXML
     void handleAdd(ActionEvent event) {
         try {
+            // Student mapping
+            String eleveName = eleveCombo.getValue();
+            int eleveId = 42; 
+            if ("Sonia Mansour".equals(eleveName)) eleveId = 43;
+            else if ("Firas Gharbi".equals(eleveName)) eleveId = 44;
+            else if ("Yasmine Trabelsi".equals(eleveName)) eleveId = 45;
+
+            Session selectedSession = sessionCombo.getValue();
+
             Booking b = new Booking(
                     0,
-                    Integer.parseInt(idSessionField.getText()),
-                    Integer.parseInt(idEleveField.getText()),
-                    statutPaiementCombo.getValue()
+                    selectedSession != null ? selectedSession.getIdSession() : 0,
+                    eleveId,
+                    statutPaiementCombo.getValue() != null ? statutPaiementCombo.getValue() : "en_attente",
+                    dateReservationPicker.getValue() != null ? dateReservationPicker.getValue().atTime(LocalTime.now()) : LocalDateTime.now(),
+                    modePaiementCombo.getValue()
             );
-            if (dateReservationPicker.getValue() != null) {
-                b.setDateReservation(dateReservationPicker.getValue().atTime(LocalTime.now()));
-            }
-            b.setModePaiement(modePaiementCombo.getValue());
             bookingService.book(b);
             loadData();
             handleReset(null);
@@ -154,8 +197,17 @@ public class BookingController {
         Booking selected = bookingListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
-                selected.setIdSession(Integer.parseInt(idSessionField.getText()));
-                selected.setIdEleve(Integer.parseInt(idEleveField.getText()));
+                // Student mapping
+                String eleveName = eleveCombo.getValue();
+                int eleveId = 42; 
+                if ("Sonia Mansour".equals(eleveName)) eleveId = 43;
+                else if ("Firas Gharbi".equals(eleveName)) eleveId = 44;
+                else if ("Yasmine Trabelsi".equals(eleveName)) eleveId = 45;
+
+                Session selectedSession = sessionCombo.getValue();
+
+                selected.setIdSession(selectedSession != null ? selectedSession.getIdSession() : 0);
+                selected.setIdEleve(eleveId);
                 if (dateReservationPicker.getValue() != null) {
                     selected.setDateReservation(dateReservationPicker.getValue().atTime(LocalTime.now()));
                 }
@@ -187,11 +239,11 @@ public class BookingController {
 
     @FXML
     void handleReset(ActionEvent event) {
-        idSessionField.clear();
-        idEleveField.clear();
         dateReservationPicker.setValue(null);
         statutPaiementCombo.getSelectionModel().clearSelection();
         modePaiementCombo.getSelectionModel().clearSelection();
+        sessionCombo.getSelectionModel().clearSelection();
+        eleveCombo.getSelectionModel().clearSelection();
         bookingListView.getSelectionModel().clearSelection();
     }
 

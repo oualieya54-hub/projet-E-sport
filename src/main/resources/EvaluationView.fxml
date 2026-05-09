@@ -30,8 +30,8 @@
             
             <VBox spacing="15" VBox.vgrow="ALWAYS">
                 <VBox spacing="5">
-                    <Label text="ID Réservation:" styleClass="label-white" />
-                    <TextField fx:id="idBookingField" promptText="Ex: 105" />
+                    <Label text="Réservation:" styleClass="label-white" />
+                    <ComboBox fx:id="bookingCombo" maxWidth="Infinity" promptText="Choisir une réservation..." />
                 </VBox>
                 <VBox spacing="5">
                     <Label text="Note (0-100):" styleClass="label-white" />

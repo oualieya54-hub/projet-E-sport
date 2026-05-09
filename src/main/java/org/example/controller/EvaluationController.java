@@ -7,7 +7,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Evaluation;
+import org.example.Model.Booking;
 import org.example.Service.EvaluationService;
+import org.example.Service.BookingService;
+import javafx.util.StringConverter;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,15 +34,18 @@ public class EvaluationController {
     @FXML private ListView<Evaluation> evaluationListView;
     @FXML private TextField searchField;
 
-    @FXML private TextField idBookingField;
+    @FXML private ComboBox<Booking> bookingCombo;
     @FXML private TextField noteField;
     @FXML private TextArea commentaireArea;
     @FXML private DatePicker dateEvalPicker;
 
     private final ObservableList<Evaluation> evaluationList = FXCollections.observableArrayList();
 
+    private final BookingService bookingService;
+
     public EvaluationController() {
         this.evaluationService = new EvaluationService();
+        this.bookingService = new BookingService();
     }
 
     @FXML
@@ -89,7 +95,19 @@ public class EvaluationController {
                 (observable, oldValue, newValue) -> showEvaluationDetails(newValue)
         );
 
-        // 3. Load data
+        // 3. Initialize ComboBox items
+        try {
+            List<Booking> bookings = bookingService.getAll();
+            bookingCombo.setItems(FXCollections.observableArrayList(bookings));
+            bookingCombo.setConverter(new StringConverter<Booking>() {
+                @Override public String toString(Booking b) { return b == null ? "" : "Réserv. #" + b.getIdBooking() + " (Session " + b.getIdSession() + ")"; }
+                @Override public Booking fromString(String string) { return null; }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // 4. Load data
         loadData();
     }
 
@@ -104,7 +122,13 @@ public class EvaluationController {
 
     private void showEvaluationDetails(Evaluation e) {
         if (e != null) {
-            idBookingField.setText(String.valueOf(e.getIdBooking()));
+            // Selection Booking
+            for (Booking b : bookingCombo.getItems()) {
+                if (b.getIdBooking() == e.getIdBooking()) {
+                    bookingCombo.getSelectionModel().select(b);
+                    break;
+                }
+            }
             noteField.setText(String.valueOf(e.getNote()));
             commentaireArea.setText(e.getCommentaire());
             if (e.getDateEval() != null) {
@@ -118,8 +142,9 @@ public class EvaluationController {
     @FXML
     void handleAdd(ActionEvent event) {
         try {
+            Booking selectedBooking = bookingCombo.getValue();
             Evaluation e = new Evaluation(
-                    Integer.parseInt(idBookingField.getText()),
+                    selectedBooking != null ? selectedBooking.getIdBooking() : 0,
                     Integer.parseInt(noteField.getText()),
                     commentaireArea.getText()
             );
@@ -140,7 +165,8 @@ public class EvaluationController {
         Evaluation selected = evaluationListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
-                selected.setIdBooking(Integer.parseInt(idBookingField.getText()));
+                Booking selectedBooking = bookingCombo.getValue();
+                selected.setIdBooking(selectedBooking != null ? selectedBooking.getIdBooking() : 0);
                 selected.setNote(Integer.parseInt(noteField.getText()));
                 selected.setCommentaire(commentaireArea.getText());
                 if (dateEvalPicker.getValue() != null) {
@@ -172,7 +198,7 @@ public class EvaluationController {
 
     @FXML
     void handleReset(ActionEvent event) {
-        idBookingField.clear();
+        bookingCombo.getSelectionModel().clearSelection();
         noteField.clear();
         commentaireArea.clear();
         dateEvalPicker.setValue(null);
