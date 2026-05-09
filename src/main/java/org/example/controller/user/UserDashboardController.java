@@ -88,30 +88,31 @@ public class UserDashboardController implements Initializable {
         Button btnBook = new Button("S'inscrire");
         btnBook.getStyleClass().add("btn-primary");
         btnBook.setMaxWidth(Double.MAX_VALUE);
-        btnBook.setOnAction(e -> navigateToBooking(null));
+        btnBook.setOnAction(e -> showFormationDetails(f));
 
         card.getChildren().addAll(title, jeu, level, price, desc, btnDetails, btnBook);
         return card;
     }
 
     private void showFormationDetails(Formation f) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Détails de la Formation");
-        alert.setHeaderText(f.getTitre());
-        alert.setContentText(
-            "Jeu: " + f.getJeu() + "\n" +
-            "Niveau: " + f.getNiveau() + "\n" +
-            "Prix: " + f.getPrix() + " TND\n" +
-            "Durée: " + f.getDureeSemaines() + " semaines\n\n" +
-            "Description:\n" + f.getDescription()
-        );
-        alert.showAndWait();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user/FormationDetailsView.fxml"));
+            Parent root = loader.load();
+            
+            FormationDetailsController controller = loader.getController();
+            controller.setFormation(f);
+            
+            Stage stage = (Stage) formationsFlowPane.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateStats() {
-        totalBookingsLabel.setText("12");
-        completedFormationsLabel.setText("5");
-        certificationsLabel.setText("3");
+        totalBookingsLabel.setText("0");
+        completedFormationsLabel.setText("0");
+        certificationsLabel.setText("0");
     }
 
     @FXML

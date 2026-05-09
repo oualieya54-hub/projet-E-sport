@@ -163,5 +163,19 @@ public class SessionService {
         }
         return false;
     }
+    //Métier : Récupérer toutes les sessions liées à une formation spécifique.
+    public List<Session> getSessionsByFormation(int idFormation) throws SQLException {
+        List<Session> liste = new ArrayList<>();
+        String sql = "SELECT * FROM Session WHERE id_formation = ?";
+        try (Connection con = MyDatabase.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idFormation);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                liste.add(extractSessionFromResultSet(rs));
+            }
+        }
+        return liste;
+    }
 }
 //.

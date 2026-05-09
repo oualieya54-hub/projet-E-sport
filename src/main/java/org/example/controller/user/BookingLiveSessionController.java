@@ -69,7 +69,7 @@ public class BookingLiveSessionController implements Initializable {
     }
 
     private void setupMockParticipants() {
-        participantsList.setItems(FXCollections.observableArrayList("Coach Slim", "Moi", "Ahmed Gamer", "Sonia Pro"));
+        participantsList.setItems(FXCollections.observableArrayList());
     }
 
     @FXML

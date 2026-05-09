@@ -72,12 +72,8 @@ public class ProgressCenterController implements Initializable {
     }
 
     private void loadCertifications() {
-        try {
-            List<Certification> list = certificationService.getAll();
-            certList.setAll(list);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // Leave empty for now, will be populated after user integration
+        certList.clear();
     }
 
     private void setupEvaluation() {
@@ -86,10 +82,10 @@ public class ProgressCenterController implements Initializable {
         opt2.setToggleGroup(optionsGroup);
         opt3.setToggleGroup(optionsGroup);
         
-        questionLabel.setText("Quelle est la durée maximale d'une session de coaching e-sport recommandée ?");
-        opt1.setText("30 minutes");
-        opt2.setText("120 minutes");
-        opt3.setText("24 heures");
+        questionLabel.setText("Sélectionnez une formation terminée pour passer l'évaluation.");
+        opt1.setText("---");
+        opt2.setText("---");
+        opt3.setText("---");
     }
 
     @FXML
