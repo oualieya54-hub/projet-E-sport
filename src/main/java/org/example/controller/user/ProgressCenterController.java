@@ -3,6 +3,7 @@ package org.example.controller.user;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -39,6 +40,11 @@ public class ProgressCenterController implements Initializable {
         setupCertList();
         loadCertifications();
         setupEvaluation();
+    }
+
+    @FXML
+    void handleRefresh() {
+        loadCertifications();
     }
 
     private void setupCertList() {

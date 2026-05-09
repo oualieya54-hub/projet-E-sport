@@ -47,7 +47,7 @@
         <VBox prefWidth="450" spacing="20" styleClass="card">
             <Label styleClass="card-title" text="🏆 Mes Certifications" />
             <ListView fx:id="certListView" styleClass="list-view-dark" VBox.vgrow="ALWAYS" />
-            <Button text="Actualiser la liste" onAction="#initialize" styleClass="btn-secondary" maxWidth="Infinity" />
+            <Button text="Actualiser la liste" onAction="#handleRefresh" styleClass="btn-secondary" maxWidth="Infinity" />
         </VBox>
     </HBox>
 </VBox>
