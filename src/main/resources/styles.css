@@ -161,8 +161,12 @@
     -fx-padding: 8;
 }
 
-.text-field:focused, .combo-box:focused, .date-picker:focused {
+.text-field:focused, .combo-box:focused, .date-picker:focused, .text-area:focused {
     -fx-border-color: #00bcd4;
+}
+
+.text-area .content {
+    -fx-background-color: #1c2436;
 }
 
 .label-white {
