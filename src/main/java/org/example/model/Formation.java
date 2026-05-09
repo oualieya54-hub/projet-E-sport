@@ -76,6 +76,6 @@ public class Formation {
     @Override
     public String toString() {
         return "Formation { id=" + idFormation + ", titre='" + titre + "', jeu='" + jeu +
-               "', niveau='" + niveau + "', statut='" + statut + "', prix=" + prix + " }";
+                "', niveau='" + niveau + "', statut='" + statut + "', prix=" + prix + " }";
     }
 }

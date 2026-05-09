@@ -31,7 +31,7 @@ public class FormationService {
 
     public void create(Formation f) throws SQLException {
         String sql = "INSERT INTO formation (titre, description, jeu, niveau, duree_semaines, prix, id_coach, date_debut, statut, nombre_sessions) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = MyDatabase.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, f.getTitre());

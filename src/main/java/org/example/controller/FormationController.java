@@ -9,10 +9,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Formation;
 import org.example.Service.FormationService;
 
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -75,16 +74,8 @@ public class FormationController {
     @FXML private ComboBox<String> filterNiveauCombo;
     @FXML private ComboBox<String> filterStatutCombo;
 
-    // --- JavaFX TableView ---
-    @FXML private TableView<Formation> formationTable;
-    @FXML private TableColumn<Formation, Integer> colId;
-    @FXML private TableColumn<Formation, String> colTitre;
-    @FXML private TableColumn<Formation, String> colJeu;
-    @FXML private TableColumn<Formation, String> colNiveau;
-    @FXML private TableColumn<Formation, Integer> colDuree;
-    @FXML private TableColumn<Formation, Float> colPrix;
-    @FXML private TableColumn<Formation, String> colStatut;
-    @FXML private TableColumn<Formation, LocalDate> colDate;
+    // --- JavaFX ListView ---
+    @FXML private ListView<Formation> formationListView;
 
     // --- JavaFX Form Fields ---
     @FXML private TextField titreField;
@@ -102,35 +93,66 @@ public class FormationController {
 
     @FXML
     public void initialize() {
-        // 1. Configure TableView columns
-        colId.setCellValueFactory(new PropertyValueFactory<>("idFormation"));
-        colTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
-        colJeu.setCellValueFactory(new PropertyValueFactory<>("jeu"));
-        colNiveau.setCellValueFactory(new PropertyValueFactory<>("niveau"));
-        colDuree.setCellValueFactory(new PropertyValueFactory<>("dureeSemaines"));
-        colPrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
-        colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
-        colDate.setCellValueFactory(new PropertyValueFactory<>("dateDebut"));
+        // 1. Configure ListView CellFactory
+        formationListView.setCellFactory(param -> new ListCell<Formation>() {
+            @Override
+            protected void updateItem(Formation item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    // Create Card Layout
+                    VBox card = new VBox(5);
+                    card.getStyleClass().add("list-card");
 
-        formationTable.setItems(formationList);
+                    HBox header = new HBox(10);
+                    Label title = new Label(item.getTitre());
+                    title.getStyleClass().add("item-title");
+                    
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+                    
+                    Label price = new Label(String.format("%.2f TND", item.getPrix()));
+                    price.getStyleClass().add("item-title");
+                    price.setStyle("-fx-text-fill: #e91e63;");
 
-        // 2. Setup TableView selection listener to fill the form
-        formationTable.getSelectionModel().selectedItemProperty().addListener(
+                    header.getChildren().addAll(title, spacer, price);
+
+                    Label detail = new Label(item.getJeu() + " | " + item.getNiveau() + " | " + item.getDureeSemaines() + "h");
+                    detail.getStyleClass().add("item-detail");
+
+                    HBox footer = new HBox(10);
+                    Label badge = new Label(item.getStatut().toUpperCase());
+                    badge.getStyleClass().add("badge");
+                    if ("active".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-active");
+                    else if ("archivée".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-danger");
+                    else badge.getStyleClass().add("badge-warning");
+
+                    footer.getChildren().add(badge);
+
+                    card.getChildren().addAll(header, detail, footer);
+                    setGraphic(card);
+                }
+            }
+        });
+
+        formationListView.setItems(formationList);
+
+        // 2. Setup ListView selection listener to fill the form
+        formationListView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showFormationDetails(newValue)
         );
 
-        // 3. Initialize ComboBox items (example items for 'jeu')
+        // 3. Initialize ComboBox items
         ObservableList<String> jeux = FXCollections.observableArrayList("League of Legends", "Valorant", "Fortnite", "CS:GO", "Rocket League");
         jeuCombo.setItems(jeux);
         
-        ObservableList<String> filterJeux = FXCollections.observableArrayList("Tous");
-        filterJeux.addAll(jeux);
-        filterJeuCombo.setItems(filterJeux);
+        ObservableList<String> levels = FXCollections.observableArrayList("débutant", "intermédiaire", "avancé");
+        niveauCombo.setItems(levels);
 
-        // Select "Tous" by default for filters
-        filterJeuCombo.getSelectionModel().select("Tous");
-        filterNiveauCombo.getSelectionModel().select("Tous");
-        filterStatutCombo.getSelectionModel().select("Tous");
+        ObservableList<String> statusList = FXCollections.observableArrayList("brouillon", "active", "archivée");
+        statutCombo.setItems(statusList);
 
         // 4. Load initial data
         loadData();
@@ -196,9 +218,9 @@ public class FormationController {
 
     @FXML
     void handleUpdate(ActionEvent event) {
-        Formation selected = formationTable.getSelectionModel().getSelectedItem();
+        Formation selected = formationListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert("Aucune sélection", "Veuillez sélectionner une formation", "Sélectionnez une formation dans le tableau pour la modifier.", Alert.AlertType.WARNING);
+            showAlert("Aucune sélection", "Veuillez sélectionner une formation", "Sélectionnez une formation dans la liste pour la modifier.", Alert.AlertType.WARNING);
             return;
         }
 
@@ -227,7 +249,7 @@ public class FormationController {
 
     @FXML
     void handleDelete(ActionEvent event) {
-        Formation selected = formationTable.getSelectionModel().getSelectedItem();
+        Formation selected = formationListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Voulez-vous vraiment supprimer cette formation ?", ButtonType.YES, ButtonType.NO);
             confirm.showAndWait();
@@ -249,7 +271,7 @@ public class FormationController {
 
     @FXML
     void handleReset(ActionEvent event) {
-        formationTable.getSelectionModel().clearSelection();
+        formationListView.getSelectionModel().clearSelection();
         titreField.clear();
         descArea.clear();
         jeuCombo.getSelectionModel().clearSelection();
@@ -315,6 +337,9 @@ public class FormationController {
 
         return true;
     }
+
+    @FXML
+    void navigateToDashboard(ActionEvent event) { switchScene(event, "/AcademyMainView.fxml"); }
 
     @FXML
     void navigateToFormation(ActionEvent event) { switchScene(event, "/FormationView.fxml"); }
