@@ -9,6 +9,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Session;
 import org.example.Service.SessionService;
 
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -21,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SessionController {
     
@@ -75,16 +80,9 @@ public class SessionController {
         return sessionService.isCoachDisponible(idCoach, dateHeure);
     }
 
-    // --- JavaFX TableView ---
-    @FXML private TableView<Session> sessionTable;
-    @FXML private TableColumn<Session, Integer> colId;
-    @FXML private TableColumn<Session, LocalDateTime> colDateHeure;
-    @FXML private TableColumn<Session, String> colJeu;
-    @FXML private TableColumn<Session, Float> colPrix;
-    @FXML private TableColumn<Session, Integer> colDuree;
-    @FXML private TableColumn<Session, Integer> colCapacite;
-    @FXML private TableColumn<Session, String> colType;
-    @FXML private TableColumn<Session, String> colStatut;
+    // --- JavaFX ListView ---
+    @FXML private ListView<Session> sessionListView;
+    @FXML private TextField searchField;
 
     // --- JavaFX Form Fields ---
     @FXML private DatePicker datePicker;
@@ -103,24 +101,62 @@ public class SessionController {
 
     @FXML
     public void initialize() {
-        // 1. Configure TableView columns
-        colId.setCellValueFactory(new PropertyValueFactory<>("idSession"));
-        colDateHeure.setCellValueFactory(new PropertyValueFactory<>("dateHeure"));
-        colJeu.setCellValueFactory(new PropertyValueFactory<>("jeu"));
-        colPrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
-        colDuree.setCellValueFactory(new PropertyValueFactory<>("dureeMinutes"));
-        colCapacite.setCellValueFactory(new PropertyValueFactory<>("capaciteMax"));
-        colType.setCellValueFactory(new PropertyValueFactory<>("typeSession"));
-        colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
+        // 1. Configure ListView CellFactory
+        sessionListView.setCellFactory(param -> new ListCell<Session>() {
+            @Override
+            protected void updateItem(Session item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    VBox card = new VBox(5);
+                    card.getStyleClass().add("list-card");
 
-        sessionTable.setItems(sessionList);
+                    HBox header = new HBox(10);
+                    Label title = new Label(item.getJeu());
+                    title.getStyleClass().add("item-title");
+                    
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+                    
+                    Label price = new Label(String.format("%.2f TND", item.getPrix()));
+                    price.getStyleClass().add("item-title");
+                    price.setStyle("-fx-text-fill: #e91e63;");
 
-        // 2. Setup TableView selection listener to fill the form
-        sessionTable.getSelectionModel().selectedItemProperty().addListener(
+                    header.getChildren().addAll(title, spacer, price);
+
+                    String dateStr = item.getDateHeure() != null ? item.getDateHeure().toString().replace("T", " ") : "N/A";
+                    Label detail = new Label(dateStr + " | " + item.getTypeSession() + " | Cap: " + item.getCapaciteMax());
+                    detail.getStyleClass().add("item-detail");
+
+                    HBox footer = new HBox(10);
+                    Label badge = new Label(item.getStatut().toUpperCase());
+                    badge.getStyleClass().add("badge");
+                    if ("planifiée".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-active");
+                    else if ("annulée".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-danger");
+                    else badge.getStyleClass().add("badge-warning");
+
+                    footer.getChildren().add(badge);
+
+                    card.getChildren().addAll(header, detail, footer);
+                    setGraphic(card);
+                }
+            }
+        });
+
+        sessionListView.setItems(sessionList);
+
+        // 2. Setup ListView selection listener to fill the form
+        sessionListView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showSessionDetails(newValue)
         );
 
-        // 3. Load initial data
+        // 3. Initialize ComboBox items
+        typeCombo.setItems(FXCollections.observableArrayList("individuel", "groupe"));
+        statutCombo.setItems(FXCollections.observableArrayList("planifiée", "terminée", "annulée"));
+
+        // 4. Load initial data
         loadData();
     }
 
@@ -200,9 +236,9 @@ public class SessionController {
 
     @FXML
     void handleUpdate(ActionEvent event) {
-        Session selected = sessionTable.getSelectionModel().getSelectedItem();
+        Session selected = sessionListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert("Aucune sélection", "Veuillez sélectionner une session", "Sélectionnez une session dans le tableau pour la modifier.", Alert.AlertType.WARNING);
+            showAlert("Aucune sélection", "Veuillez sélectionner une session", "Sélectionnez une session dans la liste pour la modifier.", Alert.AlertType.WARNING);
             return;
         }
 
@@ -238,7 +274,7 @@ public class SessionController {
 
     @FXML
     void handleDelete(ActionEvent event) {
-        Session selected = sessionTable.getSelectionModel().getSelectedItem();
+        Session selected = sessionListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Voulez-vous vraiment annuler/supprimer cette session ?", ButtonType.YES, ButtonType.NO);
             confirm.showAndWait();
@@ -260,7 +296,7 @@ public class SessionController {
 
     @FXML
     void handleReset(ActionEvent event) {
-        sessionTable.getSelectionModel().clearSelection();
+        sessionListView.getSelectionModel().clearSelection();
         datePicker.setValue(null);
         timeField.clear();
         jeuField.clear();
@@ -271,6 +307,20 @@ public class SessionController {
         statutCombo.getSelectionModel().clearSelection();
         idCoachField.clear();
         idFormationField.clear();
+    }
+
+    @FXML
+    void handleFilter() {
+        String keyword = searchField.getText() != null ? searchField.getText().toLowerCase() : "";
+        try {
+            List<Session> all = this.getDisponibilites();
+            List<Session> filtered = all.stream()
+                .filter(s -> keyword.isEmpty() || s.getJeu().toLowerCase().contains(keyword) || s.getStatut().toLowerCase().contains(keyword))
+                .collect(Collectors.toList());
+            sessionList.setAll(filtered);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean validateInput() {
@@ -299,6 +349,9 @@ public class SessionController {
 
         return true;
     }
+
+    @FXML
+    void navigateToDashboard(ActionEvent event) { switchScene(event, "/AcademyMainView.fxml"); }
 
     @FXML
     void navigateToFormation(ActionEvent event) { switchScene(event, "/FormationView.fxml"); }
