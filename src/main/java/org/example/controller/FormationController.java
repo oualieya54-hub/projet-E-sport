@@ -333,7 +333,11 @@ public class FormationController {
 
         try {
             Integer.parseInt(dureeField.getText());
-            Float.parseFloat(prixField.getText());
+            float price = Float.parseFloat(prixField.getText());
+            if (price < 0 || price > 10000) {
+                showAlert("Prix invalide", "Le prix est illogique", "Le prix doit être compris entre 0 et 10,000 TND.", Alert.AlertType.WARNING);
+                return false;
+            }
         } catch (NumberFormatException e) {
             showAlert("Format invalide", "Erreur de format", "Durée et Prix doivent être des nombres.", Alert.AlertType.WARNING);
             return false;

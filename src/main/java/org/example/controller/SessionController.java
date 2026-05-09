@@ -336,7 +336,11 @@ public class SessionController {
         }
 
         try {
-            Float.parseFloat(prixField.getText());
+            float price = Float.parseFloat(prixField.getText());
+            if (price < 0 || price > 5000) {
+                showAlert("Prix invalide", "Le prix est illogique", "Le prix d'une session doit être compris entre 0 et 5,000 TND.", Alert.AlertType.WARNING);
+                return false;
+            }
             Integer.parseInt(dureeField.getText());
             Integer.parseInt(capaciteField.getText());
             Integer.parseInt(idCoachField.getText());
