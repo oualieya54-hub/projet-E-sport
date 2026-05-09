@@ -9,6 +9,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.Model.Evaluation;
 import org.example.Service.EvaluationService;
 
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -19,16 +23,13 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EvaluationController {
     private final EvaluationService evaluationService;
 
-    @FXML private TableView<Evaluation> evaluationTable;
-    @FXML private TableColumn<Evaluation, Integer> colIdEvaluation;
-    @FXML private TableColumn<Evaluation, Integer> colIdBooking;
-    @FXML private TableColumn<Evaluation, Integer> colNote;
-    @FXML private TableColumn<Evaluation, String> colCommentaire;
-    @FXML private TableColumn<Evaluation, LocalDateTime> colDateEval;
+    @FXML private ListView<Evaluation> evaluationListView;
+    @FXML private TextField searchField;
 
     @FXML private TextField idBookingField;
     @FXML private TextField noteField;
@@ -43,18 +44,52 @@ public class EvaluationController {
 
     @FXML
     public void initialize() {
-        colIdEvaluation.setCellValueFactory(new PropertyValueFactory<>("idEvaluation"));
-        colIdBooking.setCellValueFactory(new PropertyValueFactory<>("idBooking"));
-        colNote.setCellValueFactory(new PropertyValueFactory<>("note"));
-        colCommentaire.setCellValueFactory(new PropertyValueFactory<>("commentaire"));
-        colDateEval.setCellValueFactory(new PropertyValueFactory<>("dateEval"));
+        // 1. Configure ListView CellFactory
+        evaluationListView.setCellFactory(param -> new ListCell<Evaluation>() {
+            @Override
+            protected void updateItem(Evaluation item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    VBox card = new VBox(5);
+                    card.getStyleClass().add("list-card");
 
-        evaluationTable.setItems(evaluationList);
+                    HBox header = new HBox(10);
+                    Label title = new Label("Évaluation #" + item.getIdEvaluation());
+                    title.getStyleClass().add("item-title");
+                    
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+                    
+                    Label note = new Label(item.getNote() + "/100");
+                    note.getStyleClass().add("item-title");
+                    note.setStyle("-fx-text-fill: #e91e63;");
 
-        evaluationTable.getSelectionModel().selectedItemProperty().addListener(
+                    header.getChildren().addAll(title, spacer, note);
+
+                    Label detail = new Label("Réservation: " + item.getIdBooking() + " | Date: " + (item.getDateEval() != null ? item.getDateEval().toLocalDate() : "N/A"));
+                    detail.getStyleClass().add("item-detail");
+
+                    Label comment = new Label(item.getCommentaire());
+                    comment.getStyleClass().add("item-detail");
+                    comment.setStyle("-fx-font-style: italic; -fx-opacity: 0.8;");
+
+                    card.getChildren().addAll(header, detail, comment);
+                    setGraphic(card);
+                }
+            }
+        });
+
+        evaluationListView.setItems(evaluationList);
+
+        // 2. Setup ListView selection listener to fill the form
+        evaluationListView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showEvaluationDetails(newValue)
         );
 
+        // 3. Load data
         loadData();
     }
 
@@ -102,7 +137,7 @@ public class EvaluationController {
 
     @FXML
     void handleUpdate(ActionEvent event) {
-        Evaluation selected = evaluationTable.getSelectionModel().getSelectedItem();
+        Evaluation selected = evaluationListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
                 selected.setIdBooking(Integer.parseInt(idBookingField.getText()));
@@ -122,7 +157,7 @@ public class EvaluationController {
 
     @FXML
     void handleDelete(ActionEvent event) {
-        Evaluation selected = evaluationTable.getSelectionModel().getSelectedItem();
+        Evaluation selected = evaluationListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
                 evaluationService.delete(selected.getIdEvaluation());
@@ -141,8 +176,25 @@ public class EvaluationController {
         noteField.clear();
         commentaireArea.clear();
         dateEvalPicker.setValue(null);
-        evaluationTable.getSelectionModel().clearSelection();
+        evaluationListView.getSelectionModel().clearSelection();
     }
+
+    @FXML
+    void handleFilter() {
+        String keyword = searchField.getText() != null ? searchField.getText().toLowerCase() : "";
+        try {
+            List<Evaluation> all = evaluationService.getAll();
+            List<Evaluation> filtered = all.stream()
+                .filter(e -> keyword.isEmpty() || e.getCommentaire().toLowerCase().contains(keyword))
+                .collect(Collectors.toList());
+            evaluationList.setAll(filtered);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void navigateToDashboard(ActionEvent event) { switchScene(event, "/AcademyMainView.fxml"); }
 
     @FXML
     void navigateToFormation(ActionEvent event) { switchScene(event, "/FormationView.fxml"); }
