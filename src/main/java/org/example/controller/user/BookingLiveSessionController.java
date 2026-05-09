@@ -136,9 +136,9 @@ public class BookingLiveSessionController implements Initializable {
     @FXML void handleMicToggle() { System.out.println("Mic toggled"); }
     @FXML void handleShareScreen() { System.out.println("Sharing screen"); }
 
-    @FXML void navigateToDashboard(ActionEvent event) { switchScene("/user/UserDashboard.fxml", sessionTable); }
-    @FXML void navigateToBooking(ActionEvent event) { /* Already here */ }
-    @FXML void navigateToProgress(ActionEvent event) { switchScene("/user/ProgressCenter.fxml", sessionTable); }
+    @FXML void navigateToDashboard(Event event) { switchScene("/user/UserDashboard.fxml", sessionTable); }
+    @FXML void navigateToBooking(Event event) { /* Already here */ }
+    @FXML void navigateToProgress(Event event) { switchScene("/user/ProgressCenter.fxml", sessionTable); }
 
     private void switchScene(String fxmlPath, Node node) {
         try {

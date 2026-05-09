@@ -100,9 +100,9 @@ public class ProgressCenterController implements Initializable {
         evaluationResultLabel.setStyle("-fx-text-fill: #4caf50;");
     }
 
-    @FXML void navigateToDashboard(ActionEvent event) { switchScene("/user/UserDashboard.fxml", certListView); }
-    @FXML void navigateToBooking(ActionEvent event) { switchScene("/user/BookingLiveSession.fxml", certListView); }
-    @FXML void navigateToProgress(ActionEvent event) { /* Already here */ }
+    @FXML void navigateToDashboard(javafx.event.Event event) { switchScene("/user/UserDashboard.fxml", certListView); }
+    @FXML void navigateToBooking(javafx.event.Event event) { switchScene("/user/BookingLiveSession.fxml", certListView); }
+    @FXML void navigateToProgress(javafx.event.Event event) { /* Already here */ }
 
     private void switchScene(String fxmlPath, Node node) {
         try {

@@ -140,13 +140,13 @@ public class UserDashboardController implements Initializable {
     }
 
     @FXML
-    void navigateToDashboard(ActionEvent event) { /* Already here */ }
+    void navigateToDashboard(Event event) { switchScene("/user/UserDashboard.fxml", formationsFlowPane); }
 
     @FXML
-    void navigateToBooking(ActionEvent event) { switchScene("/user/BookingLiveSession.fxml", formationsFlowPane); }
+    void navigateToBooking(Event event) { switchScene("/user/BookingLiveSession.fxml", formationsFlowPane); }
 
     @FXML
-    void navigateToProgress(ActionEvent event) { switchScene("/user/ProgressCenter.fxml", formationsFlowPane); }
+    void navigateToProgress(Event event) { switchScene("/user/ProgressCenter.fxml", formationsFlowPane); }
 
     private void switchScene(String fxmlPath, Node node) {
         try {
