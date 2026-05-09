@@ -138,8 +138,8 @@ public class SessionController {
                     HBox footer = new HBox(10);
                     Label badge = new Label(item.getStatut().toUpperCase());
                     badge.getStyleClass().add("badge");
-                    if ("prévu".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-active");
-                    else if ("annulé".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-danger");
+                    if ("ouverte".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-active");
+                    else if ("annulée".equalsIgnoreCase(item.getStatut())) badge.getStyleClass().add("badge-danger");
                     else badge.getStyleClass().add("badge-warning");
 
                     footer.getChildren().add(badge);
@@ -159,7 +159,7 @@ public class SessionController {
 
         // 3. Initialize ComboBox items
         typeCombo.setItems(FXCollections.observableArrayList("individuel", "groupe"));
-        statutCombo.setItems(FXCollections.observableArrayList("prévu", "terminé", "annulé"));
+        statutCombo.setItems(FXCollections.observableArrayList("ouverte", "terminée", "annulée"));
         
         // Populate Coaches (Dummy names for now)
         coachCombo.setItems(FXCollections.observableArrayList("Coach Karim", "Coach Slim", "Coach Amina", "Coach Yassine"));
@@ -264,7 +264,7 @@ public class SessionController {
             } catch (SQLException e) {
                 String msg = e.getMessage();
                 if (msg.contains("Data truncated for column 'statut'")) {
-                    msg = "Le statut choisi est trop long ou non supporté par la base de données.";
+                    msg = "Le statut choisi n'est pas reconnu par la base de données. Utilisez 'ouverte', 'terminée' ou 'annulée'.";
                 } else if (msg.contains("Duplicate entry")) {
                     msg = "Cette session existe déjà (doublon).";
                 }
@@ -312,7 +312,7 @@ public class SessionController {
             } catch (SQLException e) {
                 String msg = e.getMessage();
                 if (msg.contains("Data truncated for column 'statut'")) {
-                    msg = "Le statut choisi est trop long ou non supporté par la base de données.";
+                    msg = "Le statut choisi n'est pas reconnu par la base de données. Utilisez 'ouverte', 'terminée' ou 'annulée'.";
                 }
                 showAlert("Erreur Base de Données", "Erreur lors de la modification", msg, Alert.AlertType.ERROR);
             } catch (DateTimeParseException e) {
