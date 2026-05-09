@@ -59,7 +59,8 @@ public class UserDashboardController implements Initializable {
     private VBox createFormationCard(Formation f) {
         VBox card = new VBox(10);
         card.getStyleClass().add("card");
-        card.setPrefWidth(260);
+        card.setPrefWidth(280);
+        card.setMinHeight(250);
         card.setStyle("-fx-background-color: #1a2332; -fx-padding: 20; -fx-background-radius: 15; -fx-border-color: #00bcd4; -fx-border-width: 1;");
 
         Label title = new Label(f.getTitre());
@@ -69,28 +70,42 @@ public class UserDashboardController implements Initializable {
         Label jeu = new Label("🎮 " + f.getJeu().toUpperCase());
         jeu.setStyle("-fx-text-fill: #00bcd4; -fx-font-size: 12;");
 
-        Label level = new Label("⭐ " + f.getNiveau());
-        level.setStyle("-fx-text-fill: #9c27b0; -fx-font-size: 12;");
-
         Label price = new Label(f.getPrix() + " TND");
         price.setStyle("-fx-text-fill: #e91e63; -fx-font-size: 16; -fx-font-weight: bold;");
 
-        Label desc = new Label(f.getDescription());
-        desc.setStyle("-fx-text-fill: #b0b0b0; -fx-font-size: 11;");
-        desc.setWrapText(true);
-        desc.setMaxHeight(40);
+        // Extra details (Hidden by default)
+        VBox extraInfo = new VBox(10);
+        extraInfo.setVisible(false);
+        extraInfo.setManaged(false);
+        
+        Label level = new Label("⭐ Niveau: " + f.getNiveau());
+        level.setStyle("-fx-text-fill: #9c27b0;");
+        
+        Label duree = new Label("⏳ Durée: " + f.getDureeSemaines() + " semaines");
+        duree.setStyle("-fx-text-fill: #b0b0b0;");
+
+        Label fullDesc = new Label(f.getDescription());
+        fullDesc.setStyle("-fx-text-fill: #e0e0e0; -fx-font-size: 11;");
+        fullDesc.setWrapText(true);
+        
+        extraInfo.getChildren().addAll(level, duree, fullDesc);
 
         Button btnDetails = new Button("Détails");
         btnDetails.getStyleClass().add("btn-secondary");
         btnDetails.setMaxWidth(Double.MAX_VALUE);
-        btnDetails.setOnAction(e -> showFormationDetails(f));
+        btnDetails.setOnAction(e -> {
+            boolean isVisible = !extraInfo.isVisible();
+            extraInfo.setVisible(isVisible);
+            extraInfo.setManaged(isVisible);
+            btnDetails.setText(isVisible ? "Réduire" : "Détails");
+        });
 
         Button btnBook = new Button("S'inscrire");
         btnBook.getStyleClass().add("btn-primary");
         btnBook.setMaxWidth(Double.MAX_VALUE);
         btnBook.setOnAction(e -> showFormationDetails(f));
 
-        card.getChildren().addAll(title, jeu, level, price, desc, btnDetails, btnBook);
+        card.getChildren().addAll(title, jeu, price, extraInfo, btnDetails, btnBook);
         return card;
     }
 
