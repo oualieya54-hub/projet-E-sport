@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="750.0" prefWidth="1250.0" style="-fx-background-color: #0b121e;" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.user.ProgressCenterController">
+    
+    <!-- Top Header -->
+    <HBox alignment="CENTER_LEFT" prefHeight="70.0" styleClass="top-header">
+        <Label text="🛡️" styleClass="header-rocket" />
+        <Region prefWidth="10" />
+        <Label text="GAME PILOT : MON PROGRÈS" styleClass="header-title" />
+    </HBox>
+
+    <!-- Navigation Tabs -->
+    <HBox styleClass="nav-tabs-container">
+        <Button onAction="#navigateToDashboard" styleClass="nav-tab" text="DASHBOARD" />
+        <Button onAction="#navigateToBooking" styleClass="nav-tab" text="MES SESSIONS &amp; LIVE" />
+        <Button onAction="#navigateToProgress" styleClass="nav-tab, active" text="MON PROGRÈS" />
+    </HBox>
+
+    <HBox VBox.vgrow="ALWAYS" spacing="30" style="-fx-padding: 30;">
+        <!-- Left: Evaluation Section -->
+        <VBox HBox.hgrow="ALWAYS" spacing="20" styleClass="card">
+            <Label styleClass="card-title" text="📝 Évaluation en cours" />
+            <VBox fx:id="evaluationBox" spacing="20" style="-fx-background-color: #1a2332; -fx-padding: 25; -fx-background-radius: 15;">
+                <Label fx:id="questionLabel" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" wrapText="true" />
+                <VBox spacing="15">
+                    <RadioButton fx:id="opt1" styleClass="label-white" text="Option 1" />
+                    <RadioButton fx:id="opt2" styleClass="label-white" text="Option 2" />
+                    <RadioButton fx:id="opt3" styleClass="label-white" text="Option 3" />
+                </VBox>
+                <Separator opacity="0.1" />
+                <Button onAction="#handleSubmitEvaluation" styleClass="btn-primary" text="Soumettre l'évaluation" maxWidth="Infinity" />
+                <Label fx:id="evaluationResultLabel" style="-fx-font-weight: bold;" />
+            </VBox>
+            
+            <Region VBox.vgrow="ALWAYS" />
+            <VBox spacing="10" style="-fx-background-color: #1a2332; -fx-padding: 15; -fx-background-radius: 10;">
+                <Label text="💡 Conseil Coaching" style="-fx-text-fill: #00bcd4; -fx-font-weight: bold;" />
+                <Label text="N'oubliez pas de revoir les vidéos de vos sessions live avant de passer l'examen final." styleClass="card-subtitle" wrapText="true" />
+            </VBox>
+        </VBox>
+
+        <!-- Right: Certifications Section -->
+        <VBox prefWidth="450" spacing="20" styleClass="card">
+            <Label styleClass="card-title" text="🏆 Mes Certifications" />
+            <ListView fx:id="certListView" styleClass="list-view-dark" VBox.vgrow="ALWAYS" />
+            <Button text="Actualiser la liste" onAction="#initialize" styleClass="btn-secondary" maxWidth="Infinity" />
+        </VBox>
+    </HBox>
+</VBox>

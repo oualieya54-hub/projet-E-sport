@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="750.0" prefWidth="1250.0" style="-fx-background-color: #0b121e;" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.user.BookingLiveSessionController">
+    
+    <!-- Top Header -->
+    <HBox alignment="CENTER_LEFT" prefHeight="70.0" styleClass="top-header">
+        <Label text="🛡️" styleClass="header-rocket" />
+        <Region prefWidth="10" />
+        <Label text="GAME PILOT : MES SESSIONS LIVE" styleClass="header-title" />
+    </HBox>
+
+    <!-- Navigation Tabs -->
+    <HBox styleClass="nav-tabs-container">
+        <Button onAction="#navigateToDashboard" styleClass="nav-tab" text="DASHBOARD" />
+        <Button onAction="#navigateToBooking" styleClass="nav-tab, active" text="MES SESSIONS &amp; LIVE" />
+        <Button onAction="#navigateToProgress" styleClass="nav-tab" text="MON PROGRÈS" />
+    </HBox>
+
+    <HBox VBox.vgrow="ALWAYS">
+        <!-- Left: My Bookings -->
+        <VBox prefWidth="480.0" spacing="15.0" style="-fx-background-color: #0f1724; -fx-padding: 20;">
+            <Label styleClass="card-title" text="📑 Mes Réservations" />
+            <TableView fx:id="sessionTable" styleClass="table-view-dark" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colJeu" prefWidth="100" text="Jeu" />
+                    <TableColumn fx:id="colCoach" prefWidth="100" text="Coach" />
+                    <TableColumn fx:id="colDate" prefWidth="150" text="Date &amp; Heure" />
+                    <TableColumn fx:id="colStatut" prefWidth="90" text="Statut" />
+                </columns>
+            </TableView>
+            <HBox spacing="10">
+                <Button maxWidth="Infinity" onAction="#handleJoinSession" styleClass="btn-primary" text="Rejoindre Live" HBox.hgrow="ALWAYS" />
+                <Button maxWidth="Infinity" styleClass="btn-danger" text="Annuler" HBox.hgrow="ALWAYS" />
+            </HBox>
+        </VBox>
+
+        <!-- Right: Vision Conference Simulator -->
+        <VBox HBox.hgrow="ALWAYS" spacing="15.0" style="-fx-padding: 20;">
+            <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #1a2332; -fx-padding: 10; -fx-background-radius: 10;">
+                <Label fx:id="coachStatusLabel" style="-fx-text-fill: #b0b0b0; -fx-font-weight: bold;" text="COACH OFFLINE" />
+                <Separator orientation="VERTICAL" prefHeight="20" />
+                <Label fx:id="timerLabel" style="-fx-text-fill: white; -fx-font-family: 'Courier New'; -fx-font-size: 16;" text="00:00:00" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="sessionStatusBadge" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-padding: 3 10; -fx-background-radius: 5;" text="SESSION INACTIVE" />
+            </HBox>
+
+            <HBox VBox.vgrow="ALWAYS" spacing="15">
+                <!-- Video Area -->
+                <VBox HBox.hgrow="ALWAYS" spacing="15">
+                    <StackPane VBox.vgrow="ALWAYS" style="-fx-background-color: black; -fx-background-radius: 15; -fx-border-color: #9c27b0; -fx-border-width: 2; -fx-border-radius: 15;">
+                        <VBox alignment="CENTER" spacing="15">
+                            <Label text="📹" style="-fx-font-size: 60;" />
+                            <Label text="Vision Conference Live" style="-fx-text-fill: #8892b0;" />
+                        </VBox>
+                        <HBox alignment="CENTER" StackPane.alignment="BOTTOM_CENTER" spacing="15" style="-fx-padding: 20;">
+                            <Button onAction="#handleCameraToggle" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🎥" />
+                            <Button onAction="#handleMicToggle" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🎤" />
+                            <Button onAction="#handleShareScreen" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🖥️" />
+                            <Button onAction="#handleLeaveSession" style="-fx-background-color: #e91e63; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="❌" />
+                        </HBox>
+                    </StackPane>
+                    
+                    <!-- Participants -->
+                    <VBox prefHeight="150" styleClass="card">
+                        <Label text="Participants" styleClass="item-title" />
+                        <ListView fx:id="participantsList" styleClass="list-view-dark" orientation="HORIZONTAL" prefHeight="80" />
+                    </VBox>
+                </VBox>
+
+                <!-- Chat Panel -->
+                <VBox prefWidth="300" spacing="10" styleClass="card">
+                    <Label text="Chat en direct" styleClass="item-title" />
+                    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                        <VBox fx:id="chatBox" spacing="8" />
+                    </ScrollPane>
+                    <HBox spacing="5">
+                        <TextField fx:id="chatInput" HBox.hgrow="ALWAYS" promptText="Message..." onAction="#handleSendMessage" styleClass="text-field-dark" />
+                        <Button onAction="#handleSendMessage" styleClass="btn-primary" text="➤" />
+                    </HBox>
+                </VBox>
+            </HBox>
+        </VBox>
+    </HBox>
+</VBox>

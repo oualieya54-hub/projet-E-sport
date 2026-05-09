@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="750.0" prefWidth="1250.0" style="-fx-background-color: #0b121e;" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.user.UserDashboardController">
+    
+    <!-- Top Header -->
+    <HBox alignment="CENTER_LEFT" prefHeight="70.0" styleClass="top-header">
+        <Label text="🛡️" styleClass="header-rocket" />
+        <Region prefWidth="10" />
+        <Label text="GAME PILOT : ESPORTS ACADEMY" styleClass="header-title" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label style="-fx-text-fill: #00bcd4; -fx-font-weight: bold;" text="Bienvenue, Joueur !" />
+    </HBox>
+
+    <!-- Navigation Tabs -->
+    <HBox styleClass="nav-tabs-container">
+        <Button onAction="#navigateToDashboard" styleClass="nav-tab, active" text="DASHBOARD" />
+        <Button onAction="#navigateToBooking" styleClass="nav-tab" text="MES SESSIONS &amp; LIVE" />
+        <Button onAction="#navigateToProgress" styleClass="nav-tab" text="MON PROGRÈS" />
+    </HBox>
+
+    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+        <VBox spacing="30.0" style="-fx-padding: 30;">
+            
+            <!-- Statistics Cards -->
+            <HBox alignment="CENTER" spacing="20">
+                <VBox prefWidth="250" styleClass="dash-summary-card, cyan">
+                    <Label styleClass="dash-summary-label" text="RÉSERVATIONS" />
+                    <Label fx:id="totalBookingsLabel" styleClass="dash-summary-value" text="0" />
+                </VBox>
+                <VBox prefWidth="250" styleClass="dash-summary-card, purple">
+                    <Label styleClass="dash-summary-label" text="FORMATIONS FINIES" />
+                    <Label fx:id="completedFormationsLabel" styleClass="dash-summary-value" text="0" />
+                </VBox>
+                <VBox prefWidth="250" styleClass="dash-summary-card, green">
+                    <Label styleClass="dash-summary-label" text="CERTIFICATIONS" />
+                    <Label fx:id="certificationsLabel" styleClass="dash-summary-value" text="0" />
+                </VBox>
+            </HBox>
+
+            <Separator opacity="0.1" />
+
+            <!-- Formations Section -->
+            <VBox spacing="20">
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <Label styleClass="card-title" text="🔥 FORMATIONS DISPONIBLES" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <TextField fx:id="searchField" onKeyReleased="#handleSearch" prefWidth="300" promptText="Rechercher un jeu ou une formation..." styleClass="text-field-dark" />
+                </HBox>
+                
+                <FlowPane fx:id="formationsFlowPane" hgap="20.0" prefWrapLength="1100.0" vgap="20.0" />
+            </VBox>
+
+            <!-- Quick Navigation Cards -->
+            <HBox spacing="30">
+                <VBox onMouseClicked="#navigateToBooking" style="-fx-cursor: hand;" styleClass="card" HBox.hgrow="ALWAYS">
+                    <Label styleClass="item-title" text="🎥 Live Coaching" />
+                    <Label styleClass="item-detail" text="Rejoignez vos sessions Vision Conference en direct." />
+                </VBox>
+                <VBox onMouseClicked="#navigateToProgress" style="-fx-cursor: hand;" styleClass="card" HBox.hgrow="ALWAYS">
+                    <Label styleClass="item-title" text="🏆 Progrès &amp; Certifs" />
+                    <Label styleClass="item-detail" text="Passez vos évaluations et téléchargez vos diplômes." />
+                </VBox>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+</VBox>

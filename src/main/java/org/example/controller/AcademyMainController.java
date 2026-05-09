@@ -35,6 +35,9 @@ public class AcademyMainController {
     @FXML
     void navigateToVision(MouseEvent event) { switchScene(event, "/user/VisionConferenceView.fxml"); }
 
+    @FXML
+    void navigateToUserMode(ActionEvent event) { switchScene(event, "/user/UserDashboard.fxml"); }
+
     private void switchScene(Event event, String fxmlPath) {
         try {
             URL url = getClass().getResource(fxmlPath);
