@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BookingController {
-    private BookingService bookingService;
-
     @FXML private ListView<Booking> bookingListView;
     @FXML private TextField searchField;
 

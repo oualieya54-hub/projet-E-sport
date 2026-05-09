@@ -28,7 +28,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EvaluationController {
+public class
+EvaluationController {
     private final EvaluationService evaluationService;
 
     @FXML private ListView<Evaluation> evaluationListView;
