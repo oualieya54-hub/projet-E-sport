@@ -22,7 +22,7 @@ public class Main {
 
             Parent root = FXMLLoader.load(fxmlUrl);
             Scene scene = new Scene(root);
-            primaryStage.setTitle("Game Pilot - Academy & Coaching");
+            primaryStage.setTitle("Game - Pilot Backoffice Admin");
             primaryStage.setScene(scene);
             primaryStage.show();
         }

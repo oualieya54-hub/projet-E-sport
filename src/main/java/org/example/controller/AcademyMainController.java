@@ -15,6 +15,9 @@ import java.net.URL;
 public class AcademyMainController {
 
     @FXML
+    void navigateToDashboard(Event event) { switchScene(event, "/AcademyMainView.fxml"); }
+
+    @FXML
     void navigateToFormation(Event event) { switchScene(event, "/FormationView.fxml"); }
 
     @FXML

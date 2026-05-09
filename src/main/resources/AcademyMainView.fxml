@@ -4,60 +4,56 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<HBox stylesheets="@styles.css" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.AcademyMainController">
-    <!-- Sidebar -->
-    <VBox prefWidth="250.0" styleClass="sidebar" spacing="10">
-        <Label text="Game Pilot" styleClass="sidebar-title" />
-        <Label text="ACADEMY MANAGER" styleClass="sidebar-subtitle" />
-        
-        <Region prefHeight="10" />
-        
-        <Button text="Formation" onAction="#navigateToFormation" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Session" onAction="#navigateToSession" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Booking" onAction="#navigateToBooking" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Evaluation" onAction="#navigateToEvaluation" styleClass="nav-btn" prefWidth="210"/>
-        <Button text="Certification" onAction="#navigateToCertification" styleClass="nav-btn" prefWidth="210"/>
-    </VBox>
+<VBox stylesheets="@styles.css" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.AcademyMainController">
+    <!-- Top Header -->
+    <HBox styleClass="top-header">
+        <Label text="🚀" styleClass="header-rocket" />
+        <Region prefWidth="10" />
+        <Label text="GAME PILOT ADMIN" styleClass="header-title" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="Ouvrir la Boutique Client" styleClass="btn-client-shop" />
+    </HBox>
+
+    <!-- Navigation Tabs -->
+    <HBox styleClass="nav-tabs-container">
+        <Button text="DASHBOARD" onAction="#navigateToDashboard" styleClass="nav-tab, active" />
+        <Button text="FORMATIONS" onAction="#navigateToFormation" styleClass="nav-tab" />
+        <Button text="SESSIONS" onAction="#navigateToSession" styleClass="nav-tab" />
+        <Button text="BOOKINGS" onAction="#navigateToBooking" styleClass="nav-tab" />
+        <Button text="EVALUATIONS" onAction="#navigateToEvaluation" styleClass="nav-tab" />
+        <Button text="CERTIFICATIONS" onAction="#navigateToCertification" styleClass="nav-tab" />
+    </HBox>
 
     <!-- Main Content -->
-    <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #161722; -fx-padding: 40;" spacing="30">
-        <VBox spacing="5">
-            <Label text="Academy &amp; Coaching" styleClass="card-title">
-                <font><Font size="32.0" /></font>
-            </Label>
-            <Label text="Manage your eSports educational module from one place." styleClass="card-subtitle" />
+    <VBox VBox.vgrow="ALWAYS" style="-fx-padding: 40;" spacing="30">
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="🚀 Dashboard Académie 🚀" styleClass="card-title" style="-fx-font-size: 32;" />
+            <Label text="Gérez vos programmes d'entraînement eSports depuis un seul endroit." styleClass="card-subtitle" />
         </VBox>
 
-        <FlowPane hgap="30" vgap="30">
-            <!-- Formation Card -->
-            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToFormation">
-                <Label text="📚" styleClass="dash-icon" />
-                <Label text="Formations" styleClass="dash-title" />
+        <HBox spacing="30" alignment="CENTER">
+            <!-- Summary Cards -->
+            <VBox styleClass="dash-summary-card, cyan" prefWidth="280">
+                <Label text="Total Formations" styleClass="dash-summary-label" />
+                <Label text="23" styleClass="dash-summary-value" />
             </VBox>
 
-            <!-- Session Card -->
-            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToSession">
-                <Label text="📅" styleClass="dash-icon" />
-                <Label text="Sessions" styleClass="dash-title" />
+            <VBox styleClass="dash-summary-card, purple" prefWidth="280">
+                <Label text="Sessions Actives" styleClass="dash-summary-label" />
+                <Label text="18" styleClass="dash-summary-value" />
             </VBox>
 
-            <!-- Booking Card -->
-            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToBooking">
-                <Label text="🎟️" styleClass="dash-icon" />
-                <Label text="Bookings" styleClass="dash-title" />
+            <VBox styleClass="dash-summary-card, green" prefWidth="280">
+                <Label text="Inscriptions" styleClass="dash-summary-label" />
+                <Label text="145" styleClass="dash-summary-value" />
             </VBox>
+        </HBox>
 
-            <!-- Evaluation Card -->
-            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToEvaluation">
-                <Label text="⭐" styleClass="dash-icon" />
-                <Label text="Evaluations" styleClass="dash-title" />
-            </VBox>
-
-            <!-- Certification Card -->
-            <VBox styleClass="dash-card" prefWidth="250" onMouseClicked="#navigateToCertification">
-                <Label text="🏆" styleClass="dash-icon" />
-                <Label text="Certifications" styleClass="dash-title" />
-            </VBox>
-        </FlowPane>
+        <Region VBox.vgrow="ALWAYS" />
+        
+        <HBox alignment="CENTER">
+            <Button text=" Rafraîchir les statistiques" styleClass="btn-client-shop" prefHeight="45" />
+        </HBox>
     </VBox>
-</HBox>
+</VBox>
+
