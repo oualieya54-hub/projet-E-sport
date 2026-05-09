@@ -133,9 +133,46 @@ public class BookingLiveSessionController implements Initializable {
         alert.showAndWait();
     }
 
-    @FXML void handleCameraToggle() { System.out.println("Camera toggled"); }
-    @FXML void handleMicToggle() { System.out.println("Mic toggled"); }
-    @FXML void handleShareScreen() { System.out.println("Sharing screen"); }
+    @FXML private StackPane videoArea;
+    @FXML private VBox placeholderBox;
+    @FXML private VBox videoOverlay;
+    @FXML private ProgressBar micVolumeBar;
+    @FXML private Button camBtn, micBtn, shareBtn;
+
+    private Timeline micTimeline;
+    private boolean isCamOn = false;
+    private boolean isMicOn = false;
+
+    @FXML
+    void handleCameraToggle() {
+        isCamOn = !isCamOn;
+        videoOverlay.setVisible(isCamOn);
+        placeholderBox.setVisible(!isCamOn);
+        videoArea.setStyle(isCamOn ? "-fx-background-color: #1a2332; -fx-background-radius: 15; -fx-border-color: #00bcd4; -fx-border-width: 2;" : "-fx-background-color: black; -fx-background-radius: 15; -fx-border-color: #9c27b0; -fx-border-width: 2;");
+        camBtn.setStyle(isCamOn ? "-fx-background-color: #00ff00; -fx-text-fill: black; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" : "-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;");
+    }
+
+    @FXML
+    void handleMicToggle() {
+        isMicOn = !isMicOn;
+        micVolumeBar.setVisible(isMicOn);
+        micBtn.setStyle(isMicOn ? "-fx-background-color: #00ff00; -fx-text-fill: black; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" : "-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;");
+        
+        if (isMicOn) {
+            micTimeline = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+                micVolumeBar.setProgress(Math.random() * 0.8 + 0.1);
+            }));
+            micTimeline.setCycleCount(Timeline.INDEFINITE);
+            micTimeline.play();
+        } else if (micTimeline != null) {
+            micTimeline.stop();
+        }
+    }
+
+    @FXML
+    void handleShareScreen() {
+        showAlert("Partage d'écran", "Simulation du partage d'écran activée. Votre bureau est maintenant visible par le coach.");
+    }
 
     @FXML void navigateToDashboard(Event event) { switchScene("/user/UserDashboard.fxml", sessionTable); }
     @FXML void navigateToBooking(Event event) { /* Already here */ }

@@ -51,16 +51,27 @@
             <HBox VBox.vgrow="ALWAYS" spacing="15">
                 <!-- Video Area -->
                 <VBox HBox.hgrow="ALWAYS" spacing="15">
-                    <StackPane VBox.vgrow="ALWAYS" style="-fx-background-color: black; -fx-background-radius: 15; -fx-border-color: #9c27b0; -fx-border-width: 2; -fx-border-radius: 15;">
-                        <VBox alignment="CENTER" spacing="15">
+                    <StackPane fx:id="videoArea" VBox.vgrow="ALWAYS" style="-fx-background-color: black; -fx-background-radius: 15; -fx-border-color: #9c27b0; -fx-border-width: 2; -fx-border-radius: 15;">
+                        <VBox fx:id="placeholderBox" alignment="CENTER" spacing="15">
                             <Label text="📹" style="-fx-font-size: 60;" />
                             <Label text="Vision Conference Live" style="-fx-text-fill: #8892b0;" />
                         </VBox>
+                        
+                        <!-- Video Simulation Overlay -->
+                        <VBox fx:id="videoOverlay" visible="false" alignment="TOP_RIGHT" style="-fx-padding: 10;">
+                             <Label text="REC ●" style="-fx-text-fill: red; -fx-font-weight: bold;" />
+                        </VBox>
+                        
                         <HBox alignment="CENTER" StackPane.alignment="BOTTOM_CENTER" spacing="15" style="-fx-padding: 20;">
-                            <Button onAction="#handleCameraToggle" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🎥" />
-                            <Button onAction="#handleMicToggle" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🎤" />
-                            <Button onAction="#handleShareScreen" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🖥️" />
-                            <Button onAction="#handleLeaveSession" style="-fx-background-color: #e91e63; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="❌" />
+                            <VBox alignment="CENTER" spacing="5">
+                                <ProgressBar fx:id="micVolumeBar" prefWidth="100" progress="0.0" visible="false" style="-fx-accent: #00ff00;" />
+                                <HBox spacing="15">
+                                    <Button fx:id="camBtn" onAction="#handleCameraToggle" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🎥" />
+                                    <Button fx:id="micBtn" onAction="#handleMicToggle" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🎤" />
+                                    <Button fx:id="shareBtn" onAction="#handleShareScreen" style="-fx-background-color: #333d4d; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="🖥️" />
+                                    <Button onAction="#handleLeaveSession" style="-fx-background-color: #e91e63; -fx-text-fill: white; -fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45;" text="❌" />
+                                </HBox>
+                            </VBox>
                         </HBox>
                     </StackPane>
                     
