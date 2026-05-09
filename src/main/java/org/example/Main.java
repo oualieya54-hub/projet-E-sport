@@ -6,30 +6,26 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.net.URL;
+public class Main extends Application {
 
-public class Main {
-    
-    public static class EsportApp extends Application {
-        @Override
-        public void start(Stage primaryStage) throws Exception {
-            URL fxmlUrl = getClass().getResource("/AcademyMainView.fxml");
-            
-            if (fxmlUrl == null) {
-                System.err.println("ERREUR : Impossible de trouver le fichier AcademyMainView.fxml !");
-                System.exit(1);
-            }
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // Open Admin Window
+        Stage adminStage = new Stage();
+        Parent adminRoot = FXMLLoader.load(getClass().getResource("/AcademyMainView.fxml"));
+        adminStage.setTitle("Game Pilot - Administration");
+        adminStage.setScene(new Scene(adminRoot));
+        adminStage.show();
 
-            Parent root = FXMLLoader.load(fxmlUrl);
-            Scene scene = new Scene(root);
-            primaryStage.setTitle("Game - Pilot Backoffice Admin");
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        }
-    }//
+        // Open User Window
+        Stage userStage = new Stage();
+        Parent userRoot = FXMLLoader.load(getClass().getResource("/user/UserDashboard.fxml"));
+        userStage.setTitle("Game Pilot - E-sport Academy (Espace Joueur)");
+        userStage.setScene(new Scene(userRoot));
+        userStage.show();
+    }
 
     public static void main(String[] args) {
-        // Launch the JavaFX application directly from this main class
-        Application.launch(EsportApp.class, args);
+        launch(args);
     }
 }
