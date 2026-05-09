@@ -259,6 +259,39 @@
 }
 
 
+/* TableView Dark Theme */
+.table-view-dark {
+    -fx-background-color: transparent;
+    -fx-border-color: #3f4a61;
+    -fx-border-radius: 5;
+}
+
+.table-view-dark .column-header-background {
+    -fx-background-color: #1a2332;
+}
+
+.table-view-dark .column-header {
+    -fx-background-color: transparent;
+    -fx-text-fill: #00bcd4;
+}
+
+.table-view-dark .table-cell {
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.table-view-dark .table-row-cell:odd {
+    -fx-background-color: #0f1724;
+}
+
+.table-view-dark .table-row-cell:even {
+    -fx-background-color: #141c2b;
+}
+
+.table-view-dark .table-row-cell:selected {
+    -fx-background-color: #00bcd4;
+}
+
 /* Vision Conference Specific Styles */
 .list-view-dark {
     -fx-background-color: transparent;
