@@ -34,6 +34,8 @@ public class SessionController {
     
     private final SessionService sessionService;
     private final FormationService formationService;
+    private boolean isEditMode = false;
+    private Session currentSession = null;
 
     public SessionController() {
         this.sessionService = new SessionService();
@@ -46,8 +48,6 @@ public class SessionController {
     }
 
     public List<Session> getDisponibilites() throws SQLException {
-        // Returning all sessions for the dashboard view instead of just available ones
-        // If there's a getAll() in service, we should use it. For now, we use getDisponibilites().
         return sessionService.getDisponibilites();
     }
 
@@ -64,8 +64,6 @@ public class SessionController {
     }
     
     public void delete(int idSession) throws SQLException {
-        // Typically, we might just cancel it, but assuming a delete logic if required
-        // We will call cancel() here to represent the delete action since SessionService uses cancel()
         sessionService.cancel(idSession);
     }
 
@@ -85,6 +83,10 @@ public class SessionController {
         return sessionService.isCoachDisponible(idCoach, dateHeure);
     }
 
+    public Session checkDuplicate(String jeu, int idCoach, LocalDateTime dateHeure, int excludeId) throws SQLException {
+        return sessionService.checkDuplicate(jeu, idCoach, dateHeure, excludeId);
+    }
+
     // --- JavaFX ListView ---
     @FXML private ListView<Session> sessionListView;
     @FXML private TextField searchField;
@@ -100,6 +102,10 @@ public class SessionController {
     @FXML private ComboBox<String> statutCombo;
     @FXML private ComboBox<String> coachCombo;
     @FXML private ComboBox<Formation> formationCombo;
+
+    @FXML private Button buttonAdd;
+    @FXML private Button buttonModify;
+    @FXML private Button buttonDelete;
 
     // ObservableList for the TableView
     private final ObservableList<Session> sessionList = FXCollections.observableArrayList();
@@ -257,6 +263,16 @@ public class SessionController {
                         selectedForm != null ? selectedForm.getIdFormation() : null
                 );
 
+                Session duplicate = checkDuplicate(newSession.getJeu(), newSession.getIdCoach(),
+                        newSession.getDateHeure(), 0);
+                if (duplicate != null) {
+                    showAlert("Session dupliquée", "Doublon détecté",
+                            String.format("Une session existe déjà pour:\n- Coach: %d\n- Jeu: %s\n- Créneau: %s",
+                                    newSession.getIdCoach(), newSession.getJeu(), newSession.getDateHeure()),
+                            Alert.AlertType.WARNING);
+                    return;
+                }
+
                 this.create(newSession);
                 loadData();
                 handleReset(null);
@@ -277,48 +293,112 @@ public class SessionController {
 
     @FXML
     void handleUpdate(ActionEvent event) {
-        Session selected = sessionListView.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert("Aucune sélection", "Veuillez sélectionner une session", "Sélectionnez une session dans la liste pour la modifier.", Alert.AlertType.WARNING);
-            return;
-        }
-
-        if (validateInput()) {
-            try {
-                LocalDateTime dateTime = LocalDateTime.of(datePicker.getValue(), LocalTime.parse(timeField.getText()));
-                
-                // Coach mapping
-                String coachName = coachCombo.getValue();
-                int coachId = 1;
-                if ("Coach Slim".equals(coachName)) coachId = 2;
-                else if ("Coach Amina".equals(coachName)) coachId = 3;
-                else if ("Coach Yassine".equals(coachName)) coachId = 4;
-
-                selected.setDateHeure(dateTime);
-                selected.setJeu(jeuField.getText());
-                selected.setPrix(Float.parseFloat(prixField.getText()));
-                selected.setIdCoach(coachId);
-                selected.setDureeMinutes(Integer.parseInt(dureeField.getText()));
-                selected.setCapaciteMax(Integer.parseInt(capaciteField.getText()));
-                selected.setTypeSession(typeCombo.getValue());
-                selected.setStatut(statutCombo.getValue());
-                
-                Formation selectedForm = formationCombo.getValue();
-                selected.setIdFormation(selectedForm != null ? selectedForm.getIdFormation() : null);
-
-                this.update(selected);
-                loadData();
-                showAlert("Succès", "Session modifiée", "La session a été mise à jour.", Alert.AlertType.INFORMATION);
-            } catch (SQLException e) {
-                String msg = e.getMessage();
-                if (msg.contains("Data truncated for column 'statut'")) {
-                    msg = "Le statut choisi n'est pas reconnu par la base de données. Utilisez 'ouverte', 'terminée' ou 'annulée'.";
-                }
-                showAlert("Erreur Base de Données", "Erreur lors de la modification", msg, Alert.AlertType.ERROR);
-            } catch (DateTimeParseException e) {
-                showAlert("Erreur de format", "Heure invalide", "L'heure doit être au format HH:mm (ex: 14:30)", Alert.AlertType.ERROR);
+        if (!isEditMode) {
+            Session selected = sessionListView.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                showAlert("Aucune sélection", "Veuillez sélectionner une session",
+                        "Sélectionnez une session dans la liste pour la modifier.", Alert.AlertType.WARNING);
+                return;
             }
+            enterEditMode(selected);
+        } else {
+            saveSession();
         }
+    }
+
+    private void enterEditMode(Session session) {
+        isEditMode = true;
+        currentSession = session;
+
+        buttonAdd.setDisable(true);
+        buttonDelete.setDisable(true);
+        buttonModify.setText("Enregistrer");
+        buttonModify.setStyle("-fx-font-weight: bold;");
+
+        showAlert("Mode édition", "Modification de la session",
+                "Vous êtes en mode édition.\nModifiez les champs puis cliquez sur « Enregistrer ».",
+                Alert.AlertType.INFORMATION);
+    }
+
+    private void saveSession() {
+        if (currentSession == null) return;
+
+        if (!validateInput()) return;
+
+        try {
+            LocalDateTime dateTime = LocalDateTime.of(datePicker.getValue(), LocalTime.parse(timeField.getText()));
+
+            String coachName = coachCombo.getValue();
+            int coachId = 1;
+            if ("Coach Slim".equals(coachName)) coachId = 2;
+            else if ("Coach Amina".equals(coachName)) coachId = 3;
+            else if ("Coach Yassine".equals(coachName)) coachId = 4;
+
+            currentSession.setDateHeure(dateTime);
+            currentSession.setJeu(jeuField.getText());
+            currentSession.setPrix(Float.parseFloat(prixField.getText()));
+            currentSession.setIdCoach(coachId);
+            currentSession.setDureeMinutes(Integer.parseInt(dureeField.getText()));
+            currentSession.setCapaciteMax(Integer.parseInt(capaciteField.getText()));
+            currentSession.setTypeSession(typeCombo.getValue());
+            currentSession.setStatut(statutCombo.getValue());
+
+            Formation selectedForm = formationCombo.getValue();
+            currentSession.setIdFormation(selectedForm != null ? selectedForm.getIdFormation() : null);
+
+            Session duplicate = checkDuplicate(currentSession.getJeu(), currentSession.getIdCoach(),
+                    currentSession.getDateHeure(), currentSession.getIdSession());
+            if (duplicate != null) {
+                showAlert("Session dupliquée", "Doublon détecté",
+                        String.format("Une autre session existe déjà pour:\n- Coach: %d\n- Jeu: %s\n- Créneau: %s",
+                                currentSession.getIdCoach(), currentSession.getJeu(), currentSession.getDateHeure()),
+                        Alert.AlertType.WARNING);
+                return;
+            }
+
+            this.update(currentSession);
+            loadData();
+            exitEditMode();
+            showAlert("Succès", "Session modifiée", "La session a été mise à jour.", Alert.AlertType.INFORMATION);
+        } catch (SQLException e) {
+            String msg = e.getMessage();
+            if (msg.contains("Data truncated for column 'statut'")) {
+                msg = "Le statut choisi n'est pas reconnu par la base de données. Utilisez 'ouverte', 'terminée' ou 'annulée'.";
+            }
+            showAlert("Erreur Base de Données", "Erreur lors de la modification", msg, Alert.AlertType.ERROR);
+        } catch (DateTimeParseException e) {
+            showAlert("Erreur de format", "Heure invalide", "L'heure doit être au format HH:mm (ex: 14:30)", Alert.AlertType.ERROR);
+        } catch (NumberFormatException e) {
+            showAlert("Erreur de saisie", "Champs numériques invalides",
+                    "Vérifiez le prix, la durée et la capacité.", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void exitEditMode() {
+        isEditMode = false;
+        currentSession = null;
+
+        buttonAdd.setDisable(false);
+        buttonDelete.setDisable(false);
+        buttonModify.setText("Modifier");
+        buttonModify.setStyle("");
+
+        clearSessionFormFields();
+    }
+
+    /** Vide le formulaire et la sélection (sans toucher au mode édition — utiliser {@link #exitEditMode()} pour quitter l’édition). */
+    private void clearSessionFormFields() {
+        sessionListView.getSelectionModel().clearSelection();
+        datePicker.setValue(null);
+        timeField.clear();
+        jeuField.clear();
+        prixField.clear();
+        dureeField.clear();
+        capaciteField.clear();
+        typeCombo.getSelectionModel().clearSelection();
+        statutCombo.getSelectionModel().clearSelection();
+        coachCombo.getSelectionModel().clearSelection();
+        formationCombo.getSelectionModel().clearSelection();
     }
 
     @FXML
@@ -332,7 +412,8 @@ public class SessionController {
                 try {
                     this.delete(selected.getIdSession());
                     loadData();
-                    handleReset(null);
+                    if (isEditMode) exitEditMode();
+                    else handleReset(null);
                     showAlert("Succès", "Session supprimée/annulée", "L'action a été effectuée.", Alert.AlertType.INFORMATION);
                 } catch (SQLException e) {
                     showAlert("Erreur BD", "Erreur lors de la suppression", e.getMessage(), Alert.AlertType.ERROR);
@@ -345,18 +426,11 @@ public class SessionController {
 
     @FXML
     void handleReset(ActionEvent event) {
-        sessionListView.getSelectionModel().clearSelection();
-        datePicker.setValue(null);
-        timeField.clear();
-        jeuField.clear();
-        prixField.clear();
-        dureeField.clear();
-        capaciteField.clear();
-        typeCombo.getSelectionModel().clearSelection();
-        statutCombo.getSelectionModel().clearSelection();
-        coachCombo.getSelectionModel().clearSelection();
-        formationCombo.getSelectionModel().clearSelection();
-        sessionListView.getSelectionModel().clearSelection();
+        if (isEditMode) {
+            exitEditMode();
+            return;
+        }
+        clearSessionFormFields();
     }
 
     @FXML

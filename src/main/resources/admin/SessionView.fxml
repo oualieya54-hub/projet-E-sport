@@ -82,9 +82,9 @@
             <Separator opacity="0.1" />
 
             <VBox spacing="10">
-                <Button text="Ajouter" onAction="#handleAdd" styleClass="btn-primary" maxWidth="Infinity" />
-                <Button text="Modifier" onAction="#handleUpdate" styleClass="btn-secondary" maxWidth="Infinity" />
-                <Button text="Supprimer" onAction="#handleDelete" styleClass="btn-danger" maxWidth="Infinity" />
+                <Button fx:id="buttonAdd" text="Ajouter" onAction="#handleAdd" styleClass="btn-primary" maxWidth="Infinity" />
+                <Button fx:id="buttonModify" text="Modifier" onAction="#handleUpdate" styleClass="btn-secondary" maxWidth="Infinity" />
+                <Button fx:id="buttonDelete" text="Supprimer" onAction="#handleDelete" styleClass="btn-danger" maxWidth="Infinity" />
                 <Button text="Actualiser" onAction="#handleRefresh" styleClass="btn-client-shop" maxWidth="Infinity" />
             </VBox>
         </VBox>

@@ -177,5 +177,23 @@ public class SessionService {
         }
         return liste;
     }
+
+    /**
+     * Retourne une session existante si le même coach, le même jeu et le même créneau (date + heure) existent déjà.
+     * {@code excludeId} : id de la session en cours d’édition (0 pour une insertion) à exclure de la recherche.
+     */
+    public Session checkDuplicate(String jeu, int idCoach, LocalDateTime dateHeure, int excludeId) throws SQLException {
+        String sql = "SELECT * FROM Session WHERE jeu = ? AND id_coach = ? AND date_heure = ? AND id_session != ?";
+        try (Connection con = MyDatabase.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, jeu);
+            ps.setInt(2, idCoach);
+            ps.setTimestamp(3, Timestamp.valueOf(dateHeure));
+            ps.setInt(4, excludeId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return extractSessionFromResultSet(rs);
+        }
+        return null;
+    }
 }
 //.
