@@ -169,4 +169,21 @@ public class FormationService {
             System.out.println("✅ Formation archivée !");
         }
     }
+
+    public Formation checkDuplicate(String jeu, int idCoach, java.time.LocalDate dateDebut, int excludeId) throws SQLException {
+        String sql = "SELECT * FROM formation WHERE jeu = ? AND id_coach = ? AND date_debut = ? AND id_formation != ?";
+        try (Connection con = MyDatabase.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, jeu);
+            ps.setInt(2, idCoach);
+            if (dateDebut != null)
+                ps.setDate(3, Date.valueOf(dateDebut));
+            else
+                ps.setNull(3, Types.DATE);
+            ps.setInt(4, excludeId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return extract(rs);
+        }
+        return null;
+    }
 }
