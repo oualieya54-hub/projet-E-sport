@@ -15,7 +15,9 @@ import org.example.Model.Booking;
 import org.example.Model.Formation;
 import org.example.Model.Session;
 import org.example.Service.BookingService;
+import org.example.Service.EmailService;
 import org.example.Service.SessionService;
+import org.example.Utils.EmailValidator;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,12 +35,14 @@ public class FormationDetailsController {
     @FXML private TableColumn<Session, String> colType;
     @FXML private TableColumn<Session, String> colCoach;
 
+    @FXML private TextField userPrenomField;
     @FXML private TextField userNameField;
     @FXML private TextField userEmailField;
 
     private Formation formation;
     private final SessionService sessionService = new SessionService();
     private final BookingService bookingService = new BookingService();
+    private final EmailService emailService = new EmailService();
     private final ObservableList<Session> sessionList = FXCollections.observableArrayList();
 
     public void setFormation(Formation f) {
@@ -68,12 +72,23 @@ public class FormationDetailsController {
     void handleConfirmBooking() {
         Session selectedSession = sessionTable.getSelectionModel().getSelectedItem();
         if (selectedSession == null) {
-            showAlert("Sélection requise", "Veuillez sélectionner une session dans le tableau pour vous inscrire.");
+            showAlert(Alert.AlertType.WARNING, "Sélection requise",
+                    "Veuillez sélectionner une session dans le tableau pour vous inscrire.");
             return;
         }
 
-        if (userNameField.getText().isEmpty() || userEmailField.getText().isEmpty()) {
-            showAlert("Erreur", "Veuillez remplir vos informations pour vous inscrire.");
+        String prenom = userPrenomField.getText() != null ? userPrenomField.getText().trim() : "";
+        String nom = userNameField.getText() != null ? userNameField.getText().trim() : "";
+        String email = userEmailField.getText() != null ? userEmailField.getText().trim() : "";
+
+        if (prenom.isEmpty() || nom.isEmpty() || email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Champs requis",
+                    "Veuillez remplir le prénom, le nom et l’e-mail pour vous inscrire.");
+            return;
+        }
+
+        if (!EmailValidator.isValid(email)) {
+            showAlert(Alert.AlertType.WARNING, "E-mail invalide", EmailValidator.reasonIfInvalid(email));
             return;
         }
 
@@ -81,11 +96,38 @@ public class FormationDetailsController {
             // Correct constructor: idBooking (0), idSession, idEleve (mock 1), statutPaiement
             Booking b = new Booking(0, selectedSession.getIdSession(), 1, "confirmé");
             bookingService.book(b);
-            showAlert("Succès", "Inscription réussie à la session du " + selectedSession.getDateHeure());
+
+            String fullName = prenom + " " + nom;
+            String subject = "Confirmation d’inscription — " + formation.getTitre();
+            String body = buildConfirmationBody(fullName, email, selectedSession);
+
+            EmailService.SendResult mailResult = emailService.sendPlainText(email, subject, body);
+            if (mailResult.sent) {
+                showAlert(Alert.AlertType.INFORMATION, "Inscription confirmée",
+                        "Bonjour " + fullName + ",\n\nVotre inscription à la session du "
+                                + selectedSession.getDateHeure() + " est enregistrée.\n\n"
+                                + "Un e-mail de confirmation vous a été envoyé à : " + email);
+            } else {
+                showAlert(Alert.AlertType.INFORMATION, "Inscription enregistrée",
+                        "Bonjour " + fullName + ",\n\nVotre inscription à la session du "
+                                + selectedSession.getDateHeure() + " est enregistrée.\n\n"
+                                + "E-mail de confirmation : " + mailResult.message);
+            }
             closeView();
         } catch (SQLException e) {
-            showAlert("Erreur", "Impossible de valider l'inscription : " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de valider l'inscription : " + e.getMessage());
         }
+    }
+
+    private String buildConfirmationBody(String fullName, String email, Session selectedSession) {
+        return "Bonjour " + fullName + ",\n\n"
+                + "Nous confirmons votre inscription à la formation suivante :\n"
+                + "• Formation : " + formation.getTitre() + "\n"
+                + "• Jeu : " + formation.getJeu() + " — Niveau : " + formation.getNiveau() + "\n"
+                + "• Session : " + selectedSession.getDateHeure() + "\n"
+                + "• Type : " + selectedSession.getTypeSession() + "\n\n"
+                + "Adresse enregistrée : " + email + "\n\n"
+                + "Merci et à bientôt sur Game Pilot Academy.\n";
     }
 
     @FXML
@@ -103,8 +145,9 @@ public class FormationDetailsController {
         }
     }
 
-    private void showAlert(String header, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private void showAlert(Alert.AlertType type, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(type == Alert.AlertType.ERROR ? "Erreur" : "Information");
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();

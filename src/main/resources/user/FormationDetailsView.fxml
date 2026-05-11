@@ -27,9 +27,11 @@
             <VBox spacing="15" styleClass="card">
                 <Label styleClass="card-title" text="✍️ Inscription Rapide" />
                 <VBox spacing="10">
-                    <Label text="Votre Nom:" styleClass="label-white" />
-                    <TextField fx:id="userNameField" promptText="Ex: Ahmed Ben Ali" styleClass="text-field-dark" />
-                    <Label text="Votre Email:" styleClass="label-white" />
+                    <Label text="Prénom:" styleClass="label-white" />
+                    <TextField fx:id="userPrenomField" promptText="Ex: Ahmed" styleClass="text-field-dark" />
+                    <Label text="Nom:" styleClass="label-white" />
+                    <TextField fx:id="userNameField" promptText="Ex: Ben Ali" styleClass="text-field-dark" />
+                    <Label text="E-mail:" styleClass="label-white" />
                     <TextField fx:id="userEmailField" promptText="Ex: ahmed@gmail.com" styleClass="text-field-dark" />
                 </VBox>
                 <Button onAction="#handleConfirmBooking" maxWidth="Infinity" styleClass="btn-primary" text="Confirmer mon Inscription" prefHeight="45" />

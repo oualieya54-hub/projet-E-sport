@@ -4,6 +4,9 @@ target/
 !**/src/test/**/target/
 .kotlin
 
+# SMTP local (copier mail.example.properties → mail.properties)
+src/main/resources/mail.properties
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
