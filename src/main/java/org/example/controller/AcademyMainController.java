@@ -15,22 +15,22 @@ import java.net.URL;
 public class AcademyMainController {
 
     @FXML
-    void navigateToDashboard(Event event) { switchScene(event, "/AcademyMainView.fxml"); }
+    void navigateToDashboard(Event event) { switchScene(event, "/admin/AcademyMainView.fxml"); }
 
     @FXML
-    void navigateToFormation(Event event) { switchScene(event, "/FormationView.fxml"); }
+    void navigateToFormation(Event event) { switchScene(event, "/admin/FormationView.fxml"); }
 
     @FXML
-    void navigateToSession(Event event) { switchScene(event, "/SessionView.fxml"); }
+    void navigateToSession(Event event) { switchScene(event, "/admin/SessionView.fxml"); }
 
     @FXML
-    void navigateToBooking(Event event) { switchScene(event, "/BookingView.fxml"); }
+    void navigateToBooking(Event event) { switchScene(event, "/admin/BookingView.fxml"); }
 
     @FXML
-    void navigateToEvaluation(Event event) { switchScene(event, "/EvaluationView.fxml"); }
+    void navigateToEvaluation(Event event) { switchScene(event, "/admin/EvaluationView.fxml"); }
 
     @FXML
-    void navigateToCertification(Event event) { switchScene(event, "/CertificationView.fxml"); }
+    void navigateToCertification(Event event) { switchScene(event, "/admin/CertificationView.fxml"); }
 
     @FXML
     void navigateToVision(MouseEvent event) { switchScene(event, "/user/VisionConferenceView.fxml"); }

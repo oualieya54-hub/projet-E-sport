@@ -281,22 +281,22 @@ public class BookingController {
     }
 
     @FXML
-    void navigateToDashboard(ActionEvent event) { switchScene(event, "/AcademyMainView.fxml"); }
+    void navigateToDashboard(ActionEvent event) { switchScene(event, "/admin/AcademyMainView.fxml"); }
 
     @FXML
-    void navigateToFormation(ActionEvent event) { switchScene(event, "/FormationView.fxml"); }
+    void navigateToFormation(ActionEvent event) { switchScene(event, "/admin/FormationView.fxml"); }
 
     @FXML
-    void navigateToSession(ActionEvent event) { switchScene(event, "/SessionView.fxml"); }
+    void navigateToSession(ActionEvent event) { switchScene(event, "/admin/SessionView.fxml"); }
 
     @FXML
-    void navigateToBooking(ActionEvent event) { switchScene(event, "/BookingView.fxml"); }
+    void navigateToBooking(ActionEvent event) { switchScene(event, "/admin/BookingView.fxml"); }
 
     @FXML
-    void navigateToEvaluation(ActionEvent event) { switchScene(event, "/EvaluationView.fxml"); }
+    void navigateToEvaluation(ActionEvent event) { switchScene(event, "/admin/EvaluationView.fxml"); }
 
     @FXML
-    void navigateToCertification(ActionEvent event) { switchScene(event, "/CertificationView.fxml"); }
+    void navigateToCertification(ActionEvent event) { switchScene(event, "/admin/CertificationView.fxml"); }
 
     private void switchScene(ActionEvent event, String fxmlPath) {
         try {

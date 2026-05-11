@@ -149,7 +149,7 @@ public class VisionConferenceController implements Initializable {
     @FXML
     void navigateBack(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/AcademyMainView.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/admin/AcademyMainView.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (IOException e) {

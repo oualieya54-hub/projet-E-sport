@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox stylesheets="@styles.css" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.BookingController">
+<VBox stylesheets="@../styles/styles.css" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.CertificationController">
     <!-- Top Header -->
     <HBox styleClass="top-header">
         <Label text="🚀" styleClass="header-rocket" />
@@ -18,38 +18,38 @@
         <Button text="DASHBOARD" onAction="#navigateToDashboard" styleClass="nav-tab" />
         <Button text="FORMATIONS" onAction="#navigateToFormation" styleClass="nav-tab" />
         <Button text="SESSIONS" onAction="#navigateToSession" styleClass="nav-tab" />
-        <Button text="BOOKINGS" onAction="#navigateToBooking" styleClass="nav-tab, active" />
+        <Button text="BOOKINGS" onAction="#navigateToBooking" styleClass="nav-tab" />
         <Button text="EVALUATIONS" onAction="#navigateToEvaluation" styleClass="nav-tab" />
-        <Button text="CERTIFICATIONS" onAction="#navigateToCertification" styleClass="nav-tab" />
+        <Button text="CERTIFICATIONS" onAction="#navigateToCertification" styleClass="nav-tab, active" />
     </HBox>
 
     <HBox VBox.vgrow="ALWAYS">
         <!-- Sidebar Actions -->
         <VBox styleClass="sidebar">
-            <Label text="Gérer la Réservation" styleClass="sidebar-title" />
+            <Label text="Gérer la Certification" styleClass="sidebar-title" />
             
             <VBox spacing="15" VBox.vgrow="ALWAYS">
                 <HBox spacing="10">
                     <VBox HBox.hgrow="ALWAYS" spacing="5">
-                        <Label text="Session:" styleClass="label-white" />
-                        <ComboBox fx:id="sessionCombo" maxWidth="Infinity" promptText="Choisir une session..." />
-                    </VBox>
-                    <VBox HBox.hgrow="ALWAYS" spacing="5">
                         <Label text="Élève:" styleClass="label-white" />
                         <ComboBox fx:id="eleveCombo" maxWidth="Infinity" promptText="Choisir un élève..." />
                     </VBox>
+                    <VBox HBox.hgrow="ALWAYS" spacing="5">
+                        <Label text="Formation:" styleClass="label-white" />
+                        <ComboBox fx:id="formationCombo" maxWidth="Infinity" promptText="Choisir une formation..." />
+                    </VBox>
                 </HBox>
                 <VBox spacing="5">
-                    <Label text="Date Réservation:" styleClass="label-white" />
-                    <DatePicker fx:id="dateReservationPicker" maxWidth="Infinity" />
+                    <Label text="Niveau:" styleClass="label-white" />
+                    <ComboBox fx:id="niveauCombo" maxWidth="Infinity" promptText="Sélectionner..." />
                 </VBox>
                 <VBox spacing="5">
-                    <Label text="Statut Paiement:" styleClass="label-white" />
-                    <ComboBox fx:id="statutPaiementCombo" maxWidth="Infinity" promptText="Sélectionner..." />
+                    <Label text="Score Final:" styleClass="label-white" />
+                    <TextField fx:id="scoreField" promptText="Ex: 92.5" />
                 </VBox>
                 <VBox spacing="5">
-                    <Label text="Mode de Paiement:" styleClass="label-white" />
-                    <ComboBox fx:id="modePaiementCombo" maxWidth="Infinity" promptText="Sélectionner..." />
+                    <Label text="Date d'Obtention:" styleClass="label-white" />
+                    <DatePicker fx:id="datePicker" maxWidth="Infinity" />
                 </VBox>
             </VBox>
 
@@ -66,12 +66,12 @@
         <!-- Main Content (List) -->
         <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 20;" spacing="15">
             <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label text="🎟️ Liste des Réservations" styleClass="card-title" />
+                <Label text="🎓 Liste des Certifications" styleClass="card-title" />
                 <Region HBox.hgrow="ALWAYS" />
                 <TextField fx:id="searchField" promptText="Filtrer..." prefWidth="250" />
             </HBox>
             
-            <ListView fx:id="bookingListView" VBox.vgrow="ALWAYS" styleClass="list-view" />
+            <ListView fx:id="certificationListView" VBox.vgrow="ALWAYS" styleClass="list-view" />
         </VBox>
     </HBox>
 </VBox>

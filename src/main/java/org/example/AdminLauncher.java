@@ -11,7 +11,7 @@ public class AdminLauncher {
     public static class AdminApp extends Application {
         @Override
         public void start(Stage primaryStage) throws Exception {
-            Parent root = FXMLLoader.load(getClass().getResource("/AcademyMainView.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/admin/AcademyMainView.fxml"));
             primaryStage.setTitle("Game Pilot - Administration");
             primaryStage.setScene(new Scene(root));
             primaryStage.show();

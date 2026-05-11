@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="750.0" prefWidth="1250.0" style="-fx-background-color: #0b121e;" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.user.ProgressCenterController">
+<VBox prefHeight="750.0" prefWidth="1250.0" style="-fx-background-color: #0b121e;" stylesheets="@../styles/styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.user.ProgressCenterController">
     
     <!-- Top Header -->
     <HBox alignment="CENTER_LEFT" prefHeight="70.0" styleClass="top-header">

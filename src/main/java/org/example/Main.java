@@ -13,7 +13,7 @@ public class Main {
         public void start(Stage primaryStage) throws Exception {
             // Open Admin Window
             Stage adminStage = new Stage();
-            Parent adminRoot = FXMLLoader.load(getClass().getResource("/AcademyMainView.fxml"));
+            Parent adminRoot = FXMLLoader.load(getClass().getResource("/admin/AcademyMainView.fxml"));
             adminStage.setTitle("Game Pilot - Administration");
             adminStage.setScene(new Scene(adminRoot));
             adminStage.show();
