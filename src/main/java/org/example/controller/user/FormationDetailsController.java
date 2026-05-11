@@ -18,6 +18,7 @@ import org.example.Service.BookingService;
 import org.example.Service.EmailService;
 import org.example.Service.SessionService;
 import org.example.Utils.EmailValidator;
+import org.example.Utils.DbErrorMapper;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -115,7 +116,8 @@ public class FormationDetailsController {
             }
             closeView();
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de valider l'inscription : " + e.getMessage());
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", DbErrorMapper.toUserMessage(e));
         }
     }
 

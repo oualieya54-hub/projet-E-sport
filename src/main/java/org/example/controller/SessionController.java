@@ -29,6 +29,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.example.Utils.DbErrorMapper;
 
 public class SessionController {
     
@@ -191,7 +192,8 @@ public class SessionController {
             List<Session> data = this.getDisponibilites();
             sessionList.setAll(data);
         } catch (SQLException e) {
-            showAlert("Erreur de chargement", "Impossible de charger les sessions.", e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+            showAlert("Erreur de chargement", "Impossible de charger les sessions.", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
         }
     }
 
@@ -278,13 +280,8 @@ public class SessionController {
                 handleReset(null);
                 showAlert("Succès", "Session ajoutée", "La session a été ajoutée avec succès.", Alert.AlertType.INFORMATION);
             } catch (SQLException e) {
-                String msg = e.getMessage();
-                if (msg.contains("Data truncated for column 'statut'")) {
-                    msg = "Le statut choisi n'est pas reconnu par la base de données. Utilisez 'ouverte', 'terminée' ou 'annulée'.";
-                } else if (msg.contains("Duplicate entry")) {
-                    msg = "Cette session existe déjà (doublon).";
-                }
-                showAlert("Erreur Base de Données", "Impossible d'enregistrer les données", msg, Alert.AlertType.ERROR);
+                e.printStackTrace();
+                showAlert("Erreur Base de Données", "Impossible d'enregistrer les données", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
             } catch (DateTimeParseException e) {
                 showAlert("Erreur de format", "Heure invalide", "L'heure doit être au format HH:mm (ex: 14:30)", Alert.AlertType.ERROR);
             }
@@ -361,11 +358,8 @@ public class SessionController {
             exitEditMode();
             showAlert("Succès", "Session modifiée", "La session a été mise à jour.", Alert.AlertType.INFORMATION);
         } catch (SQLException e) {
-            String msg = e.getMessage();
-            if (msg.contains("Data truncated for column 'statut'")) {
-                msg = "Le statut choisi n'est pas reconnu par la base de données. Utilisez 'ouverte', 'terminée' ou 'annulée'.";
-            }
-            showAlert("Erreur Base de Données", "Erreur lors de la modification", msg, Alert.AlertType.ERROR);
+            e.printStackTrace();
+            showAlert("Erreur Base de Données", "Erreur lors de la modification", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
         } catch (DateTimeParseException e) {
             showAlert("Erreur de format", "Heure invalide", "L'heure doit être au format HH:mm (ex: 14:30)", Alert.AlertType.ERROR);
         } catch (NumberFormatException e) {
@@ -416,7 +410,8 @@ public class SessionController {
                     else handleReset(null);
                     showAlert("Succès", "Session supprimée/annulée", "L'action a été effectuée.", Alert.AlertType.INFORMATION);
                 } catch (SQLException e) {
-                    showAlert("Erreur BD", "Erreur lors de la suppression", e.getMessage(), Alert.AlertType.ERROR);
+                    e.printStackTrace();
+                    showAlert("Erreur BD", "Erreur lors de la suppression", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
                 }
             }
         } else {

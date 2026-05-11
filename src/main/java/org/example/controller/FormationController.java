@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.example.Utils.DbErrorMapper;
 
 public class FormationController {
 
@@ -179,7 +180,8 @@ public class FormationController {
             List<Formation> data = this.getAll();
             formationList.setAll(data);
         } catch (SQLException e) {
-            showAlert("Erreur de chargement", "Impossible de charger les formations depuis la base de données.", e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+            showAlert("Erreur de chargement", "Impossible de charger les formations depuis la base de données.", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
         }
     }
 
@@ -234,13 +236,8 @@ public class FormationController {
                 clearFormFields();
                 showAlert("Succès", "Formation ajoutée", "La formation a été ajoutée avec succès.", Alert.AlertType.INFORMATION);
             } catch (SQLException e) {
-                String msg = e.getMessage();
-                if (msg.contains("Data truncated for column 'statut'")) {
-                    msg = "Le statut choisi est trop long ou non supporté par la base de données.";
-                } else if (msg.contains("Duplicate entry")) {
-                    msg = "Une formation avec ce titre existe déjà.";
-                }
-                showAlert("Erreur Base de Données", "Impossible d'ajouter la formation", msg, Alert.AlertType.ERROR);
+                e.printStackTrace();
+                showAlert("Erreur Base de Données", "Impossible d'ajouter la formation", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
             } catch (NumberFormatException e) {
                 showAlert("Erreur de saisie", "Champs numériques invalides", "Veuillez vérifier la durée, le prix et le nombre de sessions.", Alert.AlertType.ERROR);
             }
@@ -305,11 +302,8 @@ public class FormationController {
                 exitEditMode();
                 showAlert("Succès", "Formation modifiée", "La formation a été mise à jour.", Alert.AlertType.INFORMATION);
             } catch (SQLException e) {
-                String msg = e.getMessage();
-                if (msg.contains("Data truncated for column 'statut'")) {
-                    msg = "Le statut choisi est trop long ou non supporté par la base de données.";
-                }
-                showAlert("Erreur Base de Données", "Erreur lors de la modification", msg, Alert.AlertType.ERROR);
+                e.printStackTrace();
+                showAlert("Erreur Base de Données", "Erreur lors de la modification", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
             } catch (NumberFormatException e) {
                 showAlert("Erreur de saisie", "Champs numériques invalides",
                     "Veuillez vérifier la durée, le prix et le nombre de sessions.", Alert.AlertType.ERROR);
@@ -357,7 +351,8 @@ public class FormationController {
                     else clearFormFields();
                     showAlert("Succès", "Formation supprimée", "La formation a été supprimée.", Alert.AlertType.INFORMATION);
                 } catch (SQLException e) {
-                    showAlert("Erreur BD", "Erreur lors de la suppression", e.getMessage(), Alert.AlertType.ERROR);
+                    e.printStackTrace();
+                    showAlert("Erreur BD", "Erreur lors de la suppression", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
                 }
             }
         } else {
@@ -401,7 +396,8 @@ public class FormationController {
 
             formationList.setAll(filtered);
         } catch (SQLException e) {
-            showAlert("Erreur", "Erreur lors du filtrage", e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+            showAlert("Erreur", "Erreur lors du filtrage", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
         }
     }
 

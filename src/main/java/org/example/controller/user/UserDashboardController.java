@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.Model.Formation;
 import org.example.Service.FormationService;
+import org.example.Utils.DbErrorMapper;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,6 +48,7 @@ public class UserDashboardController implements Initializable {
             displayFormations(list);
         } catch (SQLException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", DbErrorMapper.toUserMessage(e));
         }
     }
 
@@ -156,6 +158,15 @@ public class UserDashboardController implements Initializable {
             stage.getScene().setRoot(root);
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page demandée.");
         }
+    }
+
+    private void showAlert(Alert.AlertType type, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(type == Alert.AlertType.ERROR ? "Erreur" : "Information");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

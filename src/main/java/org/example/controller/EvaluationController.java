@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.example.Utils.DbErrorMapper;
 
 public class
 EvaluationController {
@@ -117,7 +118,8 @@ EvaluationController {
             List<Evaluation> data = evaluationService.getAll();
             evaluationList.setAll(data);
         } catch (SQLException e) {
-            showAlert("Erreur", "Impossible de charger les évaluations", e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger les évaluations", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
         }
     }
 
@@ -158,9 +160,11 @@ EvaluationController {
                 handleReset(null);
                 showAlert("Succès", "Évaluation ajoutée", "L'évaluation a été enregistrée.", Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur Base de Données", "Impossible d'ajouter l'évaluation", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Impossible d'ajouter l'évaluation", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             } catch (Exception ex) {
-                showAlert("Erreur", "Une erreur inattendue est survenue", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur", "Une erreur inattendue est survenue", "Veuillez vérifier les champs saisis puis réessayer.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -186,9 +190,11 @@ EvaluationController {
                 loadData();
                 showAlert("Succès", "Évaluation mise à jour", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur Base de Données", "Impossible de modifier l'évaluation", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Impossible de modifier l'évaluation", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             } catch (Exception ex) {
-                showAlert("Erreur", "Une erreur inattendue est survenue", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur", "Une erreur inattendue est survenue", "Veuillez vérifier les champs saisis puis réessayer.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -203,8 +209,8 @@ EvaluationController {
                 handleReset(null);
                 showAlert("Succès", "Évaluation supprimée", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                String msg = ex.getMessage();
-                showAlert("Erreur Base de Données", "Suppression impossible", msg, Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Suppression impossible", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             }
         }
     }

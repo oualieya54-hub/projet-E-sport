@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.example.Utils.DbErrorMapper;
 
 public class CertificationController {
     private final CertificationService certificationService;
@@ -127,7 +128,8 @@ public class CertificationController {
             List<Certification> data = certificationService.getAll();
             certificationList.setAll(data);
         } catch (SQLException e) {
-            showAlert("Erreur", "Impossible de charger les certifications", e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger les certifications", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
         }
     }
 
@@ -183,9 +185,11 @@ public class CertificationController {
                 handleReset(null);
                 showAlert("Succès", "Certification ajoutée", "La certification a été enregistrée.", Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur Base de Données", "Impossible d'ajouter la certification", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Impossible d'ajouter la certification", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             } catch (Exception ex) {
-                showAlert("Erreur", "Saisie invalide", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur", "Saisie invalide", "Veuillez vérifier les champs saisis puis réessayer.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -219,9 +223,11 @@ public class CertificationController {
                 loadData();
                 showAlert("Succès", "Certification mise à jour", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur Base de Données", "Impossible de modifier la certification", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Impossible de modifier la certification", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             } catch (Exception ex) {
-                showAlert("Erreur", "Mise à jour impossible", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur", "Mise à jour impossible", "Veuillez vérifier les champs saisis puis réessayer.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -236,7 +242,8 @@ public class CertificationController {
                 handleReset(null);
                 showAlert("Succès", "Certification supprimée", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur Base de Données", "Suppression impossible", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Suppression impossible", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             }
         }
     }

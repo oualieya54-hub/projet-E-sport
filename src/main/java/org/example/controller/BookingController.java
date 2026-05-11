@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.example.Utils.DbErrorMapper;
 
 public class BookingController {
     @FXML private ListView<Booking> bookingListView;
@@ -131,7 +132,8 @@ public class BookingController {
             List<Booking> data = bookingService.getAll();
             bookingList.setAll(data);
         } catch (SQLException e) {
-            showAlert("Erreur", "Impossible de charger les réservations", e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger les réservations", DbErrorMapper.toUserMessage(e), Alert.AlertType.ERROR);
         }
     }
 
@@ -187,9 +189,11 @@ public class BookingController {
                 handleReset(null);
                 showAlert("Succès", "Réservation ajoutée", "La réservation a été enregistrée avec succès.", Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur Base de Données", "Impossible de réserver", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Impossible de réserver", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             } catch (Exception ex) {
-                showAlert("Erreur", "Saisie invalide", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur", "Saisie invalide", "Veuillez vérifier les champs saisis puis réessayer.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -224,9 +228,11 @@ public class BookingController {
                 loadData();
                 showAlert("Succès", "Réservation mise à jour", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur Base de Données", "Impossible de modifier", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Impossible de modifier", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             } catch (Exception ex) {
-                showAlert("Erreur", "Mise à jour impossible", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur", "Mise à jour impossible", "Veuillez vérifier les champs saisis puis réessayer.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -241,7 +247,8 @@ public class BookingController {
                 handleReset(null);
                 showAlert("Succès", "Réservation supprimée", null, Alert.AlertType.INFORMATION);
             } catch (SQLException ex) {
-                showAlert("Erreur Base de Données", "Suppression impossible", ex.getMessage(), Alert.AlertType.ERROR);
+                ex.printStackTrace();
+                showAlert("Erreur Base de Données", "Suppression impossible", DbErrorMapper.toUserMessage(ex), Alert.AlertType.ERROR);
             }
         }
     }
