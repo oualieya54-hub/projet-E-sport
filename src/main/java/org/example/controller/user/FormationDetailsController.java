@@ -57,9 +57,16 @@ public class FormationDetailsController {
 
     private void loadSessions() {
         try {
-            colDate.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDateHeure().toString()));
+            colDate.setCellValueFactory(cell -> {
+                LocalDateTime dt = cell.getValue().getDateHeure();
+                String display = dt != null
+                        ? dt.toLocalDate() + "  " + String.format("%02d:%02d", dt.getHour(), dt.getMinute())
+                        : "N/A";
+                return new SimpleStringProperty(display);
+            });
             colType.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTypeSession()));
-            colCoach.setCellValueFactory(cell -> new SimpleStringProperty("Coach ID: " + cell.getValue().getIdCoach()));
+            colCoach.setCellValueFactory(cell ->
+                    new SimpleStringProperty(sessionService.getCoachName(cell.getValue().getIdCoach())));
             
             List<Session> sessions = sessionService.getSessionsByFormation(formation.getIdFormation());
             sessionList.setAll(sessions);

@@ -182,6 +182,25 @@ public class SessionService {
      * Retourne une session existante si le même coach, le même jeu et le même créneau (date + heure) existent déjà.
      * {@code excludeId} : id de la session en cours d’édition (0 pour une insertion) à exclure de la recherche.
      */
+    /**
+     * Retourne le nom du coach depuis la table users, ou "Coach #idCoach" si introuvable.
+     */
+    public String getCoachName(int idCoach) {
+        String sql = "SELECT nom FROM users WHERE id = ?";
+        try (Connection con = MyDatabase.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idCoach);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String nom = rs.getString("nom");
+                return (nom != null && !nom.isBlank()) ? nom : "Coach #" + idCoach;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Coach #" + idCoach;
+    }
+
     public Session checkDuplicate(String jeu, int idCoach, LocalDateTime dateHeure, int excludeId) throws SQLException {
         String sql = "SELECT * FROM Session WHERE jeu = ? AND id_coach = ? AND date_heure = ? AND id_session != ?";
         try (Connection con = MyDatabase.getConnection();
