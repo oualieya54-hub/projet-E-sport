@@ -4,7 +4,7 @@ import service.UserService;
 import java.util.List;
 
 /**
- * Manual integration test for UserService against merged_esport DB.
+ * Manual integration test for UserService against esport_db DB.
 
  *
  * Each test prints:  [PASS] or [FAIL] — <description>
@@ -224,7 +224,7 @@ public class test {
     public static void main(String[] args) {
         System.out.println("╔══════════════════════════════════════════╗");
         System.out.println("║     UserService Integration Tests        ║");
-        System.out.println("║     DB: merged_esport                    ║");
+        System.out.println("║     DB: esport_db                    ║");
         System.out.println("╚══════════════════════════════════════════╝");
 
         // CREATE — keep the id for all following tests

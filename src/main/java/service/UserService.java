@@ -32,15 +32,18 @@ public class UserService {
         u.setAvatarUrl(rs.getString("avatar_url"));
         u.setRole(rs.getString("role"));
         u.setPoints(rs.getInt("points"));
+        // bio, wins, losses are not yet in the shared DB — kept in-memory only
         u.setLastActive(rs.getTimestamp("last_active"));
         u.setIsBanned(rs.getBoolean("is_banned"));
         u.setCreatedAt(rs.getTimestamp("created_at"));
         u.setUpdatedAt(rs.getTimestamp("updated_at"));
+        u.setGoogleId(rs.getString("google_id"));
+        u.setDiscordId(rs.getString("discord_id"));
         return u;
     }
 
     public boolean addUser(User user) {
-        String sql = "INSERT INTO users (nom, pseudo, email, password, avatar_url, role) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (nom, pseudo, email, password, avatar_url, role, google_id, discord_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -52,6 +55,8 @@ public class UserService {
             ps.setString(4, hashPassword(user.getPassword()));
             ps.setString(5, user.getAvatarUrl());
             ps.setString(6, user.getRole() != null ? user.getRole() : "Player");
+            ps.setString(7, user.getGoogleId());
+            ps.setString(8, user.getDiscordId());
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
@@ -207,6 +212,8 @@ public class UserService {
         target.setLastActive(source.getLastActive());
         target.setCreatedAt(source.getCreatedAt());
         target.setUpdatedAt(source.getUpdatedAt());
+        target.setGoogleId(source.getGoogleId());
+        target.setDiscordId(source.getDiscordId());
     }
 
     public User login(String email, String password) {
@@ -230,7 +237,7 @@ public class UserService {
     }
     
     public boolean updateUser(User user) {
-        String sql = "UPDATE users SET nom=?, pseudo=?, avatar_url=? WHERE id=?";
+        String sql = "UPDATE users SET nom=?, pseudo=?, avatar_url=?, google_id=?, discord_id=? WHERE id=?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -238,7 +245,9 @@ public class UserService {
             ps.setString(1, user.getNom());
             ps.setString(2, user.getPseudo());
             ps.setString(3, user.getAvatarUrl());
-            ps.setInt(4, user.getId());
+            ps.setString(4, user.getGoogleId());
+            ps.setString(5, user.getDiscordId());
+            ps.setInt(6, user.getId());
             int affected = ps.executeUpdate();
             
             if (affected > 0) {
@@ -356,6 +365,20 @@ public class UserService {
         return null;
     }
 
+    public User getUserByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapRow(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("getUserByEmail error: " + e.getMessage());
+        }
+        return null;
+    }
+
     public User getUserById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -410,6 +433,76 @@ public class UserService {
         } catch (SQLException e) {
             System.err.println("updatePoints error: " + e.getMessage());
             return false;
+        }
+    }
+
+    public User getUserByGoogleId(String googleId) {
+        String sql = "SELECT * FROM users WHERE google_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, googleId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User u = mapRow(rs);
+                    return getFullUserById(u.getId(), u.getRole());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("getUserByGoogleId error: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public User getUserByDiscordId(String discordId) {
+        String sql = "SELECT * FROM users WHERE discord_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, discordId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User u = mapRow(rs);
+                    return getFullUserById(u.getId(), u.getRole());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("getUserByDiscordId error: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean linkGoogle(int userId, String googleId) {
+        String sql = "UPDATE users SET google_id = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, googleId);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public boolean linkDiscord(int userId, String discordId) {
+        String sql = "UPDATE users SET discord_id = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, discordId);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public void initDb() {
+        String sql1 = "ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE";
+        String sql2 = "ALTER TABLE users ADD COLUMN IF NOT EXISTS discord_id VARCHAR(255) UNIQUE";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement st = conn.createStatement()) {
+            st.execute(sql1);
+            st.execute(sql2);
+        } catch (SQLException e) {
+            // Ignore if columns exist
         }
     }
 }

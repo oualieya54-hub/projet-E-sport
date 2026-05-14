@@ -14,10 +14,13 @@ public class User {
     private String    avatarUrl;
     private String    role;          // 'player' | 'captain' | 'coach' | 'guest' | 'moderator' | 'admin'
     private int       points;        // loyalty points balance
+    private String    bio;
     private Timestamp lastActive;
     private boolean   isBanned;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private String    googleId;
+    private String    discordId;
 
     // ============================================================
     // Constructors
@@ -77,6 +80,9 @@ public class User {
     public int getPoints() { return points; }
     public void setPoints(int points) { this.points = points; }
 
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
     public Timestamp getLastActive() { return lastActive; }
     public void setLastActive(Timestamp lastActive) { this.lastActive = lastActive; }
 
@@ -88,6 +94,12 @@ public class User {
 
     public Timestamp getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getGoogleId() { return googleId; }
+    public void setGoogleId(String googleId) { this.googleId = googleId; }
+
+    public String getDiscordId() { return discordId; }
+    public void setDiscordId(String discordId) { this.discordId = discordId; }
 
     // ============================================================
     // Convenience helpers

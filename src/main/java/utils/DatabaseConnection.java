@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    private static final String URL      = "jdbc:mysql://localhost:3306/merged_esport";
-    private static final String USER     = "root";
-    private static final String PASSWORD = "";  // WAMP default: no password
+    private static final String URL = "jdbc:mysql://localhost:3306/esport_db";
+    private static final String USER = "root";
+    private static final String PASSWORD = ""; // WAMP default: no password
 
     private static Connection connection = null;
 

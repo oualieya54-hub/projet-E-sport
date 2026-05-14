@@ -18,20 +18,53 @@ public class MainApp {
         @Override
         public void start(Stage stage) throws Exception {
             primaryStage = stage;
+            primaryStage.setMaximized(true);
+            
+            // Set the application icon in the title bar
+            try {
+                javafx.scene.image.Image appIcon = new javafx.scene.image.Image(App.class.getResourceAsStream("/images/logo.png"));
+                primaryStage.getIcons().add(appIcon);
+            } catch (Exception e) {
+                System.out.println("Info: Could not load /images/logo.png. Please add the transparent logo there.");
+            }
+
             // Load the Login interface initially
-            switchScene("/LoginView.fxml", "E-SPORT - Login");
+            switchScene("/commun/LoginView.fxml", "E-SPORT - Login");
             primaryStage.show();
         }
 
         public static void switchScene(String fxmlFile, String title) {
             try {
                 Parent root = FXMLLoader.load(App.class.getResource(fxmlFile));
-                Scene scene = new Scene(root);
+                
+                // Just use the provided title directly to remove text branding
                 primaryStage.setTitle(title);
-                primaryStage.setScene(scene);
+
+                if (primaryStage.getScene() == null) {
+                    Scene scene = new Scene(root, 1000, 700);
+                    primaryStage.setScene(scene);
+                } else {
+                    // Preserve the current size if the user resized or maximized the window
+                    double currentWidth = primaryStage.getWidth();
+                    double currentHeight = primaryStage.getHeight();
+                    boolean wasMaximized = primaryStage.isMaximized();
+
+                    primaryStage.getScene().setRoot(root);
+                    
+                    // Root changes can sometimes trigger layout resets, so we re-apply dimensions if needed
+                    if (!wasMaximized) {
+                        primaryStage.setWidth(currentWidth);
+                        primaryStage.setHeight(currentHeight);
+                    }
+                    primaryStage.setMaximized(wasMaximized);
+                }
+
+                primaryStage.setMinWidth(920);
+                primaryStage.setMinHeight(680);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
     }
 }
